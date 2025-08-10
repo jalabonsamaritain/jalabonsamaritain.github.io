@@ -3,10 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" href="/images/logo_isfa.png" type="image/png">
+  <link rel="icon" href="images/logo_isfa.png" type="image/png">
   <title>JalabonSamaritain</title>
   <style>
-    /* (styles identiques) */
+    /* Styles généraux */
+    body { font-family: Calibri, sans-serif; margin:0; padding:0; background-color:#f4f4f4; }
+
+    /* En-tête */
+    header { background-color:#235A8C; color:#fff; text-align:center; padding:0.5rem 0; position:fixed; top:0; width:100%; z-index:2; }
+    header a{ color:white; }
+    header a:hover{ color:antiquewhite; }
+
+    /* Barre de navigation */
+    nav { display:flex; justify-content:center; background-color:#0E76A8; padding:0.5rem 0; position:fixed; top:90px; width:100%; z-index:2; }
+    nav a { color:#fff; margin:0 1rem; text-decoration:none; padding:0.5rem 1rem; border-radius:5px; transition:background-color .3s, transform .3s; }
+    nav a:hover { color:white; transform:scale(1.1); }
+    header, nav { width:100%; }
+
+    /* Contenu général */
+    .container_global { width:80%; margin:2rem auto; text-align:center; padding:1rem; background-color:#f4f4f4; border-radius:5px; margin-top:120px; }
+
+    table { border-collapse:collapse; width:100%; }
+    td, th { border:1px solid #ddd; padding:8px; }
+    th { background-color:#f2f2f2; }
+    .col1{width:40%}.col2{width:30%}.col3{width:30%}
+
+    /* Contenu dans matière */
+    .container { width:80%; margin:2rem auto; margin-left:50px; padding:1.5rem; background-color:#fff; border-radius:5px; }
+
+    .box-container { display:flex; justify-content:space-between; margin-top:20px; }
+    .box { width:30%; padding:30px; background-color:#f9f9f9; border-radius:5px; box-shadow:0 0 10px rgba(0,0,0,.1); transition:transform .3s; margin:0 10px; display:flex; align-items:center; justify-content:center; text-align:center; }
+    .box:hover { transform:scale(1.05); cursor:pointer; }
+    .box a { display:block; text-decoration:none; color:#333; font-size:20px; width:100%; padding:30px 0; }
+    .box-gold { border:1px solid gold; box-shadow:0 0 15px rgba(255,215,0,.6); font-weight:bold; color:goldenrod; }
+
+    .compteur-box { text-align:left; margin-bottom:50px; font-size:14px; color:#555; }
+
+    p { font-size:18px; }
+    h1 { text-align:center; }
+    a { text-decoration:none; color:blue; }
+    a:hover { color:purple; }
+
+    .brainteaser-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1em; }
+    .brainteaser-box { border:2px solid #8C7C68; border-radius:12px; padding:1.5em; margin-top:2em; background:linear-gradient(135deg,#fdfcfb,#e2d1c3); box-shadow:0 4px 10px rgba(0,0,0,.1); font-family:'Georgia', serif; text-align:left; }
+    .brainteaser-box h3 { margin:0; font-size:1.4em; color:#3c2f2f; }
+    .brainteaser-box p { font-size:1.1em; color:#2f2f2f; line-height:1.5; margin:0; }
+    .brainteaser-icon { font-size:1.4em; margin-right:.4em; color:#a67c52; }
+
+    .brainteaser-button { background-color:#AD8B00; color:white; border:none; padding:8px 16px; font-weight:bold; font-size:1em; border-radius:8px; cursor:pointer; transition:background-color .3s ease; }
+    .brainteaser-button:hover { background-color:#8C7C00; }
+    #new-brainteaser-btn { margin-top:1em; background-color:#e6d3b3; color:#3c2f2f; border:1px solid #a67c52; border-radius:8px; padding:8px 16px; font-family:'Georgia', serif; font-size:1em; cursor:pointer; transition:background-color .3s, transform .2s; box-shadow:0 2px 6px rgba(0,0,0,.1); }
+    #new-brainteaser-btn:hover { background-color:#f2e6cd; transform:scale(1.05); }
+
+    #brainteaser-answer { padding-top:.5em; border-top:1px dashed #ccc; margin-top:1em; }
+    #show-answer-btn { background-color:#6B5B95; color:white; }
+    #show-answer-btn:hover { background-color:#574778; }
+
+    .brainteaser-spacer { height:4em; }
+
+    /* Pied de page */
+    footer { background-color:#235A8C; color:#fff; text-align:center; padding:1rem 0; position:fixed; bottom:0; width:100%; }
   </style>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -14,20 +70,18 @@
     src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
   </script>
 
+  <!-- JS sans PHP : charge un brainteaser depuis /brainteasers/ -->
   <script>
     // --- util: hash déterministe pour "un brainteaser par jour" ---
     function hashString(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return h>>>0;}
     function todayKey(){const d=new Date();const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,"0");const dd=String(d.getDate()).padStart(2,"0");return `${yyyy}-${mm}-${dd}`;}
 
-    // TOUT vient de /brainteasers/ à la racine du domaine
-    const BT_BASE = "/brainteasers/";
-
-    let LIST=[];              
-    let currentIdx=null;      
-    const seenToday=new Set();
+    let LIST=[];              // chargée depuis brainteasers/index.json
+    let currentIdx=null;      // index dans LIST
+    const seenToday=new Set();// pour "Voir un autre" sans répétition locale
 
     async function loadIndex(){
-      const r=await fetch(BT_BASE + "index.json",{cache:"no-store"});
+      const r=await fetch("brainteasers/index.json",{cache:"no-store"});
       if(!r.ok) throw new Error("index.json introuvable");
       const data=await r.json();
       if(!Array.isArray(data)||data.length===0) throw new Error("index.json vide");
@@ -37,8 +91,7 @@
     async function render(entry){
       const el=document.getElementById("brainteaser");
       el.textContent="Chargement...";
-      const r=await fetch(BT_BASE + entry.file,{cache:"no-store"});
-      if(!r.ok){ el.textContent="Fichier introuvable : " + entry.file; return; }
+      const r=await fetch(`brainteasers/${entry.file}`,{cache:"no-store"});
       el.innerHTML=await r.text();
       if(typeof MathJax!=="undefined") MathJax.typeset();
     }
@@ -54,7 +107,7 @@
     async function initBT(){
       try{
         await loadIndex();
-        currentIdx=pickDaily();
+        currentIdx=pickDaily();          // brainteaser du jour (déterministe)
         seenToday.add(currentIdx);
         await render(LIST[currentIdx]);
 
