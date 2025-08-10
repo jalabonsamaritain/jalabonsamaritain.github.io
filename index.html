@@ -66,12 +66,13 @@
   </style>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async
-    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-  <!-- JS sans PHP : charge un brainteaser depuis /brainteasers/ -->
+  <!-- JS sans PHP : charge un brainteaser depuis /html_files/brainteasers/ -->
   <script>
+    // Base absolue vers le dossier brainteasers (depuis la racine du site)
+    const BT_BASE = "/html_files/brainteasers/";
+
     // --- util: hash déterministe pour "un brainteaser par jour" ---
     function hashString(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return h>>>0;}
     function todayKey(){const d=new Date();const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,"0");const dd=String(d.getDate()).padStart(2,"0");return `${yyyy}-${mm}-${dd}`;}
@@ -81,7 +82,7 @@
     const seenToday=new Set();// pour "Voir un autre" sans répétition locale
 
     async function loadIndex(){
-      const r=await fetch("brainteasers/index.json",{cache:"no-store"});
+      const r=await fetch(BT_BASE + "index.json",{cache:"no-store"});
       if(!r.ok) throw new Error("index.json introuvable");
       const data=await r.json();
       if(!Array.isArray(data)||data.length===0) throw new Error("index.json vide");
@@ -91,7 +92,7 @@
     async function render(entry){
       const el=document.getElementById("brainteaser");
       el.textContent="Chargement...";
-      const r=await fetch(`brainteasers/${entry.file}`,{cache:"no-store"});
+      const r=await fetch(BT_BASE + entry.file,{cache:"no-store"});
       el.innerHTML=await r.text();
       if(typeof MathJax!=="undefined") MathJax.typeset();
     }
