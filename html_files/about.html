@@ -1,204 +1,90 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/images/logo_isfa.png" type="image/png">
-    <title>JalabonSamaritain</title>
-    <style>
-        /* Styles généraux */
-        body {
-            font-family: Calibri, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="../images/logo_isfa.png" type="image/png">
+  <title>JalabonSamaritain</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    :root{
+      --brand-1:#235A8C;
+      --brand-2:#0E76A8;
+      --text:#222;
+      --bg:#f4f4f4;
+      --space:clamp(12px,2vw,20px);
+      --header-h:64px;
+      --nav-h:48px;
+    }
+    body{
+      margin:0;min-height:100svh;display:flex;flex-direction:column;
+      font-family:ui-sans-serif,system-ui,Segoe UI,Calibri,Roboto,Arial;
+      line-height:1.5;background:var(--bg);color:var(--text);
+    }
+    a{color:#0645AD;text-decoration:none;}
+    a:hover{text-decoration:underline;}
+    .container{width:min(100%,70rem);margin-inline:auto;padding-inline:var(--space);}
 
-        /* En-tête */
-        header {
-            background-color: #235A8C;
-            color: #fff;
-            text-align: center;
-            padding: 0.5rem 0;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 2;
-        }
+    /* Header & Nav (identiques à l'index) */
+    header{background:var(--brand-1);color:#fff;}
+    header .inner{display:flex;align-items:center;justify-content:center;min-height:var(--header-h);padding-block:8px;}
+    header a{color:#fff;text-decoration:none;}
+    header a:hover{color:#f9f9f9;}
 
-        header a{
-            color: white;
-        }
+    .nav{background:var(--brand-2);color:#fff;}
+    .nav .inner{display:flex;align-items:center;justify-content:center;min-height:var(--nav-h);}
+    #nav-list{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;width:100%;}
+    #nav-list a{color:#fff;padding:10px 12px;border-radius:8px;}
+    #nav-list a:hover{background:rgba(255,255,255,.12);}
 
-        header a:hover{
-            color: antiquewhite;
-        }
+    @media(min-width:768px){
+      header{position:fixed;top:0;left:0;right:0;z-index:20;}
+      .nav{position:fixed;top:var(--header-h);left:0;right:0;z-index:19;}
+      body{padding-top:calc(var(--header-h) + var(--nav-h));}
+    }
 
-        /* Barre de navigation */
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #0E76A8;
-            padding: 0.5rem 0;
-            position: fixed;
-            top: 90px;
-            width: 100%;
-            z-index: 2;
-        }
-        nav a {
-            color: #fff;
-            margin: 0 1rem;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        nav a:hover {
-            
-            color: white;
-            transform: scale(1.1);
-        }
+    /* Content */
+    main.container_global{flex:1;width:min(100%,70rem);margin-inline:auto;padding:var(--space);margin-top:var(--space);}
+    .container_global p{font-size:clamp(1rem,.9rem+.4vw,1.125rem);margin:1em 0;}
+    h1{text-align:center;font-size:clamp(1.5rem,1rem+2vw,2.25rem);margin:.5em 0;}
 
-        header, nav {
-            width: 100%;
-        }
-
-
-        /* Contenu général */
-        .container_global {
-            width: 80%;
-            margin: 2rem auto;
-            text-align: center;
-            padding: 1rem;
-            background-color: #f4f4f4;
-            border-radius: 5px;
-            margin-top: 120px;
-        }
-
-
-            table {
-                border-collapse: collapse; 
-                width: 100%; 
-            }
-
-            td, th {
-                border: 1px solid #ddd;
-                padding: 8px; 
-            }
-
-            th {
-                background-color: #f2f2f2; 
-            }
-
-            /* Spécifie la largeur de chaque colonne */
-            .col1 {
-                width: 40%;
-            }
-
-            .col2 {
-                width: 30%;
-            }
-
-            .col3 {
-                width: 30%;
-            }
-
-
-
-        /* Contenu dans matière */
-        .container {
-            width: 80%;
-            margin: 2rem auto;
-            margin-left: 50px; /* Ajout d'une marge à gauche */
-            padding: 1.5rem;
-            background-color: #fff;
-            border-radius: 5px;
-        }
-
-        .box-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .box {
-            width: 30%;
-            text-align: center;
-            padding: 50px 0;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        .box:hover {
-            transform: scale(1.05);
-            cursor: pointer;
-        }
-        .box a {
-            text-decoration: none;
-            color: #333;
-            font-size: 20px;
-        }
-        p {
-            font-size: 18px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        a {
-/*          font-weight: bold;*/
-            text-decoration: none;
-            color: blue;  /* Juste pour être sûr, forçons la couleur à bleu */
-        }
-
-        a:hover {
-            color: purple;
-        }
-
-
-        /* Pied de page */
-        footer {
-            background-color: #235A8C;
-            color: #fff;
-            text-align: center;
-            padding: 1rem 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-    </style>
+    /* Footer */
+    footer{background:var(--brand-1);color:#fff;text-align:center;padding:14px 0;margin-top:auto;}
+  </style>
 </head>
 <body>
-    <header>
-        <h1><a href="../index.html">JalabonSamaritain</a></h1>
-    </header>
+  <!-- Header -->
+  <header>
+    <div class="container inner">
+      <h1 style="margin:0; font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);">
+        <a href="../index.html">JalabonSamaritain</a>
+      </h1>
+    </div>
+  </header>
 
-    <nav>
+  <!-- Nav -->
+  <div class="nav" role="navigation" aria-label="Navigation principale">
+    <div class="container inner">
+      <div id="nav-list">
         <a href="../index.html">Accueil</a>
         <a href="about.html">À propos</a>
         <a href="contact.html">Contact</a>
-    </nav>
+      </div>
+    </div>
+  </div>
 
-    <div class="container_global">
-
-    <br> 
-
+  <!-- Main content -->
+  <main class="container_global">
     <p>Salut ! Je m'appelle <strong>Théo Jalabert</strong>.</p>
 
     <p>Je suis Quant Researcher Intern chez NatWest Markets, au sein de l’équipe Structured Rates à Paris. Mon travail consiste à modéliser la valorisation et le risque de produits dérivés de taux et d’inflation complexes, tout en fournissant des outils sur mesure aux desks de trading (EUR/GBP options, inflation, investor products).</p>
 
-    <p>Diplômé de l’ISFA (major de promotion pendant les 3 années de formation), j’ai poursuivi ma spécialisation en finance quantitative à l’<a href="https://www.polytechnique.edu/">École Polytechnique</a> et à <a href="https://www.sorbonne-universite.fr/">Sorbonne Université</a>, dans le cadre du <a href="https://finance.math.upmc.fr/#">Master Probabilités et Finance (ex-DEA El Karoui)</a>.</p>
+    <p>Diplômé de l’ISFA (major de promotion pendant les 3 années de formation), j’ai poursuivi ma spécialisation en finance quantitative à l’<a href="https://www.polytechnique.edu/" target="_blank" rel="noopener noreferrer">École Polytechnique</a> et à <a href="https://www.sorbonne-universite.fr/" target="_blank" rel="noopener noreferrer">Sorbonne Université</a>, dans le cadre du <a href="https://finance.math.upmc.fr/#" target="_blank" rel="noopener noreferrer">Master Probabilités et Finance (ex-DEA El Karoui)</a>.</p>
+  </main>
 
-    </div>
-
-
-
-    <footer>
-        Théo Jalabert | Tous droits réservés © 2025
-    </footer>
+  <!-- Footer -->
+  <footer>
+    Théo Jalabert | Tous droits réservés © 2025
+  </footer>
 </body>
 </html>
-
-

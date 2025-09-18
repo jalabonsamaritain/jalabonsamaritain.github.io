@@ -1,295 +1,300 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/images/logo_isfa.png" type="image/png">
-    <title>JalabonSamaritain</title>
-    <style>
-        /* Styles généraux */
-        body {
-            font-family: Calibri, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/images/logo_isfa.png" type="image/png">
+  <title>JalabonSamaritain — Annales Théorie de la crédibilité</title>
+  <style>
+    :root{
+      --header-h: 90px;
+      --nav-h: 40px;
+      --stack-h: calc(var(--header-h) + var(--nav-h));
+      --gap: 16px;
+      --brand:#235A8C;
+      --nav:#0E76A8;
+      --bg:#f4f4f4;
+      --card:#fff;
+      --text:#333;
+      --radius: 8px;
+      --shadow: 2px 2px 5px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family: Calibri, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin:0; background:var(--bg); color:var(--text);
+    }
 
-        /* En-tête */
-        header {
-            background-color: #235A8C;
-            color: #fff;
-            text-align: center;
-            padding: 0.5rem 0;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 2;
-        }
+    /* Header & nav fixés */
+    header{
+      position:fixed; top:0; left:0; right:0; z-index:1000;
+      background:var(--brand); color:#fff; text-align:center; padding:.5rem 0;
+    }
+    header a{ color:#fff; text-decoration:none }
+    header a:hover{ color:antiquewhite }
+    nav{
+      position:fixed; top:var(--header-h); left:0; right:0; z-index:1000;
+      display:flex; justify-content:center; gap:1rem;
+      background:var(--nav); padding:.5rem 0;
+    }
+    nav a{
+      color:#fff; text-decoration:none; padding:.4rem .8rem; border-radius:6px;
+      transition: transform .2s;
+    }
+    nav a:hover{ transform:scale(1.06) }
 
-        header a{
-            color: white;
-        }
+    /* Barre outils (recherche + select année) */
+    .tools{
+      position:sticky; top:calc(var(--stack-h) + 8px); z-index: 50;
+      background:#ffffffcc; backdrop-filter: blur(6px);
+      border:1px solid #eaeaea; border-left:none; border-right:none;
+      padding:10px 12px; display:flex; gap:10px; align-items:center;
+    }
+    .tools input, .tools select{
+      flex:1; padding:.6rem .7rem; border:1px solid #ccc; border-radius:8px; background:#fff;
+      font-size:14px;
+    }
+    .tools label{ font-weight:700; font-size:14px; white-space:nowrap }
 
-        header a:hover{
-            color: antiquewhite;
-        }
+    /* Contenu */
+    .container_global{
+      width:min(1100px, 90%);
+      margin:0 auto; padding:1rem;
+      margin-top: calc(var(--stack-h) + 24px);
+      padding-bottom: 120px; /* éviter chevauchement avec le footer fixe */
+    }
+    h1{ text-align:center; margin:0 0 1rem }
+    .container{
+      background:var(--card); border-radius:var(--radius); padding:1.2rem 1.4rem;
+      margin:1rem 0; box-shadow:var(--shadow)
+    }
+    ul.years{ list-style:none; padding-left:0; margin:0 }
+    ul.years li{ margin:.6rem 0 }
+    .year-title{ font-weight:700 }
 
-        /* Barre de navigation */
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #0E76A8;
-            padding: 0.5rem 0;
-            position: fixed;
-            top: 90px;
-            width: 100%;
-            z-index: 2;
-        }
-        nav a {
-            color: #fff;
-            margin: 0 1rem;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        nav a:hover {
-            
-            color: white;
-            transform: scale(1.1);
-        }
+    a{ color:#1a59ff; text-decoration:none }
+    a:hover{ color:purple }
 
-        header, nav {
-            width: 100%;
-        }
+    footer{
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--brand); color:#fff; text-align:center; padding:1rem 0;
+    }
 
+    /* petite grille de colonnes si besoin de tables plus tard */
+    table{ width:100%; border-collapse:collapse }
+    th,td{ border:1px solid #ddd; padding:8px; vertical-align:top }
+    th{ background:#f2f2f2 }
+    .col1{ width:40% } .col2{ width:30% } .col3{ width:30% }
 
-        /* Contenu général */
-        .container_global {
-            width: 80%;
-            margin: 2rem auto;
-            text-align: center;
-            padding: 1rem;
-            background-color: #f4f4f4;
-            border-radius: 5px;
-            margin-top: 120px;
-        }
-
-
-            table {
-                border-collapse: collapse; 
-                width: 100%; 
-            }
-
-            td, th {
-                border: 1px solid #ddd;
-                padding: 8px; 
-            }
-
-            th {
-                background-color: #f2f2f2; 
-            }
-
-            /* Spécifie la largeur de chaque colonne */
-            .col1 {
-                width: 40%;
-            }
-
-            .col2 {
-                width: 30%;
-            }
-
-            .col3 {
-                width: 30%;
-            }
-
-
-
-        /* Contenu dans matière */
-        .container {
-            width: 80%;
-            margin: 2rem auto;
-            text-align: left;
-            padding: 1.5rem;
-            background-color: #fff;
-            border-radius: 5px;
-        }
-
-        .box-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .box {
-            width: 30%;
-            text-align: center;
-            padding: 50px 0;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        .box:hover {
-            transform: scale(1.05);
-            cursor: pointer;
-        }
-        .box a {
-            text-decoration: none;
-            color: #333;
-            font-size: 20px;
-        }
-        p {
-            font-size: 18px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        a {
-/*          font-weight: bold;*/
-            text-decoration: none;
-            color: blue;  /* Juste pour être sûr, forçons la couleur à bleu */
-        }
-
-        a:hover {
-            color: purple;
-        }
-
-
-        /* Pied de page */
-        footer {
-            background-color: #235A8C;
-            color: #fff;
-            text-align: center;
-            padding: 1rem 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-    </style>
+    @media (max-width: 640px){
+      .tools{ flex-direction:column; align-items:stretch }
+      .tools label{ display:none }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1><a href="../index.html">JalabonSamaritain</a></h1>
-    </header>
+  <header>
+    <h1><a href="../index.html">JalabonSamaritain</a></h1>
+  </header>
 
-    <nav>
-        <a href="../index.html">Accueil</a>
-        <a href="about.html">À propos</a>
-        <a href="contact.html">Contact</a>
-    </nav>
+  <nav>
+    <a href="../index.html">Accueil</a>
+    <a href="about.html">À propos</a>
+    <a href="contact.html">Contact</a>
+  </nav>
 
-    <div class="container_global">
+  <!-- Outils : recherche + select année -->
+  <div class="tools">
+    <label for="q">Rechercher</label>
+    <input id="q" type="search" placeholder="Filtrer (ex: 2013, correction, 2ème session)…" aria-label="Rechercher dans les annales">
+    <select id="jump" aria-label="Aller à l’année">
+      <option value="">Aller à l’année…</option>
+      <option value="#y2023">2023</option>
+      <option value="#y2020">2020</option>
+      <option value="#y2019">2019</option>
+      <option value="#y2018">2018</option>
+      <option value="#y2017">2017</option>
+      <option value="#y2016">2016</option>
+      <option value="#y2015">2015</option>
+      <option value="#y2014">2014</option>
+      <option value="#y2013">2013</option>
+      <option value="#y2012">2012</option>
+      <option value="#y2011">2011</option>
+      <option value="#y2010">2010</option>
+      <option value="#y2009">2009</option>
+      <option value="#y2008">2008</option>
+      <option value="#y2007">2007</option>
+      <option value="#y2006">2006</option>
+    </select>
+  </div>
 
-        <h1>Annales Théorie de la crédibilité et systèmes bonus-malus</h1>
-    <ul>
-        
-        <div class="container">
-            <li><b>Examen 2006 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2006.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2006_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2006_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
+  <div class="container_global">
+    <h1>Annales Théorie de la crédibilité et systèmes bonus-malus</h1>
 
-            <br>
+    <div class="container">
+      <ul class="years" id="years">
+        <li id="y2006">
+          <span class="year-title">Examen 2006 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2006.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2006_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2006_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <li><b>Examen 2007 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2007.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2007_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
+        <li id="y2007">
+          <span class="year-title">Examen 2007 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2007.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2007_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <br>
+        <li id="y2008">
+          <span class="year-title">Examen 2008 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2008.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2008_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <li><b>Examen 2008 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2008.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2008_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
+        <li id="y2009">
+          <span class="year-title">Examen 2009 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2009.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2009_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <br>
+        <li id="y2010">
+          <span class="year-title">Examen 2010 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2010.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2010_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <li><b>Examen 2009 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2009.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2009_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
+        <li id="y2011">
+          <span class="year-title">Examen 2011 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2011.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2011_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <br>
+        <li id="y2012">
+          <span class="year-title">Examen 2012 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2012.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2012_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <li><b>Examen 2010 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2010.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2010_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
+        <li id="y2013">
+          <span class="year-title">Examen 2013 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2013.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2013_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2013_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <br>
+        <li id="y2014">
+          <span class="year-title">Examen 2014 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2014.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2014_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <li><b>Examen 2011 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2011.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2011_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
+        <li id="y2015">
+          <span class="year-title">Examen 2015 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2015.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2015_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <br>
+        <li id="y2016">
+          <span class="year-title">Examen 2016 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2016.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2016_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <li><b>Examen 2012 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2012.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2012_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
+        <li id="y2017">
+          <span class="year-title">Examen 2017 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2017.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2017_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <br>
+        <li id="y2018">
+          <span class="year-title">Examen 2018 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2018.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2018_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <li><b>Examen 2013 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2013.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2013_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2013_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
+        <li id="y2019">
+          <span class="year-title">Examen 2019 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2019.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2019_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a>
+        </li>
 
-            <br>
+        <li id="y2020">
+          <span class="year-title">Examen 2020 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2020.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>
+        </li>
 
-            <li><b>Examen 2014 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2014.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2014_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
-
-            <br>
-
-            <li><b>Examen 2015 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2015.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2015_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
-
-            <br>
-
-            <li><b>Examen 2016 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2016.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2016_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
-
-            <br>
-
-            <li><b>Examen 2017 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2017.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2017_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
-
-            <br>
-
-            <li><b>Examen 2018 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2018.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2018_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
-
-            <br>
-
-            <li><b>Examen 2019 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2019.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2019_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2ème session</a></li>
-
-            <br>
-
-            <li><b>Examen 2020 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2020.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a></li>
-
-            <br>
-
-            <li><b>Examen 2023 : </b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2023.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a></li>
-        </div>
-    </ul>
+        <li id="y2023">
+          <span class="year-title">Examen 2023 : </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annales/theorie_de_la_credibilite_annale_2023.pdf" target="_blank" rel="noopener noreferrer">Sujet 1ère session</a>
+        </li>
+      </ul>
     </div>
+  </div>
 
+  <footer>
+    Théo Jalabert | Tous droits réservés © 2025
+  </footer>
 
+  <script>
+    (function(){
+      const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 90;
+      const navH    = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 40;
+      const stackH  = headerH + navH;
 
-    <footer>
-        Théo Jalabert | Tous droits réservés © 2025
-    </footer>
+      function offsetScrollTo(hash){
+        const el = document.querySelector(hash);
+        if(!el) return;
+        const toolsH = (document.querySelector('.tools')?.getBoundingClientRect().height || 0) + 12;
+        const y = el.getBoundingClientRect().top + window.pageYOffset - (stackH + toolsH);
+        window.scrollTo({ top:y, behavior:'smooth' });
+      }
+
+      // Gestion du select "Aller à l’année"
+      const jump = document.getElementById('jump');
+      if(jump){
+        jump.addEventListener('change', (e)=>{
+          const val = e.target.value;
+          if(val && val.startsWith('#')){
+            history.pushState(null, '', val);
+            offsetScrollTo(val);
+            setTimeout(()=>{ jump.value = '' }, 400);
+          }
+        });
+      }
+
+      // Lissage des ancres cliquées dans le contenu
+      document.addEventListener('click', (e)=>{
+        const a = e.target.closest('a[href^="#"]');
+        if(!a) return;
+        const hash = a.getAttribute('href');
+        if(hash.length > 1){
+          e.preventDefault();
+          history.pushState(null, '', hash);
+          offsetScrollTo(hash);
+        }
+      });
+
+      // Filtre de recherche simple
+      const qInput = document.getElementById('q');
+      const list = document.getElementById('years');
+      if(qInput && list){
+        qInput.addEventListener('input', ()=>{
+          const q = qInput.value.trim().toLowerCase();
+          Array.from(list.children).forEach(li=>{
+            const text = li.textContent.toLowerCase();
+            li.style.display = text.includes(q) ? '' : 'none';
+          });
+        });
+      }
+
+      // Si on arrive avec un hash
+      window.addEventListener('load', ()=>{
+        if(location.hash && document.querySelector(location.hash)){
+          setTimeout(()=>offsetScrollTo(location.hash), 0);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
-
-

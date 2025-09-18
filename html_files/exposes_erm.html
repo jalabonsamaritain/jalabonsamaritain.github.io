@@ -1,309 +1,277 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/images/logo_isfa.png" type="image/png">
-    <title>JalabonSamaritain</title>
-    <style>
-        /* Styles généraux */
-        body {
-            font-family: Calibri, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" href="/images/logo_isfa.png" type="image/png">
+  <title>JalabonSamaritain — Exposés d'ERM</title>
+  <style>
+    :root{
+      --header-h:90px; --nav-h:40px; --stack-h:calc(var(--header-h)+var(--nav-h));
+      --brand:#235A8C; --nav:#0E76A8; --bg:#f4f4f4; --card:#fff; --text:#333;
+      --radius:10px; --shadow:2px 2px 5px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Calibri,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
 
-        /* En-tête */
-        header {
-            background-color: #235A8C;
-            color: #fff;
-            text-align: center;
-            padding: 0.5rem 0;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 2;
-        }
+    header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--brand);color:#fff;text-align:center;padding:.5rem 0}
+    header a{color:#fff;text-decoration:none}
+    header a:hover{color:antiquewhite}
 
-        header a{
-            color: white;
-        }
+    nav{position:fixed;top:var(--header-h);left:0;right:0;z-index:1000;display:flex;justify-content:center;gap:1rem;background:var(--nav);padding:.5rem 0}
+    nav a{color:#fff;text-decoration:none;padding:.4rem .8rem;border-radius:6px;transition:transform .2s}
+    nav a:hover{transform:scale(1.06)}
 
-        header a:hover{
-            color: antiquewhite;
-        }
+    .tools{
+      position:sticky; top:calc(var(--stack-h) + 8px); z-index:50;
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      background:#ffffffcc; backdrop-filter:blur(6px);
+      border-block:1px solid #eaeaea; padding:10px 12px;
+    }
+    .tools input,.tools select{
+      padding:.6rem .7rem; border:1px solid #ccc; border-radius:8px; background:#fff; font-size:14px;
+    }
+    .tools input{flex:1}
 
-        /* Barre de navigation */
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #0E76A8;
-            padding: 0.5rem 0;
-            position: fixed;
-            top: 90px;
-            width: 100%;
-            z-index: 2;
-        }
-        nav a {
-            color: #fff;
-            margin: 0 1rem;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        nav a:hover {
-            
-            color: white;
-            transform: scale(1.1);
-        }
+    .container_global{
+      width:min(1100px,90%); margin:0 auto; padding:1rem;
+      margin-top:calc(var(--stack-h) + 24px); padding-bottom:120px;
+    }
+    h1{text-align:center;margin:0 0 1rem}
 
-        header, nav {
-            width: 100%;
-        }
+    .container{background:var(--card);border-radius:var(--radius);padding:1.2rem 1.4rem;margin:1rem 0;box-shadow:var(--shadow)}
+    ul.list{list-style:none;padding-left:0;margin:0}
+    ul.list li{margin:.6rem 0}
+    .title{font-weight:700}
 
+    a{color:#1a59ff;text-decoration:none}
+    a:hover{color:purple}
 
-        /* Contenu général */
-        .container_global {
-            width: 80%;
-            margin: 2rem auto;
-            text-align: center;
-            padding: 1rem;
-            background-color: #f4f4f4;
-            border-radius: 5px;
-            margin-top: 120px;
-        }
+    .badge{
+      display:inline-block; font-size:.75rem; padding:.15rem .45rem; border:1px solid #d7d7d7; border-radius:999px; margin-left:.35rem;
+      vertical-align:middle; background:#fafafa;
+    }
 
+    footer{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;text-align:center;padding:1rem 0}
 
-            table {
-                border-collapse: collapse; 
-                width: 100%; 
-            }
-
-            td, th {
-                border: 1px solid #ddd;
-                padding: 8px; 
-            }
-
-            th {
-                background-color: #f2f2f2; 
-            }
-
-            /* Spécifie la largeur de chaque colonne */
-            .col1 {
-                width: 40%;
-            }
-
-            .col2 {
-                width: 30%;
-            }
-
-            .col3 {
-                width: 30%;
-            }
-
-
-
-        /* Contenu dans matière */
-        .container {
-            width: 80%;
-            margin: 2rem auto;
-            text-align: left;
-            padding: 1.5rem;
-            background-color: #fff;
-            border-radius: 5px;
-        }
-
-        .box-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .box {
-            width: 30%;
-            text-align: center;
-            padding: 50px 0;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        .box:hover {
-            transform: scale(1.05);
-            cursor: pointer;
-        }
-        .box a {
-            text-decoration: none;
-            color: #333;
-            font-size: 20px;
-        }
-        p {
-            font-size: 18px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        a {
-/*          font-weight: bold;*/
-            text-decoration: none;
-            color: blue;  /* Juste pour être sûr, forçons la couleur à bleu */
-        }
-
-        a:hover {
-            color: purple;
-        }
-
-
-        /* Pied de page */
-        footer {
-            background-color: #235A8C;
-            color: #fff;
-            text-align: center;
-            padding: 1rem 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-    </style>
+    @media (max-width:640px){
+      .tools{flex-direction:column; align-items:stretch}
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1><a href="../index.html">JalabonSamaritain</a></h1>
-    </header>
+  <header>
+    <h1><a href="../index.html">JalabonSamaritain</a></h1>
+  </header>
 
-    <nav>
-        <a href="../index.html">Accueil</a>
-        <a href="about.html">À propos</a>
-        <a href="contact.html">Contact</a>
-    </nav>
+  <nav>
+    <a href="../index.html">Accueil</a>
+    <a href="about.html">À propos</a>
+    <a href="contact.html">Contact</a>
+  </nav>
 
+  <!-- Outils -->
+  <div class="tools">
+    <input id="q" type="search" placeholder="Filtrer (ex : copule, climatiques, ORSA, .xlsx…)" aria-label="Rechercher dans les exposés">
+    <select id="jump" aria-label="Aller au groupe">
+      <option value="">Aller au groupe…</option>
+      <option value="#g1">Groupe 1</option>
+      <option value="#g2">Groupe 2</option>
+      <option value="#g3">Groupe 3</option>
+      <option value="#g4">Groupe 4</option>
+      <option value="#g5">Groupe 5</option>
+      <option value="#g6">Groupe 6</option>
+      <option value="#g7">Groupe 7</option>
+      <option value="#g8">Groupe 8</option>
+      <option value="#g9">Groupe 9</option>
+      <option value="#g10">Groupe 10</option>
+      <option value="#g11">Groupe 11</option>
+      <option value="#g12">Groupe 12</option>
+      <option value="#g13">Groupe 13</option>
+      <option value="#g14">Groupe 14</option>
+      <option value="#g15">Groupe 15</option>
+      <option value="#g16">Groupe 16</option>
+      <option value="#g17">Groupe 17</option>
+      <option value="#g18">Groupe 18</option>
+      <option value="#g19">Groupe 19</option>
+      <option value="#g20">Groupe 20</option>
+      <option value="#g21">Groupe 21</option>
+      <option value="#g22">Groupe 22</option>
+      <option value="#g23">Groupe 23</option>
+      <option value="#g24">Groupe 24</option>
+    </select>
+  </div>
 
-    <div class="container_global">
+  <div class="container_global">
+    <h1>Exposés d’ERM</h1>
 
-    <h1>Exposés d'ERM</h1>
-    <ul>
-    
-        <div class="container">
+    <div class="container">
+      <ul class="list" id="groups">
+        <li id="g1"><span class="title">Groupe 1 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/01-copules_gaussiennes.pdf" target="_blank" rel="noopener noreferrer">Copules Gaussiennes</a><span class="badge">PDF</span>
+        </li>
 
-            <ul>
-            <li><b>Groupe 1 :</b> 
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/01-copules_gaussiennes.pdf" target="_blank" rel="noopener noreferrer">Copules Gaussiennes</a>
-            </li>
+        <li id="g2"><span class="title">Groupe 2 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/02-copule_de_Student.pdf" target="_blank" rel="noopener noreferrer">Copule de Student</a><span class="badge">PDF</span>
+        </li>
 
-            <li><b>Groupe 2 :</b> 
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/02-copule_de_Student.pdf" target="_blank" rel="noopener noreferrer">Copule de Student</a>
-            </li>
+        <li id="g3"><span class="title">Groupe 3 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/03-copules_archimediennes.pptx" target="_blank" rel="noopener noreferrer">Copule Archimédiennes</a><span class="badge">PPTX</span>
+        </li>
 
-            <li><b>Groupe 3 :</b> 
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/03-copules_archimediennes.pptx" target="_blank" rel="noopener noreferrer">Copule Archimédiennes</a>
-            </li>
+        <li id="g4"><span class="title">Groupe 4 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/04-Copule_de_Clayton.pdf" target="_blank" rel="noopener noreferrer">Copule de Clayton</a><span class="badge">PDF</span>
+        </li>
 
-            <li><b>Groupe 4 :</b> 
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/04-Copule_de_Clayton.pdf" target="_blank" rel="noopener noreferrer">Copule de Clayton</a>
-            </li>
+        <li id="g5"><span class="title">Groupe 5 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/05-copule_de_Gumbel.pdf" target="_blank" rel="noopener noreferrer">Copules de Gumbel</a><span class="badge">PDF</span>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/05-copule_de_Gumbel.r">Code (.R)</a><span class="badge">R</span>
+        </li>
 
-            <li><b>Groupe 5 :</b> 
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/05-copule_de_Gumbel.pdf" target="_blank" rel="noopener noreferrer">Copules de Gumbel</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/05-copule_de_Gumbel.r">Code (.R)</a>
-            </li>
+        <li id="g6"><span class="title">Groupe 6 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/06-copules_archimediennes_hierarchiques.pdf" target="_blank" rel="noopener noreferrer">Copules Archimédiennes Hiérarchiques</a><span class="badge">PDF</span>
+        </li>
 
-            <li><b>Groupe 6 :</b> 
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/06-copules_archimediennes_hierarchiques.pdf" target="_blank" rel="noopener noreferrer">Copules Archimédiennes Hiérarchiques</a>
-            </li>
+        <li id="g7"><span class="title">Groupe 7 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/07-VaR_TVaR_et_expectiles.pptx" target="_blank" rel="noopener noreferrer">VaR, TVaR et expectiles</a><span class="badge">PPTX</span>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/07-VaR_TVaR_et_expectiles_application.xlsx">Application (.xlsx)</a><span class="badge">XLSX</span>
+        </li>
 
-            <li><b>Groupe 7 :</b> 
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/07-VaR_TVaR_et_expectiles.pptx" target="_blank" rel="noopener noreferrer">VaR, TVaR et expectiles</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/07-VaR_TVaR_et_expectiles_application.xlsx">Application (.xlsx)</a>
-            </li>
+        <li id="g8"><span class="title">Groupe 8 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.pptx" target="_blank" rel="noopener noreferrer">Agrégation des risques avec VaR et TVaR en pratique</a><span class="badge">PPTX</span>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.txt">(.txt)</a><span class="badge">TXT</span>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.xlsx">(.xlsx)</a><span class="badge">XLSX</span>
+        </li>
 
-            <li><b>Groupe 8 :</b> 
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.pptx" target="_blank" rel="noopener noreferrer">Agrégation des risques avec VaR et TVaR en pratique</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.txt">(.txt)</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.xlsx">(.xlsx)</a>
-            </li>
+        <li id="g9"><span class="title">Groupe 9 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/09-proprietes_des_methodes_d_allocation_du_capital_economique.pdf" target="_blank" rel="noopener noreferrer">Propriétés des méthodes d’allocation du capital économique</a><span class="badge">PDF</span>
+        </li>
 
-            <li><b>Groupe 9 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/09-proprietes_des_methodes_d_allocation_du_capital_economique.pdf" target="_blank" rel="noopener noreferrer">Propriétés des méthodes d’allocation du capital économique</a>
-            </li>
+        <li id="g10"><span class="title">Groupe 10 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/10-Methodes_allocation_d_actifs.pptx" target="_blank" rel="noopener noreferrer">Méthodes proportionnelles et méthodes d’impact marginal</a><span class="badge">PPTX</span>
+        </li>
 
-            <li><b>Groupe 10 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/10-Methodes_allocation_d_actifs.pptx" target="_blank" rel="noopener noreferrer">Méthodes proportionnelles et méthodes d’impact marginal</a>
-            </li>
+        <li id="g11"><span class="title">Groupe 11 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/11-Methode_d_Euler.pptx" target="_blank" rel="noopener noreferrer">Méthode d'Euler</a><span class="badge">PPTX</span>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/11-Methode_d_Euler_application.xlsx">(.xlsx)</a><span class="badge">XLSX</span>
+        </li>
 
-            <li><b>Groupe 11 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/11-Methode_d_Euler.pptx" target="_blank" rel="noopener noreferrer">Méthode d'Euler</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/11-Methode_d_Euler_application.xlsx">(.xlsx)</a>
-                
-            </li>
+        <li id="g12"><span class="title">Groupe 12 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/12-CAT_BONDS_mono_peril.pptx" target="_blank" rel="noopener noreferrer">CAT BOND mono-péril</a><span class="badge">PPTX</span>
+        </li>
 
-            <li><b>Groupe 12 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/12-CAT_BONDS_mono_peril.pptx" target="_blank" rel="noopener noreferrer">CAT BOND mono-péril</a>
-            </li>
+        <li id="g13"><span class="title">Groupe 13 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/13-mortality_bonds.pptx" target="_blank" rel="noopener noreferrer">Mortality Bonds</a><span class="badge">PPTX</span>
+        </li>
 
-            <li><b>Groupe 13 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/13-mortality_bonds.pptx" target="_blank" rel="noopener noreferrer">Mortality Bonds</a>
-            </li>
+        <li id="g14"><span class="title">Groupe 14 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/14-titrisation_des_risques_automobiles.pptx" target="_blank" rel="noopener noreferrer">Titrisation des risques automobiles</a><span class="badge">PPTX</span>
+        </li>
 
-            <li><b>Groupe 14 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/14-titrisation_des_risques_automobiles.pptx" target="_blank" rel="noopener noreferrer">Titrisation des risques automobiles</a>
-            </li>
+        <li id="g15"><span class="title">Groupe 15 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/15-titrisation_multirisques_et_risques_speciaux.pdf" target="_blank" rel="noopener noreferrer">Titrisation multi-risques et risques spéciaux</a><span class="badge">PDF</span>
+        </li>
 
-            <li><b>Groupe 15 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/15-titrisation_multirisques_et_risques_speciaux.pdf" target="_blank" rel="noopener noreferrer">Titrisation multi-risques et risques spéciaux</a>
-            </li>
+        <li id="g16"><span class="title">Groupe 16 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/16-ORSA_et_rapport_ORSA.pdf" target="_blank" rel="noopener noreferrer">ORSA et rapport ORSA</a><span class="badge">PDF</span>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/16-ORSA_et_rapport_ORSA.xlsx">(.xlsx)</a><span class="badge">XLSX</span>
+        </li>
 
-            <li><b>Groupe 16 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/16-ORSA_et_rapport_ORSA.pdf" target="_blank" rel="noopener noreferrer">ORSA et rapport ORSA</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/16-ORSA_et_rapport_ORSA.xlsx">(.xlsx)</a>
-            </li>
+        <li id="g17"><span class="title">Groupe 17 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/17-politiques_ecrites_S2.pdf" target="_blank" rel="noopener noreferrer">Politiques écrites</a><span class="badge">PDF</span>
+        </li>
 
-            <li><b>Groupe 17 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/17-politiques_ecrites_S2.pdf" target="_blank" rel="noopener noreferrer">Politiques écrites</a>
-            </li>
+        <li id="g18"><span class="title">Groupe 18 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/18-risques_cyber.pdf" target="_blank" rel="noopener noreferrer">Risque Cyber</a><span class="badge">PDF</span>
+        </li>
 
-            <li><b>Groupe 18 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/18-risques_cyber.pdf" target="_blank" rel="noopener noreferrer">Risque Cyber</a>
-            </li>
+        <li id="g19"><span class="title">Groupe 19 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/19-Impact_changement_climatique_risques_biometriques.pdf" target="_blank" rel="noopener noreferrer">Impact du changement climatique sur les risques biométriques</a><span class="badge">PDF</span>
+        </li>
 
-            <li><b>Groupe 19 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/19-Impact_changement_climatique_risques_biometriques.pdf" target="_blank" rel="noopener noreferrer">Impact du changement climatique sur les risques biométriques</a>
-            </li>
+        <li id="g20"><span class="title">Groupe 20 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/20-impact_du_changement_climatique_sur_les_risques_P&C_des_assureurs.pptx" target="_blank" rel="noopener noreferrer">Impact du changement climatique sur les risques P&C des assureurs</a><span class="badge">PPTX</span>
+        </li>
 
-            <li><b>Groupe 20 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/20-impact_du_changement_climatique_sur_les_risques_P&C_des_assureurs.pptx" target="_blank" rel="noopener noreferrer">Impact du changement climatique sur les risques P&C des assureurs</a>
-            </li>
+        <li id="g21"><span class="title">Groupe 21 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/21-Impact_du_changement_climatique_sur_l_actifs_des_assureurs.pdf" target="_blank" rel="noopener noreferrer">Impact du changement climatique sur les actifs d'assurance</a><span class="badge">PDF</span>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/21-Impact_du_changement_climatique_sur_l_actifs_des_assureurs.R" target="_blank" rel="noopener noreferrer">Code (.R)</a><span class="badge">R</span>
+        </li>
 
-            <li><b>Groupe 21 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/21-Impact_du_changement_climatique_sur_l_actifs_des_assureurs.pdf" target="_blank" rel="noopener noreferrer">Impact du changement climatique sur les actifs d'assurance</a>,
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/21-Impact_du_changement_climatique_sur_l_actifs_des_assureurs.R" target="_blank" rel="noopener noreferrer">Code (.R)</a>
-            </li>
+        <li id="g22"><span class="title">Groupe 22 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/22_Risque_De_Durabilite.pptx" target="_blank" rel="noopener noreferrer">Risque de durabilité</a><span class="badge">PPTX</span>
+        </li>
 
-            <li><b>Groupe 22 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/22_Risque_De_Durabilite.pptx" target="_blank" rel="noopener noreferrer">Risque de durabilité</a>
-            </li>
+        <li id="g23"><span class="title">Groupe 23 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/23-assurabilite_et_inassurabilite_de_certains_risques.pdf" target="_blank" rel="noopener noreferrer">Assurabilité et Inassurabilité de certains risques</a><span class="badge">PDF</span>
+        </li>
 
-            <li><b>Groupe 23 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/23-assurabilite_et_inassurabilite_de_certains_risques.pdf" target="_blank" rel="noopener noreferrer">Assurabilité et Inassurabilité de certains risques</a>
-            </li>
-
-            <li><b>Groupe 24 :</b>
-                <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/24_cartographie_des_risques.pdf" target="_blank" rel="noopener noreferrer">Cartographie des risques</a>
-            </li>
-        </ul>
-
-        </div>
-    </ul>
+        <li id="g24"><span class="title">Groupe 24 :</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/24_cartographie_des_risques.pdf" target="_blank" rel="noopener noreferrer">Cartographie des risques</a><span class="badge">PDF</span>
+        </li>
+      </ul>
     </div>
+  </div>
 
+  <footer>Théo Jalabert | Tous droits réservés © 2025</footer>
 
-    <footer>
-        Théo Jalabert | Tous droits réservés © 2025
-    </footer>
+  <script>
+    (function(){
+      const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 90;
+      const navH    = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 40;
+      const stackH  = headerH + navH;
+
+      function offsetScrollTo(hash){
+        const el = document.querySelector(hash);
+        if(!el) return;
+        const toolsH = (document.querySelector('.tools')?.getBoundingClientRect().height || 0) + 12;
+        const y = el.getBoundingClientRect().top + window.pageYOffset - (stackH + toolsH);
+        window.scrollTo({ top:y, behavior:'smooth' });
+      }
+
+      // Select "Aller au groupe"
+      const jump = document.getElementById('jump');
+      if(jump){
+        jump.addEventListener('change', (e)=>{
+          const val = e.target.value;
+          if(val && val.startsWith('#')){
+            history.pushState(null, '', val);
+            offsetScrollTo(val);
+            setTimeout(()=>{ jump.value = '' }, 400);
+          }
+        });
+      }
+
+      // Recherche instantanée
+      const qInput = document.getElementById('q');
+      const list = document.getElementById('groups');
+      if(qInput && list){
+        qInput.addEventListener('input', ()=>{
+          const q = qInput.value.trim().toLowerCase();
+          Array.from(list.children).forEach(li=>{
+            const text = li.textContent.toLowerCase();
+            li.style.display = text.includes(q) ? '' : 'none';
+          });
+        });
+      }
+
+      // Lissage des ancres cliquées
+      document.addEventListener('click', (e)=>{
+        const a = e.target.closest('a[href^="#"]');
+        if(!a) return;
+        e.preventDefault();
+        const hash = a.getAttribute('href');
+        history.pushState(null, '', hash);
+        offsetScrollTo(hash);
+      });
+
+      // Si on arrive avec un hash
+      window.addEventListener('load', ()=>{
+        if(location.hash && document.querySelector(location.hash)){
+          setTimeout(()=>offsetScrollTo(location.hash), 0);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
-
-
