@@ -97,7 +97,11 @@
   <!-- JS: Brainteaser loader -->
   <script>
     // 1) Bases possibles (relative et absolue)
-    const BT_BASES = ["htm_files/brainteasers/", HERE + "/htm_files/brainteasers/"];
+    const HERE = location.pathname.replace(/[^/]*$/, '');        // ex: /user/repo/  ou /user/repo/sousdir/
+    const BT_BASES = [
+      "html_files/brainteasers/",        // chemin relatif standard
+      HERE + "html_files/brainteasers/"  // chemin relatif depuis la page courante
+    ];
 
     // 2) Utilitaires
     function hashString(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return h>>>0;}
