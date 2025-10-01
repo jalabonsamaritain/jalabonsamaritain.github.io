@@ -339,7 +339,7 @@
     if (!logo) return;
 
     /* ====== Réglages ====== */
-    const GATE_PROB = 0.12;           // ~12% des visites
+    const GATE_PROB = 0.05;           // ~5% des visites
     const GATE_COOLDOWN_DAYS = 7;     // pas plus d’1 gate / semaine
     const SKIP_DELAY = 4;             // secondes avant que "Skip" apparaisse
 
@@ -535,6 +535,13 @@
 
     /* ====== Équations (mouvement horizontal + oscillation sinusoïdale douce) ====== */
     function randBetween(a,b){ return a + Math.random()*(b-a); }
+    function shuffleInPlace(arr){
+      for (let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
 
     async function makeEquations(){
       await waitForMathJax();
@@ -544,21 +551,61 @@
       document.body.appendChild(eqLayer);
 
       const equationsTeX = [
+        // Black–Scholes de base
         String.raw`\( \displaystyle dS_t = \mu S_t \,dt + \sigma S_t \,dW_t \)`,
-        String.raw`\( \displaystyle C(S,t) = S \mathcal{N}(d_1) - K e^{-r(T-t)} \mathcal{N}(d_2) \)`,
-        String.raw`\( \displaystyle V_t = \mathbb{E}^{\mathbb{Q}}\left[ e^{-\int\limits_{t}^{T} r_s \,ds} \, H \, \middle| \, \mathcal{F}_t  \right] \)`,
-        String.raw`\( \displaystyle \frac{\partial V}{\partial t} + \tfrac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + r S \frac{\partial V}{\partial S} - rV = 0 \)`,
-        String.raw`\( \displaystyle \Theta + \tfrac{1}{2}\sigma^2 S^2 \Gamma + rS \Delta - rV = 0 \)`
-      ];
+        String.raw`\( \displaystyle C(S,t) = S \Phi(d_1) - K e^{-r(T-t)} \Phi(d_2) \)`,
+        String.raw`\( \displaystyle V_t = \mathbb{E}^{\mathbb{Q}}\left[ e^{-\int\limits_{t}^{T} r_s \,ds} \, H \, \middle| \, \mathcal{F}_t \right] \)`,
+        String.raw`\( \displaystyle \Theta + \tfrac{1}{2}\sigma^2 S^2 \Gamma + rS \Delta - rV = 0 \)`,
 
+        // Hull–White (taux d’intérêt)
+        String.raw`\( \displaystyle dr_t = \big(\theta(t) - a r_t\big)\,dt + \sigma_t \, dW_t^{\mathbb{Q}} \)`,
+
+        // Heston (stochastic volatility, système)
+        String.raw`\(
+        \begin{cases}
+        dS_t = \mu S_t \, dt + \sqrt{v_t} \, S_t \, dW_t^{(1)} \\\\
+        dv_t = \kappa(\theta - v_t) \, dt + \xi \sqrt{v_t} \, dW_t^{(2)} \\\\
+        dW_t^{(1)} dW_t^{(2)} = \rho \,dt
+        \end{cases}\)`,
+
+        // SABR (stochastic volatility, système)
+        String.raw`\( 
+        \begin{cases}
+        dF_t = \sigma_t F_t^{\beta} \, dW_t^{(1)} \\\\
+        d\sigma_t = \nu \sigma_t \, dW_t^{(2)} \\\\
+        dW_t^{(1)} dW_t^{(2)} = \rho \,dt
+        \end{cases}\)`,
+
+        // Grecques
+        String.raw`\( \displaystyle \Delta = \Phi(d_1) \)`,
+        String.raw`\( \displaystyle \Gamma = \frac{\varphi(d_1)}{S\,\sigma\,\sqrt{\tau}} \)`,
+        String.raw`\( \displaystyle Vega = S \sqrt{\tau}\,\varphi(d_1) \)`,
+        String.raw`\( \displaystyle \Theta = -\frac{S \sigma \varphi(d_1)}{2\sqrt{\tau}} - rK e^{-r\tau}\Phi(d_2) \)`,
+        String.raw`\( \displaystyle Volga = S \varphi(d_1)\sqrt{\tau}\,(d_1 d_2 / \sigma) \)`
+
+        ];
+
+      // Itérateur aléatoire : reshuffle automatique quand on a tout consommé
+      const pool = shuffleInPlace(equationsTeX.slice());
+      let cursor = 0;
+      function nextEq(){
+        if (cursor >= pool.length){
+          shuffleInPlace(pool);
+          cursor = 0;
+        }
+        return pool[cursor++];
+      }
+
+      // Nombre d’équations visibles simultanément
       const count = Math.floor(randBetween(4, 7));
       const objs = [];
 
-      for (let i=0;i<count;i++){
+      // Création initiale (contenu randomisé)
+      for (let i = 0; i < count; i++){
         const eq = document.createElement("div");
         eq.className = "egg-equation";
         eq.style.fontSize = (14 + Math.random()*6) + "px";
-        eq.innerHTML = equationsTeX[i % equationsTeX.length];
+        eq.innerHTML = nextEq();
         eqLayer.appendChild(eq);
       }
 
@@ -612,14 +659,19 @@
           o.el.style.transform = `translate(${o.x}px, ${y}px)`;
           o.el.style.opacity = alpha;
 
+          // Recycle : on repart de l’autre côté + on assigne UNE NOUVELLE ÉQUATION
           if (o.dir === 1 && o.x > width + 80){
             o.t0 = t; o.x = -60;
             o.baseYvh = randBetween(10,85);
             o.phase0 = Math.random()*Math.PI*2;
+            o.el.innerHTML = nextEq();
+            try { window.MathJax?.typeset ? MathJax.typeset([o.el]) : null; } catch(_){}
           } else if (o.dir === -1 && o.x < -80){
             o.t0 = t; o.x = width + 60;
             o.baseYvh = randBetween(10,85);
             o.phase0 = Math.random()*Math.PI*2;
+            o.el.innerHTML = nextEq();
+            try { window.MathJax?.typeset ? MathJax.typeset([o.el]) : null; } catch(_){}
           }
         }
         eqRaf = requestAnimationFrame(animate);
