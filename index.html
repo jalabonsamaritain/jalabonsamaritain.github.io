@@ -100,6 +100,64 @@
     @media (prefers-reduced-motion: reduce) {
       * { transition:none !important; scroll-behavior:auto !important; }
     }
+
+
+  /* Accessibility: respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .egg-anim { animation: none !important; transition: none !important; }
+  }
+
+  /* ===== Confetti ===== */
+  .confetti-layer {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    overflow: hidden;
+  }
+  .confetti {
+    position: absolute;
+    top: 0;                /* repère commun */
+    width: 8px; height: 12px; opacity: 0;   /* invisible au départ */
+    transform: translate(var(--x, 0), -20vh) rotate(0deg); /* déjà au-dessus de l'écran */
+    will-change: transform, opacity;
+  }
+  @keyframes confetti-fall {
+    0%   { transform: translate(var(--x, 0), -20vh) rotate(0deg);   opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translate(var(--x, 0), 110vh) rotate(720deg); opacity: 0.6; }
+  }
+
+  /* ===== Birthday banner ===== */
+  .birthday-banner {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10000;
+    background: #fff;              /* fond blanc */
+    color: #111;                   /* texte foncé */
+    padding: 10px 14px;
+    border-radius: 12px;
+    font: 600 16px/1.2 system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  }
+
+  /* Mobile : le banner prend toute la largeur en haut, et le body se décale
+   uniquement quand le banner est présent */
+  @media (max-width: 767px) {
+    .birthday-banner {
+      position: fixed;
+      top: 0;
+      left: 0; right: 0;
+      border-radius: 8 8 20px 20px;
+      text-align: center;
+      padding: 10px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    }
+
+    /* Quand le banner est là, on pousse le contenu vers le bas de sa hauteur */
+    body.mobile-has-banner {
+      padding-top: var(--mobile-banner-h, 0px);
+      transition: padding-top 0.7s ease; /* pour un retrait fluide au fondu */
+    }
+  }
   </style>
 
   <!-- Polyfills & MathJax -->
@@ -203,7 +261,7 @@
 
       // A) Cas file:// (fetch bloqué)
       if (location.protocol === "file:"){
-        el.innerHTML = "⚠️ Les énigmes ne peuvent pas être chargées en local. Lance un petit serveur HTTP (ex. <code>python -m http.server</code>) à la racine du site.";
+        el.innerHTML = "⚠️ Les brainteasers ne peuvent pas être chargés en local. Lance un petit serveur HTTP (ex. <code>python -m http.server</code>) à la racine du site.";
         return;
       }
 
@@ -333,6 +391,105 @@
   </footer>
 
   <script>
+  /* ========= JalabonSamaritain Easter Egg (Birthday) ========= */
+  (() => {
+  const TZ = 'Europe/Paris';
+
+  function todayInTZ() {
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat('fr-FR', {
+      timeZone: TZ, year: 'numeric', month: 'numeric', day: 'numeric'
+    }).formatToParts(now);
+    const obj = Object.fromEntries(parts.map(p => [p.type, p.value]));
+    return { y: +obj.year, m: +obj.month, d: +obj.day };
+  }
+
+  function shownOncePerDay(keyBase) {
+    const { y, m, d } = todayInTZ();
+    const key = `${keyBase}:${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if (localStorage.getItem(key)) return true;
+    // Clean old keys of same base to avoid clutter
+    Object.keys(localStorage).forEach(k => { if (k.startsWith(`${keyBase}:`)) localStorage.removeItem(k); });
+    localStorage.setItem(key, '1');
+    return false;
+  }
+
+  /* ========== Birthday: 21 April ========== */
+  function runBirthday() {
+    const banner = document.createElement('div');
+    banner.className = 'birthday-banner egg-anim';
+    banner.textContent = '🎉 Joyeux anniversaire, Théo ! 🎂';
+    document.body.appendChild(banner);
+
+    // --- Mobile: réserver l'espace du banner tant qu'il est visible ---
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+    if (isMobile) {
+      // On attend un frame que le layout se stabilise, puis on mesure
+      requestAnimationFrame(() => {
+        const h = Math.ceil(banner.getBoundingClientRect().height);
+        document.body.style.setProperty('--mobile-banner-h', h + 'px');
+        document.body.classList.add('mobile-has-banner');
+      });
+    }
+
+    // Couche confettis
+    const layer = document.createElement('div');
+    layer.className = 'confetti-layer egg-anim';
+    document.body.appendChild(layer);
+
+    // Confettis
+    const N = 120;
+    for (let i = 0; i < N; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti egg-anim';
+      const hue = Math.floor(Math.random() * 360);
+      piece.style.background = `hsl(${hue} 90% 55%)`;
+      const x = Math.random() * window.innerWidth;
+      piece.style.left = `${x}px`;
+      piece.style.setProperty('--x', `${Math.random() * 10 - 5}vw`);
+      layer.appendChild(piece);
+      requestAnimationFrame(() => {
+        const delay = Math.random();
+        piece.style.animation = `confetti-fall ${6 + Math.random() * 4}s linear ${delay}s forwards`;
+        piece.style.opacity = '1';
+      });
+    }
+
+    // --- FONDU + retrait de l'espace mobile ---
+    const DISPLAY_MS = 10000; // affichage avant fondu
+    const FADE_MS = 700;      // durée du fondu
+
+    const fadeOutAndRemove = (el) => {
+      if (!el) return;
+      el.style.transition = `opacity ${FADE_MS}ms ease`;
+      el.style.willChange = 'opacity';
+      void el.offsetWidth;            // force reflow
+      el.style.opacity = '0';
+      const clean = () => el.remove();
+      el.addEventListener('transitionend', clean, { once: true });
+      setTimeout(clean, FADE_MS + 120);
+    };
+
+    setTimeout(() => {
+      // Sur mobile : on remet le padding-top à 0 pendant le fondu
+      if (isMobile) {
+        document.body.style.setProperty('--mobile-banner-h', '0px');
+        // on retire la classe après la transition de padding
+        setTimeout(() => {
+          document.body.classList.remove('mobile-has-banner');
+          document.body.style.removeProperty('--mobile-banner-h');
+        }, FADE_MS + 50);
+      }
+      fadeOutAndRemove(banner);
+      fadeOutAndRemove(layer);
+    }, DISPLAY_MS);
+  }
+
+  /* ===== Orchestrate by date (TZ Europe/Paris) ===== */
+  const { m, d } = todayInTZ();
+  if (m === 4 && d === 21) runBirthday();
+  })();
+
   /* ========= JalabonSamaritain Easter Egg (triple-click logo) + Soft Gate ========= */
   document.addEventListener("DOMContentLoaded", () => {
     const logo = document.getElementById("logo-jalabonsamaritain");
