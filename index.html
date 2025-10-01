@@ -74,6 +74,18 @@
 
     #brainteaser-answer { padding-top:.5em; border-top:1px dashed #ccc; margin-top:1em; color:#444; font-style:italic; display:none; }
 
+    /* ===== Header ===== */
+    #logo-jalabonsamaritain {
+      cursor: pointer;              /* curseur main */
+      text-decoration: none;        /* pas de souligné par défaut */
+      color: inherit;               /* garde la couleur du texte */
+      transition: color 0.2s ease;  /* effet fluide sur le hover */
+    }
+
+    #logo-jalabonsamaritain:hover {
+      text-decoration: underline;   /* souligne quand on passe dessus */
+    }
+
     /* ===== Tables (site-wide utility) ===== */
     .scroll-x { overflow-x:auto; -webkit-overflow-scrolling: touch; }
     table { border-collapse: collapse; width: 100%; }
@@ -266,7 +278,7 @@
   <header>
     <div class="container inner">
       <h1 style="margin:0; font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);">
-        <a href="index.html">JalabonSamaritain</a>
+        <a id="logo-jalabonsamaritain">JalabonSamaritain</a>
       </h1>
     </div>
   </header>
@@ -319,5 +331,488 @@
   <footer class="sticky">
     Théo Jalabert | Tous droits réservés © 2025
   </footer>
+
+  <script>
+  /* ========= JalabonSamaritain Easter Egg (triple-click logo) + Soft Gate ========= */
+  document.addEventListener("DOMContentLoaded", () => {
+    const logo = document.getElementById("logo-jalabonsamaritain");
+    if (!logo) return;
+
+    /* ====== Réglages ====== */
+    const GATE_PROB = 0.12;           // ~12% des visites
+    const GATE_COOLDOWN_DAYS = 7;     // pas plus d’1 gate / semaine
+    const SKIP_DELAY = 4;             // secondes avant que "Skip" apparaisse
+
+    /* ====== CSS injecté ====== */
+    const style = document.createElement("style");
+    style.textContent = `
+      body.egg-active::before{
+        content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+        background: linear-gradient(120deg,#0e76a833,#b993d699,#ffd16666,#06d6a066,#118ab266);
+        background-size: 300% 300%;
+        animation: eggGradient 12s ease infinite;
+        filter: saturate(1.15) brightness(1.05);
+      }
+      @keyframes eggGradient {
+        0%{ background-position: 0% 50%; }
+        50%{ background-position: 100% 50%; }
+        100%{ background-position: 0% 50%; }
+      }
+
+      .egg-floaters, .egg-equations{
+        position: fixed; inset: 0; overflow: hidden; z-index: 9998; pointer-events: none;
+        opacity: .95;
+      }
+      /* Emojis = animation verticale (une run, on re-spawn via JS en boucle) */
+      .egg-floater{
+        position: absolute;
+        will-change: transform, opacity;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,.15));
+        animation: floatUp linear var(--dur) both; /* pas d'infinite ici */
+      }
+      @keyframes floatUp {
+        0%{
+          transform:
+            translateX(var(--x))
+            translateY(0)
+            rotate(var(--rotStart));
+          opacity: 0;
+        }
+        10%{ opacity: 1; }
+        85%{ opacity: 1; }
+        100%{
+          transform:
+            translateX(calc(var(--x) + 40px))
+            translateY(-220vh)
+            rotate(var(--rotEnd));
+          opacity: 0;
+        }
+      }
+
+      /* Équations = pas d’animation CSS (pilotées en JS) */
+      .egg-equation{
+        position:absolute; will-change: transform, opacity;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,.15));
+      }
+
+      .egg-toast{
+        position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+        background: #111a; color: #fff; backdrop-filter: blur(6px);
+        border: 1px solid #fff3; border-radius: 12px; padding: 10px 14px; z-index: 9999;
+        font: 600 14px/1.2 ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;
+        box-shadow: 0 8px 30px rgba(0,0,0,.16);
+        animation: toastIn .35s ease both;
+      }
+      @keyframes toastIn {
+        from { transform: translate(-50%, -8px); opacity: 0; }
+        to   { transform: translate(-50%, 0);   opacity: 1; }
+      }
+
+      .egg-confetti{ position: fixed; inset: 0; z-index: 9997; pointer-events: none; }
+
+      /* ====== Soft Gate ====== */
+      body.egg-gated { overflow: hidden; }
+      .egg-gate{
+        position: fixed; inset:0; z-index: 10000;
+        display: grid; place-items: center;
+        background: rgba(15,18,23,.72);
+        backdrop-filter: blur(4px);
+      }
+      .egg-gate .panel{
+        width: min(520px, 92vw);
+        background: #0f172a; color: #fff;
+        border-radius: 16px; padding: 18px 18px 14px;
+        box-shadow: 0 12px 40px rgba(0,0,0,.4);
+        position: relative; isolation: isolate;
+      }
+      .egg-gate .panel::before{
+        content:""; position:absolute; inset: -2px; z-index:-1; border-radius:18px;
+        background: conic-gradient(from 140deg, #8a2be2, #00d4ff, #ffd166, #06d6a0, #8a2be2);
+        filter: blur(10px) saturate(1.2); opacity:.55;
+        mask: linear-gradient(#000 0 0) exclude, linear-gradient(#000 0 0);
+      }
+      .egg-gate h3{ margin:0 0 6px 0; font-size: 1.1rem; letter-spacing:.2px }
+      .egg-gate p{ margin: 0 0 10px 0; opacity: .95 }
+      .egg-gate .hint{ font-size:.92rem; opacity:.9 }
+      .egg-gate .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px }
+      .egg-gate button{
+        border:1px solid #ffffff33; background:#ffffff12; color:#fff;
+        border-radius:10px; padding:8px 12px; cursor:pointer;
+        transition: transform .15s ease, background .15s ease;
+      }
+      .egg-gate button:hover{ transform: translateY(-1px); background:#ffffff18; }
+      .egg-gate button[disabled]{ opacity:.6; cursor:not-allowed; transform:none !important; }
+    `;
+    document.head.appendChild(style);
+
+    /* ====== MathJax readiness ====== */
+    async function waitForMathJax(){
+      if (window.MathJax?.typesetPromise) {
+        try { if (MathJax.startup?.promise) await MathJax.startup.promise; } catch(_){}
+        return;
+      }
+      await new Promise(resolve => {
+        let tries = 0;
+        const t = setInterval(() => {
+          if (window.MathJax?.typesetPromise) {
+            clearInterval(t);
+            if (MathJax.startup?.promise) MathJax.startup.promise.then(resolve).catch(resolve);
+            else resolve();
+          } else if (++tries > 120) { clearInterval(t); resolve(); }
+        }, 125);
+      });
+    }
+
+    /* ====== Toast ====== */
+    function showToast(msg){
+      const t = document.createElement("div");
+      t.className = "egg-toast";
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 1800);
+    }
+
+    /* ====== Floaters (émoticônes en flux continu) ====== */
+    let floatLayer = null, eqLayer = null, eqRaf = null, emojiSpawnerStop = null;
+
+    function makeFloaters(){
+      floatLayer = document.createElement("div");
+      floatLayer.className = "egg-floaters";
+      document.body.appendChild(floatLayer);
+
+      const emojis = ["📘","📗","📐","🧠","📈","🧮","🎓","📊","✨", "💹","📚","💡","🔢","📝","📊","💶","🤓","🛩️"];
+
+      // Spawne un emoji (une run), puis en re-spawne un autre à la fin => flux continu
+      function spawnOne(){
+        if (!floatLayer) return; // déjà stoppé
+
+        const span = document.createElement("span");
+        span.className = "egg-floater";
+        span.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+
+        // Position de départ : sous l'écran
+        span.style.left = (Math.random()*100) + "vw";
+        span.style.top  = "110vh";
+
+        // Légère dérive horizontale & timings
+        span.style.setProperty("--x", (Math.random()*80 - 40) + "px");
+        span.style.setProperty("--dur", (6.5 + Math.random()*6.5) + "s");
+
+        // Rotation propre à chaque emoji
+        const startDeg = Math.floor(Math.random()*360);
+        const turns = 0.75 + Math.random()*1.75; // 0.75–2.5 tours
+        const endDeg = startDeg + turns*360 * (Math.random() < 0.5 ? -1 : 1);
+        span.style.setProperty("--rotStart", startDeg + "deg");
+        span.style.setProperty("--rotEnd", endDeg + "deg");
+
+        // Taille
+        span.style.fontSize = (18 + Math.random()*12) + "px";
+
+        // Quand l'anim finit, on enlève et on respawn
+        span.addEventListener("animationend", () => {
+          span.remove();
+          if (floatLayer) spawnOne();
+        });
+
+        floatLayer.appendChild(span);
+      }
+
+      // On lance un petit pool initial pour un flux régulier
+      const INITIAL_POOL = 14; // ajuste si tu veux plus/moins de densité
+      for (let i=0;i<INITIAL_POOL;i++){
+        // petit décalage de départ pour éviter qu'ils partent tous d'un coup
+        setTimeout(spawnOne, i * 180 + Math.random()*140);
+      }
+
+      // Safety: fonction pour stopper proprement le spawner (appelée au deactivate)
+      emojiSpawnerStop = () => {
+        if (!floatLayer) return;
+        Array.from(floatLayer.children).forEach(n => n.remove());
+        floatLayer.remove();
+        floatLayer = null;
+      };
+    }
+
+    /* ====== Équations (mouvement horizontal + oscillation sinusoïdale douce) ====== */
+    function randBetween(a,b){ return a + Math.random()*(b-a); }
+
+    async function makeEquations(){
+      await waitForMathJax();
+
+      eqLayer = document.createElement("div");
+      eqLayer.className = "egg-equations";
+      document.body.appendChild(eqLayer);
+
+      const equationsTeX = [
+        String.raw`\( \displaystyle dS_t = \mu S_t \,dt + \sigma S_t \,dW_t \)`,
+        String.raw`\( \displaystyle C(S,t) = S \mathcal{N}(d_1) - K e^{-r(T-t)} \mathcal{N}(d_2) \)`,
+        String.raw`\( \displaystyle V_t = \mathbb{E}^{\mathbb{Q}}\left[ e^{-\int\limits_{t}^{T} r_s \,ds} \, H \, \middle| \, \mathcal{F}_t  \right] \)`,
+        String.raw`\( \displaystyle \frac{\partial V}{\partial t} + \tfrac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + r S \frac{\partial V}{\partial S} - rV = 0 \)`,
+        String.raw`\( \displaystyle \Theta + \tfrac{1}{2}\sigma^2 S^2 \Gamma + rS \Delta - rV = 0 \)`
+      ];
+
+      const count = Math.floor(randBetween(4, 7));
+      const objs = [];
+
+      for (let i=0;i<count;i++){
+        const eq = document.createElement("div");
+        eq.className = "egg-equation";
+        eq.style.fontSize = (14 + Math.random()*6) + "px";
+        eq.innerHTML = equationsTeX[i % equationsTeX.length];
+        eqLayer.appendChild(eq);
+      }
+
+      try {
+        if (window.MathJax?.typesetPromise) {
+          await MathJax.typesetPromise([eqLayer]);
+        } else if (window.MathJax?.typeset) {
+          MathJax.typeset([eqLayer]);
+        }
+      } catch(_) {}
+
+      const H = () => window.innerHeight;
+      const W = () => window.innerWidth;
+
+      Array.from(eqLayer.children).forEach((el, idx) => {
+        const dir = Math.random() < 0.5 ? -1 : 1;        // -1: droite→gauche, 1: gauche→droite
+        const baseYvh = randBetween(10, 85);             // ligne de base (vh)
+        const amp = randBetween(26, 50);                 // amplitude verticale (px)
+        const speed = randBetween(140, 200);             // px/s horizontal
+        const omega = randBetween(1.6, 3.2);             // vitesse angulaire vague
+        const phase0 = Math.random() * Math.PI * 2;      // phase initiale
+
+        const startX = dir === 1 ? -60 : W()+60;
+
+        objs.push({
+          el,
+          dir,
+          baseYvh,
+          amp,
+          speed,
+          omega,
+          phase0,
+          x: startX,
+          t0: performance.now() - Math.random()*4000
+        });
+      });
+
+      function animate(t){
+        const width = W(), height = H();
+        for (const o of objs){
+          const dt = (t - o.t0)/1000;
+          o.x = o.dir === 1 ? (-60 + o.speed*dt) : (width + 60 - o.speed*dt);
+          const baseY = o.baseYvh/100 * height;
+          const y = baseY + o.amp * Math.sin(o.phase0 + o.omega * dt);
+
+          let alpha = 1;
+          const fade = 120;
+          if (o.x < fade) alpha = Math.max(0, (o.x)/fade);
+          if (o.x > width - fade) alpha = Math.max(0, (width - o.x)/fade);
+
+          o.el.style.transform = `translate(${o.x}px, ${y}px)`;
+          o.el.style.opacity = alpha;
+
+          if (o.dir === 1 && o.x > width + 80){
+            o.t0 = t; o.x = -60;
+            o.baseYvh = randBetween(10,85);
+            o.phase0 = Math.random()*Math.PI*2;
+          } else if (o.dir === -1 && o.x < -80){
+            o.t0 = t; o.x = width + 60;
+            o.baseYvh = randBetween(10,85);
+            o.phase0 = Math.random()*Math.PI*2;
+          }
+        }
+        eqRaf = requestAnimationFrame(animate);
+      }
+      eqRaf = requestAnimationFrame(animate);
+    }
+
+    function stopEquations(){
+      if (eqRaf) cancelAnimationFrame(eqRaf);
+      eqRaf = null;
+    }
+
+    /* ====== Confettis (plus longs + fondu progressif) ====== */
+    let confettiCanvas = null, confettiCtx = null, rafId = null;
+    const onResize = () => {
+      if (confettiCanvas){
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+      }
+    };
+    function confettiBurst(){
+      confettiCanvas = document.createElement("canvas");
+      confettiCanvas.className = "egg-confetti";
+      confettiCtx = confettiCanvas.getContext("2d");
+      document.body.appendChild(confettiCanvas);
+      onResize();
+      window.addEventListener("resize", onResize);
+
+      const pieces = Array.from({length: 220}).map(()=> ({
+        x: Math.random()*confettiCanvas.width,
+        y: -20 - Math.random()*confettiCanvas.height*0.4,
+        r: 4 + Math.random()*4,
+        vy: 2 + Math.random()*3,
+        vx: -1 + Math.random()*2,
+        a: Math.random()*Math.PI*2,
+        spin: (-0.25 + Math.random()*0.5),
+        hue: Math.floor(Math.random()*360)
+      }));
+
+      const DURATION = 5.5;
+      const FADE_START = 4.2;
+
+      const start = performance.now();
+      (function loop(t){
+        const elapsed = (t - start)/1000;
+        if (elapsed > DURATION + 0.15){ stopConfetti(); return; }
+        rafId = requestAnimationFrame(loop);
+
+        let alpha = 1;
+        if (elapsed > FADE_START){
+          const k = Math.min(1, (elapsed - FADE_START) / (DURATION - FADE_START));
+          alpha = 1 - (k*k*(3 - 2*k));
+        }
+
+        confettiCtx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+        confettiCtx.globalAlpha = alpha;
+
+        for (const p of pieces){
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.015;
+          p.a += p.spin;
+
+          confettiCtx.save();
+          confettiCtx.translate(p.x, p.y);
+          confettiCtx.rotate(p.a);
+          confettiCtx.fillStyle = `hsl(${p.hue}, 90%, 55%)`;
+          confettiCtx.fillRect(-p.r, -p.r, p.r*2, p.r*2);
+          confettiCtx.restore();
+        }
+        confettiCtx.globalAlpha = 1;
+      })(start);
+    }
+    function stopConfetti(){
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+      if (confettiCanvas){
+        window.removeEventListener("resize", onResize);
+        confettiCanvas.remove();
+        confettiCanvas = null; confettiCtx = null;
+      }
+    }
+
+    /* ====== Soft gate (rare + skippable après délai) ====== */
+    let gateEl = null;
+    function daysSince(ts){
+      const MS = 24*3600*1000;
+      return (Date.now() - ts)/MS;
+    }
+    function shouldGate(){
+      try {
+        const last = Number(localStorage.getItem("eggGateLast") || 0);
+        if (last && daysSince(last) < GATE_COOLDOWN_DAYS) return false;
+        return Math.random() < GATE_PROB;
+      } catch { return false; }
+    }
+    function markGated(){
+      try { localStorage.setItem("eggGateLast", String(Date.now())); } catch {}
+    }
+    function showGate(){
+      gateEl = document.createElement("div");
+      gateEl.className = "egg-gate";
+      gateEl.innerHTML = `
+        <div class="panel" role="dialog" aria-modal="true" aria-label="Mystery mode">
+          <h3>🔒 Mystery mode</h3>
+          <p>Un petit secret se cache sur cette page…</p>
+          <p class="hint">Astuce : triple-clique sur <strong>Jalabonsamaritain</strong> dans l’en-tête pour déverrouiller ✨</p>
+          <div class="actions">
+            <button id="gate-skip" disabled>Skip (${SKIP_DELAY})</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(gateEl);
+      document.body.classList.add("egg-gated");
+
+      const btn = gateEl.querySelector("#gate-skip");
+      let t = SKIP_DELAY;
+      const int = setInterval(() => {
+        t -= 1;
+        btn.textContent = t > 0 ? `Skip (${t})` : "Skip";
+        if (t <= 0){
+          clearInterval(int);
+          btn.disabled = false;
+        }
+      }, 1000);
+
+      btn.addEventListener("click", () => hideGate(true));
+      document.addEventListener("keydown", escHandler);
+    }
+    function escHandler(e){
+      if (e.key === "Escape"){
+        const btn = gateEl?.querySelector("#gate-skip");
+        if (btn && !btn.disabled) hideGate(true);
+      }
+    }
+    function hideGate(skipped=false){
+      if (!gateEl) return;
+      gateEl.remove();
+      gateEl = null;
+      document.body.classList.remove("egg-gated");
+      document.removeEventListener("keydown", escHandler);
+      if (!skipped) markGated();
+    }
+
+    /* ====== Toggle egg ====== */
+    let eggActive = false;
+    function isGateOpen(){ return !!gateEl; }
+
+    async function activateEgg(){
+      eggActive = true;
+      if (isGateOpen()) hideGate(false);
+      document.body.classList.add("egg-active");
+      makeFloaters();          // emojis en flux continu
+      await makeEquations();   // équations (inchangé)
+      confettiBurst();
+      showToast("✨ Secret mode ON");
+    }
+    function deactivateEgg(){
+      eggActive = false;
+      document.body.classList.remove("egg-active");
+      if (emojiSpawnerStop) { emojiSpawnerStop(); emojiSpawnerStop = null; } // stop emojis proprement
+      if (eqLayer){ stopEquations(); eqLayer.remove(); eqLayer = null; }    // stop + remove équations
+      stopConfetti();
+      showToast("🔙 Back to normal");
+    }
+
+    // Triple-clic : ON/OFF
+    let clickCount = 0, timer = null;
+    logo.addEventListener("click", () => {
+      clickCount++;
+      if (clickCount === 1){
+        timer = setTimeout(()=>{ clickCount = 0; }, 1200);
+      }
+      if (clickCount === 3){
+        clearTimeout(timer); clickCount = 0;
+        eggActive ? deactivateEgg() : activateEgg();
+      }
+    });
+
+    // Accessibilité clavier : Enter/Space = click
+    logo.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        logo.click();
+      }
+    });
+
+    // Affiche le gate si nécessaire (rare + cooldown)
+    if (shouldGate()){
+      showGate();
+    }
+  });
+</script>
+
 </body>
 </html>
