@@ -308,6 +308,7 @@
       seenToday.add(currentIdx);
 
       await renderInto(el, baseFound, list[currentIdx], preloadMap.get(list[currentIdx].file));
+      console.log("Brainteaser affiché :", list[currentIdx].file);
 
       // D) Bouton "Voir un autre"
       const btn = document.getElementById("new-brainteaser-btn");
