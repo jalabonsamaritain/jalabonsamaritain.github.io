@@ -166,162 +166,161 @@
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
   <!-- JS: Brainteaser loader -->
-  <script>
-    // 1) Bases possibles (relative et absolue)
-    const HERE = location.pathname.replace(/[^/]*$/, '');        // ex: /user/repo/  ou /user/repo/sousdir/
-    const BT_BASES = [
-      "html_files/brainteasers/",        // chemin relatif standard
-      HERE + "html_files/brainteasers/"  // chemin relatif depuis la page courante
-    ];
+<script>
+  // 1) Bases possibles (relative et absolue)
+  const HERE = location.pathname.replace(/[^/]*$/, '');        // ex: /user/repo/  ou /user/repo/sousdir/
+  const BT_BASES = [
+    "html_files/brainteasers/",        // chemin relatif standard
+    HERE + "html_files/brainteasers/"  // chemin relatif depuis la page courante
+  ];
 
-    // 2) Utilitaires
-    function hashString(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return h>>>0;}
-    function todayKey(){const d=new Date();const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,"0");const dd=String(d.getDate()).padStart(2,"0");return `${yyyy}-${mm}-${dd}`;}
-    function typeset(){ try { if (window.MathJax?.typesetPromise) MathJax.typesetPromise(); else if (window.MathJax?.typeset) MathJax.typeset(); } catch(_){} }
+  // 2) Utilitaires
+  function hashString(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return h>>>0;}
+  function todayKey(){const d=new Date();const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,"0");const dd=String(d.getDate()).padStart(2,"0");return `${yyyy}-${mm}-${dd}`;}
+  function typeset(){ try { if (window.MathJax?.typesetPromise) MathJax.typesetPromise(); else if (window.MathJax?.typeset) MathJax.typeset(); } catch(_){} }
 
-    async function fetchText(url){
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r.ok) throw new Error(`HTTP ${r.status} pour ${url}`);
-      return r.text();
+  async function fetchText(url){
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) throw new Error(`HTTP ${r.status} pour ${url}`);
+    return r.text();
+  }
+  async function fetchJSON(url){
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) throw new Error(`HTTP ${r.status} pour ${url}`);
+    return r.json();
+  }
+
+  // 3) Chargement index.json si dispo (accepte 2 formats)
+  async function loadIndex(base){
+    try{
+      const data = await fetchJSON(base + "index.json");
+      if (Array.isArray(data) && data.length){
+        if (typeof data[0] === "string") {
+          return data.map(f => ({ file: f }));
+        } else if (typeof data[0] === "object" && data[0].file){
+          return data;
+        }
+      }
+      throw new Error("index.json vide ou mal formé");
+    }catch(e){
+      throw e;
     }
-    async function fetchJSON(url){
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r.ok) throw new Error(`HTTP ${r.status} pour ${url}`);
-      return r.json();
+  }
+
+  // 4) Fallback : scan q1.html → qN.html
+  async function scanFolder(base, maxN = 60, concurrency = 6){
+    const found = [];
+    let i = 1;
+
+    async function worker(){
+      while(i <= maxN){
+        const n = i++;
+        const url = `${base}q${n}.html`;
+        try {
+          const html = await fetchText(url);
+          found.push({ file: `q${n}.html`, html });
+        } catch(_){ /* ignore 404 */ }
+      }
     }
 
-    // 3) Chargement index.json si dispo (accepte 2 formats)
-    async function loadIndex(base){
+    // ✅ correction : on s’assure d’avoir au moins 1 worker
+    const numWorkers = Math.max(1, concurrency);
+    const workers = Array.from({length: numWorkers}, worker);
+    await Promise.all(workers);
+
+    return found.sort((a,b)=>{
+      const na = parseInt(a.file.match(/\d+/)?.[0] || "0", 10);
+      const nb = parseInt(b.file.match(/\d+/)?.[0] || "0", 10);
+      return na - nb;
+    });
+  }
+
+  async function renderInto(el, base, entry, preloadedHTML){
+    el.textContent = "Chargement...";
+    try{
+      const html = preloadedHTML ?? await fetchText(base + entry.file);
+      el.innerHTML = html;
+      typeset();
+    }catch(err){
+      console.error(err);
+      el.textContent = "Erreur de chargement du brainteaser.";
+    }
+  }
+
+  function pickDaily(len){ return hashString(todayKey()) % len; }
+  function pickRandom(len, seen){
+    if (len <= seen.size) seen.clear();
+    let idx;
+    do { idx = Math.floor(Math.random()*len); } while (seen.has(idx));
+    seen.add(idx);
+    return idx;
+  }
+
+  async function initBT(){
+    const el = document.getElementById("brainteaser");
+    if (!el){ return; }
+
+    // A) Cas file:// (fetch bloqué)
+    if (location.protocol === "file:"){
+      el.innerHTML = "⚠️ Les brainteasers ne peuvent pas être chargés en local. Lance un petit serveur HTTP (ex. <code>python -m http.server</code>) à la racine du site.";
+      return;
+    }
+
+    // B) On essaie chaque base possible
+    let baseFound = null;
+    let list = [];
+    let preloadMap = new Map(); // file -> html (si préchargé via scan)
+
+    for (const base of BT_BASES){
       try{
-        const data = await fetchJSON(base + "index.json");
-        if (Array.isArray(data) && data.length){
-          if (typeof data[0] === "string") {
-            return data.map(f => ({ file: f }));
-          } else if (typeof data[0] === "object" && data[0].file){
-            return data;
-          }
+        const index = await loadIndex(base);
+        if (index?.length){
+          baseFound = base;
+          list = index.map(it => ({ file: it.file }));
+          break;
         }
-        throw new Error("index.json vide ou mal formé");
-      }catch(e){
-        // On remonte l'erreur pour déclencher le fallback
-        throw e;
-      }
+      }catch(_){}
+
+      // Sinon fallback
+      try{
+        const html = await fetchText(base + "q1.html");
+        baseFound = base;
+        const scanned = await scanFolder(base, 100, 1); // 🔧 max 100 brainteasers, séquentiel
+        if (scanned.length){
+          list = scanned.map(({file, html}) => {
+            preloadMap.set(file, html);
+            return { file };
+          });
+          break;
+        }
+      }catch(_){}
     }
 
-    // 4) Fallback : scan q1.html → qN.html
-    async function scanFolder(base, maxN = 60, concurrency = 6){
-      const found = [];
-      let i = 1;
+    if (!baseFound || !list.length){
+      console.error("Aucune base valide trouvée ou aucun brainteaser détecté.");
+      el.textContent = "Erreur de chargement du brainteaser.";
+      return;
+    }
 
-      async function worker(){
-        while(i <= maxN){
-          const n = i++;
-          const url = `${base}q${n}.html`;
-          try {
-            const html = await fetchText(url);
-            found.push({ file: `q${n}.html`, html }); // on stocke peut-être le html du premier rendu
-          } catch(_){ /* ignore 404 */ }
-        }
-      }
+    // C) Rendu initial
+    const seenToday = new Set();
+    let currentIdx = pickDaily(list.length);
+    seenToday.add(currentIdx);
+    await renderInto(el, baseFound, list[currentIdx], preloadMap.get(list[currentIdx].file));
 
-      const workers = Array.from({length: concurrency}, worker);
-      await Promise.all(workers);
-      // Si on a préchargé le HTML, on ne le gardera que pour le premier rendu
-      return found.sort((a,b)=>{
-        // tri par numéro si possible
-        const na = parseInt(a.file.match(/\d+/)?.[0] || "0", 10);
-        const nb = parseInt(b.file.match(/\d+/)?.[0] || "0", 10);
-        return na - nb;
+    // D) Bouton "Voir un autre"
+    const btn = document.getElementById("new-brainteaser-btn");
+    if (btn){
+      btn.addEventListener("click", async ()=>{
+        currentIdx = pickRandom(list.length, seenToday);
+        await renderInto(el, baseFound, list[currentIdx], preloadMap.get(list[currentIdx].file));
+        console.log("Brainteaser affiché :", list[currentIdx].file);
       });
     }
+  }
 
-    async function renderInto(el, base, entry, preloadedHTML){
-      el.textContent = "Chargement...";
-      try{
-        const html = preloadedHTML ?? await fetchText(base + entry.file);
-        el.innerHTML = html;
-        typeset();
-      }catch(err){
-        console.error(err);
-        el.textContent = "Erreur de chargement du brainteaser.";
-      }
-    }
-
-    function pickDaily(len){ return hashString(todayKey()) % len; }
-    function pickRandom(len, seen){
-      if (len <= seen.size) seen.clear();
-      let idx;
-      do { idx = Math.floor(Math.random()*len); } while (seen.has(idx));
-      seen.add(idx);
-      return idx;
-    }
-
-    async function initBT(){
-      const el = document.getElementById("brainteaser");
-      if (!el){ return; }
-
-      // A) Cas file:// (fetch bloqué)
-      if (location.protocol === "file:"){
-        el.innerHTML = "⚠️ Les brainteasers ne peuvent pas être chargés en local. Lance un petit serveur HTTP (ex. <code>python -m http.server</code>) à la racine du site.";
-        return;
-      }
-
-      // B) On essaie chaque base possible
-      let baseFound = null;
-      let list = [];
-      let preloadMap = new Map(); // file -> html (si préchargé via scan)
-
-      for (const base of BT_BASES){
-        // Essai index.json
-        try{
-          const index = await loadIndex(base);
-          if (index?.length){
-            baseFound = base;
-            list = index.map(it => ({ file: it.file }));
-            break;
-          }
-        }catch(_){}
-        // Sinon, on vérifie au moins q1.html pour valider la base
-        try{
-          const html = await fetchText(base + "q1.html");
-          baseFound = base;
-          const scanned = await scanFolder(base);
-          if (scanned.length){
-            list = scanned.map(({file, html}) => {
-              preloadMap.set(file, html);
-              return { file };
-            });
-            break;
-          }
-        }catch(_){}
-      }
-
-      if (!baseFound || !list.length){
-        console.error("Aucune base valide trouvée ou aucun brainteaser détecté.");
-        el.textContent = "Erreur de chargement du brainteaser.";
-        return;
-      }
-
-      // C) Rendu initial (index du jour)
-      const seenToday = new Set();
-      let currentIdx = pickDaily(list.length);
-      seenToday.add(currentIdx);
-
-      await renderInto(el, baseFound, list[currentIdx], preloadMap.get(list[currentIdx].file));
-
-      // D) Bouton "Voir un autre"
-      const btn = document.getElementById("new-brainteaser-btn");
-      if (btn){
-        btn.addEventListener("click", async ()=>{
-          currentIdx = pickRandom(list.length, seenToday);
-          await renderInto(el, baseFound, list[currentIdx], preloadMap.get(list[currentIdx].file));
-          console.log("Brainteaser affiché :", list[currentIdx].file);
-        });
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", initBT);
-  </script>
+  document.addEventListener("DOMContentLoaded", initBT);
+</script>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-R168QL4ED7"></script>
