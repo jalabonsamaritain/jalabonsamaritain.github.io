@@ -140,6 +140,42 @@
       .toc-mobile{ display:none; }
     }
 
+    /* ===== Icône de contribution 📤 ===== */
+    .contrib-icon {
+      font-size: 1.1em;
+      margin-left: 6px;
+      cursor: pointer;
+      position: relative;
+      color: #235A8C;
+      transition: transform 0.2s ease;
+    }
+
+    .contrib-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* Infobulle au survol */
+    .contrib-icon::after {
+      content: "Contribuer";
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #235A8C;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .contrib-icon:hover::after {
+      opacity: 1;
+    }
+
     /* ===== Blocs & tables ===== */
     .container{
       background:#fff; border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.06);
@@ -242,7 +278,7 @@
     <h1>Master El Karoui</h1>
 
     <!-- Livres pour préparer les entretiens -->
-    <ul><h3 id="livres_entretien" class="ancre-decalage">📘 Livres utiles pour les entretiens quantitatifs</h3></ul>
+    <ul><h3 id="livres_entretien" class="ancre-decalage">📘 Livres utiles pour les entretiens quantitatifs<span class="contrib-icon btn-mail" data-matiere="Livres entretiens">📤</span></h3></ul>
     <div class="container">
       <!-- === Contenu inchangé depuis ta version === -->
       <p>Voici une sélection de livres qui m'ont semblé particulièrement utiles pour préparer les entretiens en finance quantitative. N'hésitez pas à en parcourir plusieurs selon votre profil (maths, coding, brainteasers, etc.).</p>
@@ -263,7 +299,7 @@
     <ul><h2 id="bloc_probas" class="ancre-decalage">Bloc Probabilités</h2></ul>
 
     <!-- Probas num -->
-    <ul><h3 id="proba_num" class="ancre-decalage">Probabilités numériques (Gilles Pagès x Vincent Lemaire)</h3></ul>
+    <ul><h3 id="proba_num" class="ancre-decalage">Probabilités numériques (Gilles Pagès x Vincent Lemaire)<span class="contrib-icon btn-mail" data-matiere="Probabilités numériques">📤</span></h3></ul>
     <div class="container">
       <!-- === Contenu inchangé === -->
       <li><b>Cours :</b></li>
@@ -306,7 +342,7 @@
     </div>
 
     <!-- Contrôle stochastique -->
-    <ul><h3 id="controle_sto" class="ancre-decalage">Convexité, optimisation et contrôle stochastique (Idris Kharroubi)</h3></ul>
+    <ul><h3 id="controle_sto" class="ancre-decalage">Convexité, optimisation et contrôle stochastique (Idris Kharroubi)<span class="contrib-icon btn-mail" data-matiere="Contrôle stochastique">📤</span></h3></ul>
     <div class="container">
       <!-- === Contenu inchangé === -->
       <li><b>Cours :</b></li>
@@ -352,7 +388,7 @@
     </div>
 
     <!-- Processus de diffusion -->
-    <ul><h3 id="processus_diffusion" class="ancre-decalage">Introduction aux processus de diffusion (Lorenzo Zambotti)</h3></ul>
+    <ul><h3 id="processus_diffusion" class="ancre-decalage">Introduction aux processus de diffusion (Lorenzo Zambotti)<span class="contrib-icon btn-mail" data-matiere="Processus de diffusion">📤</span></h3></ul>
     <div class="container">
       <!-- === Contenu inchangé === -->
       <li><b>Cours :</b></li>
@@ -389,7 +425,7 @@
     </div>
 
     <!-- Machine & Deep Learning -->
-    <ul><h3 id="machine_deep_learning" class="ancre-decalage">Machine Learning, réseaux de neurones et Deep Learning (Patrick Gallinari x Benedikt Wilbertz)</h3></ul>
+    <ul><h3 id="machine_deep_learning" class="ancre-decalage">Machine Learning, réseaux de neurones et Deep Learning (Patrick Gallinari x Benedikt Wilbertz)<span class="contrib-icon btn-mail" data-matiere="Machine Learning & Deep Learning">📤</span></h3></ul>
     <div class="container">
       <!-- === Contenu inchangé === -->
       <li><b>Cours :</b></li>
@@ -418,7 +454,7 @@
     <ul><h2 id="bloc_finance" class="ancre-decalage">Bloc Finance</h2></ul>
 
     <!-- Econométrie / HFT -->
-    <ul><h3 id="econometrie_HFT" class="ancre-decalage">Économétrie et Trading Haute Fréquence (Mathieu Rosenbaum)</h3></ul>
+    <ul><h3 id="econometrie_HFT" class="ancre-decalage">Économétrie et Trading Haute Fréquence (Mathieu Rosenbaum)<span class="contrib-icon btn-mail" data-matiere="Économétrie & HFT">📤</span></h3></ul>
     <div class="container">
       <!-- === Contenu inchangé === -->
       <li><b>Cours :</b></li>
@@ -447,7 +483,7 @@
     </div>
 
     <!-- Modélisation stochastique -->
-    <ul><h3 id="modelisation_sto" class="ancre-decalage">Modélisation stochastique des produits dérivés (Huyen Pham x Mathieu Garcin)</h3></ul>
+    <ul><h3 id="modelisation_sto" class="ancre-decalage">Modélisation stochastique des produits dérivés (Huyen Pham x Mathieu Garcin)<span class="contrib-icon btn-mail" data-matiere="Modélisation stochastique des produits dérivés">📤</span></h3></ul>
     <div class="container">
       <li><b>TD :</b></li>
       <ul>
@@ -486,7 +522,7 @@
     </div>
 
     <!-- Modèles de taux -->
-    <ul><h3 id="modeles_taux" class="ancre-decalage">Modèles de taux (Nicole El Karoui x Caroline Hillairet)</h3></ul>
+    <ul><h3 id="modeles_taux" class="ancre-decalage">Modèles de taux (Nicole El Karoui x Caroline Hillairet)<span class="contrib-icon btn-mail" data-matiere="Modèles de taux">📤</span></h3></ul>
     <div class="container">
       <li><b>TD :</b></li>
       <ul>
@@ -519,7 +555,7 @@
     </div>
 
     <!-- Marchés financiers et Théorie financière -->
-    <ul><h3 id="marches_theorie_fin" class="ancre-decalage">Marchés financiers et Théorie financière (Camille De Langhe x Vladimir Lozeve)</h3></ul>
+    <ul><h3 id="marches_theorie_fin" class="ancre-decalage">Marchés financiers et Théorie financière (Camille De Langhe x Vladimir Lozeve)<span class="contrib-icon btn-mail" data-matiere="Marchés financiers et Théorie financière">📤</span></h3></ul>
     <div class="container">
       <li><b>Supports de cours :</b></li>
       <ul>
@@ -549,7 +585,7 @@
     </div>
 
     <!-- Mesures de risque et valeurs extrêmes -->
-    <ul><h3 id="mesures_risque_valeurs_extremes" class="ancre-decalage">Mesures de risques et valeurs extrêmes (Aurélien Alfonsi x Lokman Abbas-Turki)</h3></ul>
+    <ul><h3 id="mesures_risque_valeurs_extremes" class="ancre-decalage">Mesures de risques et valeurs extrêmes (Aurélien Alfonsi x Lokman Abbas-Turki)<span class="contrib-icon btn-mail" data-matiere="Mesures de risques et valeurs extrêmes">📤</span></h3></ul>
     <div class="container">
       <li><b>Annales :</b></li>
       <ul>
@@ -560,7 +596,7 @@
     </div>
 
     <!-- Modèles de sauts -->
-    <ul><h3 id="modeles_sauts" class="ancre-decalage">Modèles de sauts (Thomas Duquesne)</h3></ul>
+    <ul><h3 id="modeles_sauts" class="ancre-decalage">Modèles de sauts (Thomas Duquesne)<span class="contrib-icon btn-mail" data-matiere="Modèles de sauts">📤</span></h3></ul>
     <div class="container">
       <li><b>Cours :</b></li>
       <ul>
@@ -575,7 +611,7 @@
     </div>
 
     <!-- Régulation -->
-    <ul><h3 id="regulation" class="ancre-decalage">Ce que les crises financières nous enseignent : évolution des pratiques et de la régulation (Nancy Yuk)</h3></ul>
+    <ul><h3 id="regulation" class="ancre-decalage">Ce que les crises financières nous enseignent : évolution des pratiques et de la régulation (Nancy Yuk)<span class="contrib-icon btn-mail" data-matiere="Régulation">📤</span></h3></ul>
     <div class="container">
       <li><b>Cours :</b></li>
       <ul>
@@ -630,5 +666,43 @@
     });
   });
 </script>
+
+<script>
+  document.querySelectorAll('.btn-mail').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const matiere = btn.dataset.matiere;
+      let sujet, corps;
+
+      if (matiere === "Livres entretiens") {
+        sujet = encodeURIComponent(`Contribution - Master El Karoui : ${matiere}`);
+        corps = encodeURIComponent(
+  `Bonjour Théo,
+
+Je souhaite proposer une mise à jour concernant les livres d'entretiens pour le Master El Karoui.
+
+Voici les informations :
+    - Type de contenu (nouveau cours, correction d’erreur, autre) :
+    - Nom du/des fichier(s) :
+    - Remarques ou commentaires :`
+        );
+      } else {
+        sujet = encodeURIComponent(`Contribution - Master El Karoui : ${matiere}`);
+        corps = encodeURIComponent(
+  `Bonjour Théo,
+
+Je souhaite proposer une mise à jour pour la matière ${matiere} du Master El Karoui.
+
+Voici les informations :
+    - Type de contenu (nouveau cours, correction d’erreur, autre) :
+    - Nom du/des fichier(s) :
+    - Remarques ou commentaires :`
+        );
+      }
+
+      window.location.href = `mailto:jalabert.theo@gmail.com?subject=${sujet}&body=${corps}`;
+    });
+  });
+  </script>
+
 </body>
 </html>

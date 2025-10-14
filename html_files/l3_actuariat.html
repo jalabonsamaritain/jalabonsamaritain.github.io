@@ -140,6 +140,42 @@
       .toc-mobile{ display:none; }
     }
 
+    /* ===== Icône de contribution 📤 ===== */
+    .contrib-icon {
+      font-size: 1.1em;
+      margin-left: 6px;
+      cursor: pointer;
+      position: relative;
+      color: #235A8C;
+      transition: transform 0.2s ease;
+    }
+
+    .contrib-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* Infobulle au survol */
+    .contrib-icon::after {
+      content: "Contribuer";
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #235A8C;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .contrib-icon:hover::after {
+      opacity: 1;
+    }
+
     /* ===== Blocs & tables ===== */
     .container{
       background:#fff; border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.06);
@@ -239,7 +275,7 @@
       <h2 id="semestre_1">Semestre 1</h2>
 
       <!-- Droit Civil -->
-      <ul><h3 id="droit_civil">Droit civil</h3></ul>
+      <ul><h3 id="droit_civil">Droit civil<span class="contrib-icon btn-mail" data-matiere="Droit civil">📤</span></h3></ul>
       <div class="container">
         <li><b> Cours complet : </b>
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_civil_cours.pdf" target="_blank" rel="noopener noreferrer">droit_civil_cours.pdf</a>
@@ -260,7 +296,7 @@
       </div>
 
       <!-- Droit constitutionnel -->
-      <ul><h3 id="droit_constit">Droit constitutionnel</h3></ul>
+      <ul><h3 id="droit_constit">Droit constitutionnel<span class="contrib-icon btn-mail" data-matiere="Droit constitutionnel">📤</span></h3></ul>
       <div class="container">
         <li><b> Introduction générale : </b>
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_constitutionnel_intro.pdf" target="_blank" rel="noopener noreferrer">droit_constitutionnel_intro.pdf</a>
@@ -278,7 +314,7 @@
       </div>
 
       <!-- Intégration -->
-      <ul><h3 id="integration">Intégration</h3></ul>
+      <ul><h3 id="integration">Intégration<span class="contrib-icon btn-mail" data-matiere="Intégration">📤</span></h3></ul>
       <div class="container">
         <li><b> Cours par chapitres : </b></li>
         <p class="detail"><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_chap0.pdf" target="_blank" rel="noopener noreferrer">Chapitre 0</a></p>
@@ -313,7 +349,7 @@
 
       <!-- Droit des affaires -->
       <ul>
-        <h3 id="droit_des_affaires" class="ancre-decalage"> Droit des affaires </h3>
+        <h3 id="droit_des_affaires" class="ancre-decalage">Droit des affaires<span class="contrib-icon btn-mail" data-matiere="Droit des affaires">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -330,7 +366,7 @@
 
           <!-- Fiscalité -->
       <ul>
-        <h3 id="fiscalite" class="ancre-decalage"> Fiscalité </h3>
+        <h3 id="fiscalite" class="ancre-decalage">Fiscalité<span class="contrib-icon btn-mail" data-matiere="Fiscalité">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -347,7 +383,7 @@
 
           <!-- Initiation au droit de l'assurance -->
       <ul>
-        <h3 id="init_droit_assurance" class="ancre-decalage"> Initiation au droit de l'assurance </h3>
+        <h3 id="init_droit_assurance" class="ancre-decalage">Initiation au droit de l'assurance<span class="contrib-icon btn-mail" data-matiere="Initiation au droit de l'assurance">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -364,7 +400,7 @@
 
           <!-- Initiation aux opérations d'assurance -->
       <ul>
-        <h3 id="init_operations_assurance" class="ancre-decalage"> Initiation aux opérations d'assurance </h3>
+        <h3 id="init_operations_assurance" class="ancre-decalage">Initiation aux opérations d'assurance<span class="contrib-icon btn-mail" data-matiere="Initiation aux opérations d'assurance">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -381,7 +417,7 @@
 
           <!-- Mathématiques Financières 2 -->
       <ul>
-        <h3 id="maths_fi2" class="ancre-decalage"> Mathématiques Financières 2 </h3>
+        <h3 id="maths_fi2" class="ancre-decalage">Mathématiques Financières 2<span class="contrib-icon btn-mail" data-matiere="Mathématiques Financières 2">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -414,7 +450,7 @@
 
           <!-- Microéconomie 2 -->
       <ul>
-        <h3 id="micro_eco_2" class="ancre-decalage"> Microéconomie 2 </h3>
+        <h3 id="micro_eco_2" class="ancre-decalage">Microéconomie 2<span class="contrib-icon btn-mail" data-matiere="Microéconomie 2">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -436,7 +472,7 @@
 
           <!-- Opérations de banque -->
       <ul>
-        <h3 id="operations_banque" class="ancre-decalage"> Opérations de banque </h3>
+        <h3 id="operations_banque" class="ancre-decalage">Opérations de banque<span class="contrib-icon btn-mail" data-matiere="Opérations de banque">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -454,7 +490,7 @@
 
           <!-- Probas 2 -->
       <ul>
-        <h3 id="probas2" class="ancre-decalage"> Probas 2 </h3>
+        <h3 id="probas2" class="ancre-decalage">Probas 2<span class="contrib-icon btn-mail" data-matiere="Probas 2">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -543,5 +579,25 @@
     });
   });
 </script>
+
+  <script>
+  document.querySelectorAll('.btn-mail').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const matiere = btn.dataset.matiere;
+      const sujet = encodeURIComponent(`Contribution - L3 Actuariat : ${matiere}`);
+      const corps = encodeURIComponent(
+  `Bonjour Théo,
+
+Je souhaite proposer une mise à jour pour la matière ${matiere} pour l'année de L3 Actuariat.
+
+Voici les informations :
+    - Type de contenu (nouveau cours, correction d’erreur, autre) :
+    - Nom du/des fichier(s) :
+    - Remarques ou commentaires :`
+      );
+      window.location.href = `mailto:jalabert.theo@gmail.com?subject=${sujet}&body=${corps}`;
+    });
+  });
+  </script>
 </body>
 </html>

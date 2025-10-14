@@ -140,6 +140,43 @@
       .toc-mobile{ display:none; }
     }
 
+
+    /* ===== Icône de contribution 📤 ===== */
+    .contrib-icon {
+      font-size: 1.1em;
+      margin-left: 6px;
+      cursor: pointer;
+      position: relative;
+      color: #235A8C;
+      transition: transform 0.2s ease;
+    }
+
+    .contrib-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* Infobulle au survol */
+    .contrib-icon::after {
+      content: "Contribuer";
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #235A8C;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .contrib-icon:hover::after {
+      opacity: 1;
+    }
+
     /* ===== Blocs & tables ===== */
     .container{
       background:#fff; border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.06);
@@ -266,7 +303,7 @@
       <h2 id="semestre_1" class="ancre-decalage">Semestre 1</h2>
 
       <!-- ====== ADD ====== -->
-      <ul><h3 id="add" class="ancre-decalage">Analyse de données et clustering (Denis Clot)</h3></ul>
+      <ul><h3 id="add" class="ancre-decalage">Analyse de données et clustering (Denis Clot)<span class="contrib-icon btn-mail" data-matiere="Analyse de données et clustering">📤</span></h3></ul>
       <div class="container">
         <li><b>Diapos cours :</b> 
           <a href="https://pages.isfa.fr/~denis/docs/SLIDES/ES-ADDCL/">Site</a> (id : Supp!R ; password : avdU1mdpa6l)
@@ -355,7 +392,7 @@
       </div>
 
       <!-- ====== Modèles aléatoires discrets ====== -->
-      <ul><h3 id="mad" class="ancre-decalage">Modèles aléatoires discrets (Anne Eyraud)</h3></ul>
+      <ul><h3 id="mad" class="ancre-decalage">Modèles aléatoires discrets (Anne Eyraud)<span class="contrib-icon btn-mail" data-matiere="Modèles Aléatoires Discrets">📤</span></h3></ul>
       <div class="container">
         <li><b>Fiche synthèse : </b>
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_aleatoires_discrets_memento.pdf" target="_blank" rel="noopener noreferrer">ici</a>
@@ -415,7 +452,7 @@
       </div>
 
       <!-- ====== Processus stochastiques ====== -->
-      <ul><h3 id="processus_stochastiques" class="ancre-decalage">Processus stochastiques (Anne Eyraud)</h3></ul>
+      <ul><h3 id="processus_stochastiques" class="ancre-decalage">Processus stochastiques (Anne Eyraud)<span class="contrib-icon btn-mail" data-matiere="Processus Stochastiques">📤</span></h3></ul>
       <div class="container">
         <li><b>Télécharger le cours : </b>
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/processus_stochastiques_cours_manuscrit.pdf" target="_blank" rel="noopener noreferrer">ici</a></li>
@@ -498,7 +535,7 @@
 
           <!-- Techniques de simulation -->
           <ul>
-            <h3 id="techniques_simulation" class="ancre-decalage"> Techniques de simulation (Alexis Bienvenue)</h3>
+            <h3 id="techniques_simulation" class="ancre-decalage">Techniques de simulation (Alexis Bienvenue)<span class="contrib-icon btn-mail" data-matiere="Techniques de simulation">📤</span></h3>
           </ul>
 
           <div class="container">
@@ -561,7 +598,7 @@
 
           <!-- Statistiques inférentielles -->
       <ul>
-          <h3 id="stats_inf" class="ancre-decalage"> Statistiques inférentielles (Pierre Ribereau)</h3>
+          <h3 id="stats_inf" class="ancre-decalage">Statistiques inférentielles (Pierre Ribereau)<span class="contrib-icon btn-mail" data-matiere="Statistiques inférentielles">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -614,7 +651,7 @@
 
           <!-- Statistiques non-paramétriques -->
       <ul>
-          <h3 id="charges_sinitres" class="ancre-decalage"> Statistiques non-paramétriques (Denis Pommeret)</h3>
+          <h3 id="charges_sinitres" class="ancre-decalage">Statistiques non-paramétriques (Denis Pommeret)<span class="contrib-icon btn-mail" data-matiere="Statistiques non-paramétriques">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -630,7 +667,7 @@
 
           <!-- Économétrie -->
       <ul>
-          <h3 id="econometrie" class="ancre-decalage"> Économétrie (Nathalie Havet)</h3>
+          <h3 id="econometrie" class="ancre-decalage">Économétrie (Nathalie Havet)<span class="contrib-icon btn-mail" data-matiere="Économétrie">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -685,7 +722,7 @@
 
           <!-- SAS -->
       <ul>
-          <h3 id="sas" class="ancre-decalage"> SAS</h3>
+          <h3 id="sas" class="ancre-decalage">SAS<span class="contrib-icon btn-mail" data-matiere="SAS">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -723,7 +760,7 @@
 
           <!-- Access -->
           <ul>
-            <h3 id="access" class="ancre-decalage"> Access </h3>
+            <h3 id="access" class="ancre-decalage">Access<span class="contrib-icon btn-mail" data-matiere="Access">📤</span></h3>
           </ul>
 
           <div class="container">
@@ -771,7 +808,7 @@ données relationnelles</a></li>
 
           <!-- Mathématiques actuarielles -->
       <ul>
-          <h3 id="maths_actu" class="ancre-decalage"> Mathématiques actuarielles (Rémi Grégoire ex:Karim Barigou)</h3>
+          <h3 id="maths_actu" class="ancre-decalage">Mathématiques actuarielles (Rémi Grégoire ex:Karim Barigou)<span class="contrib-icon btn-mail" data-matiere="Mathématiques actuarielles">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -823,7 +860,7 @@ données relationnelles</a></li>
 
           <!-- Théorie des options -->
       <ul>
-          <h3 id="theorie_options" class="ancre-decalage"> Théorie des options (Anne Eyraud)</h3>
+          <h3 id="theorie_options" class="ancre-decalage">Théorie des options (Anne Eyraud)<span class="contrib-icon btn-mail" data-matiere="Théorie des options">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -898,7 +935,7 @@ données relationnelles</a></li>
 
           <!-- Gestion de portefeuille -->
       <ul>
-          <h3 id="gestion_portefeuille" class="ancre-decalage"> Gestion de portefeuille (Diana Dorobantu)</h3>
+          <h3 id="gestion_portefeuille" class="ancre-decalage">Gestion de portefeuille (Diana Dorobantu)<span class="contrib-icon btn-mail" data-matiere="Gestion de portefeuille">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -939,7 +976,7 @@ données relationnelles</a></li>
 
           <!-- Théorie financière -->
       <ul>
-          <h3 id="theorie_financiere" class="ancre-decalage"> Théorie financière (Nicolas Leboisne)</h3>
+          <h3 id="theorie_financiere" class="ancre-decalage">Théorie financière (Nicolas Leboisne)<span class="contrib-icon btn-mail" data-matiere="Théorie financière">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -961,7 +998,7 @@ données relationnelles</a></li>
 
           <!-- Modèles Linéaires Généralisés -->
       <ul>
-          <h3 id="mlg" class="ancre-decalage"> Modèles linéaires généralisés (Esterina Masiello)</h3>
+          <h3 id="mlg" class="ancre-decalage">Modèles linéaires généralisés (Esterina Masiello)<span class="contrib-icon btn-mail" data-matiere="Modèles linéaires généralisés">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -994,7 +1031,7 @@ données relationnelles</a></li>
 
           <!-- Provisionnement non-vie -->
       <ul>
-          <h3 id="provisionnement_non-vie" class="ancre-decalage"> Provisionnement non-vie (Esterina Masiello)</h3>
+          <h3 id="provisionnement_non-vie" class="ancre-decalage">Provisionnement non-vie (Esterina Masiello)<span class="contrib-icon btn-mail" data-matiere="Provisionnement non-vie">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1020,7 +1057,7 @@ données relationnelles</a></li>
 
           <!-- Comptabilité des assurances -->
       <ul>
-          <h3 id="compta_assurances" class="ancre-decalage"> Comptabilité des assurances (Pierre Thérond & Romaric Chalendard)</h3>
+          <h3 id="compta_assurances" class="ancre-decalage">Comptabilité des assurances (Pierre Thérond & Romaric Chalendard)<span class="contrib-icon btn-mail" data-matiere="Comptabilité des assurances">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1054,7 +1091,7 @@ données relationnelles</a></li>
 
       <!-- Comptabilité de gestion -->
       <ul>
-          <h3 id="compta_analytique" class="ancre-decalage"> Comptabilité de gestion (Jacques Gazagnes)</h3>
+          <h3 id="compta_analytique" class="ancre-decalage">Comptabilité de gestion (Jacques Gazagnes)<span class="contrib-icon btn-mail" data-matiere="Comptabilité de gestion">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1082,7 +1119,7 @@ données relationnelles</a></li>
 
           <!-- Analyse financière -->
       <ul>
-        <h3 id="analyse_financiere" class="ancre-decalage"> Analyse financière (Thierry Damet & Jacques Gazagnes)</h3>
+        <h3 id="analyse_financiere" class="ancre-decalage">Analyse financière (Thierry Damet & Jacques Gazagnes)<span class="contrib-icon btn-mail" data-matiere="Analyse financière">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1124,7 +1161,7 @@ données relationnelles</a></li>
 
           <!-- Économie de l'assurance -->
       <ul>
-        <h3 id="economie_assurance" class="ancre-decalage"> Économie de l'assurance (Jean-Louis Rullière)</h3>
+        <h3 id="economie_assurance" class="ancre-decalage">Économie de l'assurance (Jean-Louis Rullière)<span class="contrib-icon btn-mail" data-matiere="Économie de l'assurance">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1170,7 +1207,7 @@ données relationnelles</a></li>
 
           <!-- Prévoyance collective -->
       <ul>
-          <h3 id="prev_co" class="ancre-decalage"> Prévoyance collective (Vincent Benoit)</h3>
+          <h3 id="prev_co" class="ancre-decalage">Prévoyance collective (Vincent Benoit)<span class="contrib-icon btn-mail" data-matiere="Prévoyance collective">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1192,7 +1229,7 @@ données relationnelles</a></li>
 
           <!-- Droit du contrat d'assurance -->
       <ul>
-        <h3 id="droit_contrat_assurance" class="ancre-decalage"> Droit du contrat d'assurance (Florence Samarati)</h3>
+        <h3 id="droit_contrat_assurance" class="ancre-decalage">Droit du contrat d'assurance (Florence Samarati)<span class="contrib-icon btn-mail" data-matiere="Droit du contrat d'assurance">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1209,7 +1246,7 @@ données relationnelles</a></li>
 
           <!-- Droit social -->
             <ul>
-        <h3 id="droit_social"> Droit social (Wilfrid Millet & Pierrick Fournier)</h3>
+        <h3 id="droit_social">Droit du travail et de la protection sociale (Wilfrid Millet & Pierrick Fournier)<span class="contrib-icon btn-mail" data-matiere="Droit du travail et de la protection sociale">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1237,7 +1274,7 @@ données relationnelles</a></li>
 
           <!-- Stratégie 1 -->
             <ul>
-        <h3 id="strategie"> Stratégie 1 (Melchior Salgado)</h3>
+        <h3 id="strategie">Stratégie 1 (Melchior Salgado)<span class="contrib-icon btn-mail" data-matiere="Stratégie 1">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1292,6 +1329,26 @@ données relationnelles</a></li>
     });
   });
 </script>
+
+<script>
+  document.querySelectorAll('.btn-mail').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const matiere = btn.dataset.matiere;
+      const sujet = encodeURIComponent(`Contribution - M1 Actuariat : ${matiere}`);
+      const corps = encodeURIComponent(
+  `Bonjour Théo,
+
+Je souhaite proposer une mise à jour pour la matière ${matiere} pour l'année de M1 Actuariat.
+
+Voici les informations :
+    - Type de contenu (nouveau cours, correction d’erreur, autre) :
+    - Nom du/des fichier(s) :
+    - Remarques ou commentaires :`
+      );
+      window.location.href = `mailto:jalabert.theo@gmail.com?subject=${sujet}&body=${corps}`;
+    });
+  });
+  </script>
 </body>
 </html>
 

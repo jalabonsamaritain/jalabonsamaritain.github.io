@@ -140,6 +140,42 @@
       .toc-mobile{ display:none; }
     }
 
+    /* ===== Icône de contribution 📤 ===== */
+    .contrib-icon {
+      font-size: 1.1em;
+      margin-left: 6px;
+      cursor: pointer;
+      position: relative;
+      color: #235A8C;
+      transition: transform 0.2s ease;
+    }
+
+    .contrib-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* Infobulle au survol */
+    .contrib-icon::after {
+      content: "Contribuer";
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #235A8C;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .contrib-icon:hover::after {
+      opacity: 1;
+    }
+
     /* ===== Blocs & tables ===== */
     .container{
       background:#fff; border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.06);
@@ -271,7 +307,7 @@
 
     <!-- ERM -->
       <ul>
-          <h3 id="erm" class="ancre-decalage">ERM (Stéphane Loisel)</h3>
+          <h3 id="erm" class="ancre-decalage">ERM (Stéphane Loisel)<span class="contrib-icon btn-mail" data-matiere="ERM">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -350,7 +386,7 @@
 
     <!-- Modèles de durée -->
       <ul>
-        <h3 id="modeles_de_duree" class="ancre-decalage"> Modèles de durée (Frédéric Planchet)</h3>
+        <h3 id="modeles_de_duree" class="ancre-decalage">Modèles de durée (Frédéric Planchet)<span class="contrib-icon btn-mail" data-matiere="Modèles de durée">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -465,7 +501,7 @@
 
     <!-- Finance mathématique -->
       <ul>
-          <h3 id="finance_mathematique" class="ancre-decalage"> Finance mathématique (Ying Jiao)</h3>
+          <h3 id="finance_mathematique" class="ancre-decalage">Finance mathématique (Ying Jiao)<span class="contrib-icon btn-mail" data-matiere="Finance mathématique">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -538,7 +574,7 @@
 
     <!-- Actifs hybrides -->
       <ul>
-        <h3 id="actifs_hybrides" class="ancre-decalage"> Actifs hybrides (Nicolas Leboisne)</h3>
+        <h3 id="actifs_hybrides" class="ancre-decalage">Actifs hybrides (Nicolas Leboisne)<span class="contrib-icon btn-mail" data-matiere="Actifs hybrides">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -610,7 +646,7 @@
 
     <!-- Séries temporelles -->
       <ul>
-          <h3 id="series_temporelles" class="ancre-decalage"> Séries temporelles (Christian Robert)</h3>
+          <h3 id="series_temporelles" class="ancre-decalage">Séries temporelles (Christian Robert)<span class="contrib-icon btn-mail" data-matiere="Séries temporelles">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -665,7 +701,7 @@
 
     <!-- Modélisation Charges - Sinistres -->
         <ul>
-            <h3 id="charges_sinitres" class="ancre-decalage"> Modélisation Charges-Sinitres (Jean Brunet)</h3>
+            <h3 id="charges_sinitres" class="ancre-decalage">Modélisation Charges-Sinitres (Jean Brunet)<span class="contrib-icon btn-mail" data-matiere="Modélisation Charges-Sinistres">📤</span></h3>
         </ul>
 
         <div class="container">
@@ -740,7 +776,7 @@
 
     <!-- Théorie de la crédibilité -->
         <ul>
-          <h3 id="theorie_credibilite" class="ancre-decalage"> Théorie de la crédibilité (Pierre Thérond)</h3>
+          <h3 id="theorie_credibilite" class="ancre-decalage">Théorie de la crédibilité (Pierre Thérond)<span class="contrib-icon btn-mail" data-matiere="Théorie de la crédibilité">📤</span></h3>
         </ul>
 
         <div class="container">
@@ -802,7 +838,7 @@
 
     <!-- Techniques numériques -->
       <ul>
-        <h3 id="techniques_numeriques" class="ancre-decalage"> Techniques numériques (Armand Bernou)</h3>
+        <h3 id="techniques_numeriques" class="ancre-decalage">Techniques numériques (Armand Bernou)<span class="contrib-icon btn-mail" data-matiere="Techniques numériques">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -860,7 +896,7 @@
 
     <!-- Data science -->
       <ul>
-        <h3 id="data_science" class="ancre-decalage"> Data Science (Pierrick Piette)</h3>
+        <h3 id="data_science" class="ancre-decalage">Data Science (Pierrick Piette)<span class="contrib-icon btn-mail" data-matiere="Data Science">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -964,7 +1000,7 @@
 
     <!-- Retraite -->
       <ul>
-        <h3 id="retraite" class="ancre-decalage"> Retraite (Brigitte Ecary & Pierre Montesinos)</h3>
+        <h3 id="retraite" class="ancre-decalage">Retraite (Brigitte Ecary & Pierre Montesinos)<span class="contrib-icon btn-mail" data-matiere="Retraite">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1009,7 +1045,7 @@
 
     <!-- Réassurance -->
       <ul>
-        <h3 id="reassurance" class="ancre-decalage"> Réassurance (Alexandre Delacroix)</h3>
+        <h3 id="reassurance" class="ancre-decalage">Réassurance (Alexandre Delacroix)<span class="contrib-icon btn-mail" data-matiere="Réassurance">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1042,7 +1078,7 @@
 
     <!-- Modèles financiers en assurance -->
       <ul>
-        <h3 id="mfa" class="ancre-decalage"> Modèles financiers en assurance (Frédéric Planchet)</h3>
+        <h3 id="mfa" class="ancre-decalage">Modèles financiers en assurance (Frédéric Planchet)<span class="contrib-icon btn-mail" data-matiere="Modèles financiers en assurance">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1134,7 +1170,7 @@
 
     <!-- Risque de crédit -->
       <ul>
-        <h3 id="risque_credit" class="ancre-decalage"> Risque de crédit (Ying Jiao)</h3>
+        <h3 id="risque_credit" class="ancre-decalage">Risque de crédit (Ying Jiao)<span class="contrib-icon btn-mail" data-matiere="Risque de crédit">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1182,7 +1218,7 @@
 
     <!-- Valeurs extrêmes -->
       <ul>
-        <h3 id="valeurs_extremes" class="ancre-decalage"> Théorie des valeurs extrêmes (Christian Robert)</h3>
+        <h3 id="valeurs_extremes" class="ancre-decalage">Théorie des valeurs extrêmes (Christian Robert)<span class="contrib-icon btn-mail" data-matiere="Théorie des valeurs extrêmes">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1266,7 +1302,7 @@
 
     <!-- Théorie de la ruine -->
       <ul>
-        <h3 id="theorie_ruine" class="ancre-decalage"> Théorie de la ruine (Stéphane Loisel)</h3>
+        <h3 id="theorie_ruine" class="ancre-decalage">Théorie de la ruine (Stéphane Loisel)<span class="contrib-icon btn-mail" data-matiere="Théorie de la ruine">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1331,7 +1367,7 @@
 
     <!-- IFRS Solvabilité 2 -->
       <ul>
-        <h3 id="ifrs_solvabilite2" class="ancre-decalage"> IFRS Solvabilité 2 (Pierre Thérond)</h3>
+        <h3 id="ifrs_solvabilite2" class="ancre-decalage">IFRS Solvabilité 2 (Pierre Thérond)<span class="contrib-icon btn-mail" data-matiere="IFRS Solvabilité 2">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1356,7 +1392,7 @@
 
     <!-- Règlementation prudentielle bancaire -->
       <ul>
-          <h3 id="reglementation_bancaire" class="ancre-decalage"> Règlementation prudentielle bancaire (P. Perret)</h3>
+          <h3 id="reglementation_bancaire" class="ancre-decalage">Règlementation prudentielle bancaire (P. Perret)<span class="contrib-icon btn-mail" data-matiere="Réglementation prudentielle bancaire">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1371,7 +1407,7 @@
 
     <!-- Gestion Actif-Passif -->
       <ul>
-        <h3 id="alm" class="ancre-decalage"> Gestion Actif-Passif (S. Collier)</h3>
+        <h3 id="alm" class="ancre-decalage">Gestion Actif-Passif (S. Collier)<span class="contrib-icon btn-mail" data-matiere="Gestion Actif-Passif">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1423,7 +1459,7 @@
 
     <!-- Retraite 2 -->
       <ul>
-          <h3 id="retraite2" class="ancre-decalage"> Retraite 2 (J. Jacquemin)</h3>
+          <h3 id="retraite2" class="ancre-decalage">Retraite 2 (J. Jacquemin)<span class="contrib-icon btn-mail" data-matiere="Retraite 2">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1469,7 +1505,7 @@
 
     <!-- Protection sociale -->
       <ul>
-          <h3 id="protection_sociale" class="ancre-decalage"> Protection sociale (M. Favre-Beguet)</h3>
+          <h3 id="protection_sociale" class="ancre-decalage">Protection sociale (M. Favre-Beguet)<span class="contrib-icon btn-mail" data-matiere="Protection sociale">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1514,7 +1550,7 @@
 
     <!-- Business case en réassurance -->
       <ul>
-          <h3 id="business_case_reass" class="ancre-decalage"> Business case en réassurance (L. Loljeeh, A. Pellerin)</h3>
+          <h3 id="business_case_reass" class="ancre-decalage">Business case en réassurance (L. Loljeeh, A. Pellerin)<span class="contrib-icon btn-mail" data-matiere="Business case en réassurance">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1570,7 +1606,7 @@
 
     <!-- Estimation de copules -->
       <ul>
-          <h3 id="estimation_copules" class="ancre-decalage"> Estimation de copules (Esterina Masiello)</h3>
+          <h3 id="estimation_copules" class="ancre-decalage">Estimation de copules (Esterina Masiello)<span class="contrib-icon btn-mail" data-matiere="Estimation de copules">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1583,7 +1619,7 @@
 
     <!-- Stratégie 2 -->
       <ul>
-          <h3 id="strategie2"> Stratégie 2 (Melchior Salgado)</h3>
+          <h3 id="strategie2">Stratégie 2 (Melchior Salgado)<span class="contrib-icon btn-mail" data-matiere="Stratégie 2">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1595,7 +1631,7 @@
 
     <!-- Assurance santé -->
       <ul>
-          <h3 id="assurance_sante"> Assurance Santé (Anne Marion)</h3>
+          <h3 id="assurance_sante">Assurance Santé (Anne Marion)<span class="contrib-icon btn-mail" data-matiere="Assurance santé">📤</span></h3>
       </ul>
 
       <div class="container">
@@ -1618,7 +1654,7 @@
 
     <!-- Mémoire Actuariat -->
             <ul>
-              <h3 id="memoire"> Mémoire Actuariat (Anne Eyraud)</h3>
+              <h3 id="memoire">Mémoire Actuariat (Anne Eyraud)<span class="contrib-icon btn-mail" data-matiere="Mémoire actuariat">📤</span></h3>
           </ul>
 
         <div class="container">
@@ -1680,5 +1716,26 @@
     });
   });
 </script>
+
+<script>
+  document.querySelectorAll('.btn-mail').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const matiere = btn.dataset.matiere;
+      const sujet = encodeURIComponent(`Contribution - M2 Actuariat : ${matiere}`);
+      const corps = encodeURIComponent(
+  `Bonjour Théo,
+
+Je souhaite proposer une mise à jour pour la matière ${matiere} pour l'année de M2 Actuariat.
+
+Voici les informations :
+    - Type de contenu (nouveau cours, correction d’erreur, autre) :
+    - Nom du/des fichier(s) :
+    - Remarques ou commentaires :`
+      );
+      window.location.href = `mailto:jalabert.theo@gmail.com?subject=${sujet}&body=${corps}`;
+    });
+  });
+  </script>
+
 </body>
 </html>
