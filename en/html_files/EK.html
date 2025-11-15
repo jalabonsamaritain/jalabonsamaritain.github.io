@@ -1,0 +1,854 @@
+<!-- Master El Karoui — version alignée L3/M2 (sidebar + sommaire mobile fixe) -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/images/logo_isfa.png" type="image/png">
+  <title>JalabonSamaritain — Master El Karoui</title>
+
+  <style>
+    /* ===== Reset & variables ===== */
+    *,*::before,*::after{ box-sizing:border-box; }
+    :root{
+      --brand-1:#235A8C;
+      --brand-2:#0E76A8;
+      --bg:#f4f4f4;
+      --space:clamp(12px,2vw,20px);
+      --header-h:64px;
+      --nav-h:48px;
+      --top-offset: calc(var(--header-h) + var(--nav-h) + 12px); /* pour ancres */
+      --container-w:70rem;
+      --sidebar-w:240px;
+    }
+
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0; min-height:100svh; display:flex; flex-direction:column;
+      font-family:ui-sans-serif,system-ui,Segoe UI,Calibri,Roboto,Arial;
+      line-height:1.5; background:var(--bg); color:#222;
+      /* PAS de padding-top: on a choisi header/nav toujours fixes */
+    }
+    a{ color:#0645AD; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .premium {
+        color: #DAA520; /* Doré intense */
+        font-size: 1.05em;
+        transition: color 0.3s ease;
+    }
+
+    .premium:hover {
+        color: #b8860b; /* Doré foncé au survol */
+        text-decoration: underline;
+    }
+
+    /* ===== Header & Nav (toujours fixes) ===== */
+    header{ background:var(--brand-1); color:#fff; position:fixed; top:0; left:0; right:0; z-index:20; }
+    header .inner{
+      display:flex; align-items:center; justify-content:center;
+      min-height:var(--header-h); padding-block:8px;
+    }
+    header a{ color:#fff; }
+
+    .nav{ background:var(--brand-2); color:#fff; position:fixed; top:var(--header-h); left:0; right:0; z-index:19; }
+    .nav .inner{
+      display:flex; align-items:center; justify-content:center; min-height:var(--nav-h);
+    }
+    #nav-list{
+      display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; margin:0 auto;
+    }
+    #nav-list a{ color:#fff; padding:10px 12px; border-radius:6px; font-size:clamp(.95rem,.9rem + .2vw,1rem); }
+    #nav-list a:hover{ background:rgba(255,255,255,.15); }
+
+    /* ===== Sélecteur de langue ===== */
+    .lang-switcher {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle {
+      background: transparent;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle:hover {
+      background: rgb(255 255 255 / .12);
+    }
+
+    .lang-icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .lang-menu {
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: #fff;
+      color: #222;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      padding: 6px 0;
+      min-width: 150px;
+      display: none;
+      z-index: 30;
+    }
+
+    .lang-menu.open {
+      display: block;
+    }
+
+    .lang-menu button {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .lang-menu button:hover {
+      background: #eef2ff;
+    }
+
+    .lang-menu .flag {
+      font-size: 1.1rem;
+    }
+
+    /* ===== Colonne principale (décalée à droite de la sidebar) ===== */
+    main.container_global{
+      width:min(100%, var(--container-w));
+      margin-inline:auto;
+      margin-top: calc(var(--header-h) + var(--nav-h) + 20px);
+      padding:var(--space);
+      flex:1;
+      /* Décalage pour laisser la sidebar fixe à gauche */
+      margin-left: calc(var(--sidebar-w) + 30px);
+    }
+
+    h1{ text-align:center; font-size:clamp(1.5rem,1rem+2vw,2.25rem); margin:.5em 0; }
+
+    /* ===== Sidebar (fixe par défaut ; cachée <1024px) ===== */
+    .sidebar{
+      position:fixed;
+      top: calc(var(--header-h) + var(--nav-h) + 8px);
+      bottom: 16px;
+      left: 16px;
+      width: var(--sidebar-w);
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      padding:12px;
+      overflow:auto;
+      z-index:10;
+    }
+    .sidebar ul{ list-style:none; margin:0; padding:0; }
+    .sidebar li{ margin:8px 0; }
+    .sidebar a{ color:#333; display:block; padding:6px 10px; border-radius:6px; }
+    .sidebar a:hover{ background:#f2f2f2; text-decoration:none; }
+    .indent_semestre{ font-weight:700; margin-top:6px; }
+
+    @media (max-width: 1023px){
+      .sidebar{ display:none; }
+      main.container_global{
+        width:94%;
+        margin-left:auto; margin-right:auto; /* on recentre quand la sidebar disparaît */
+      }
+    }
+
+    /* Sommaire mobile : suit le scroll ET passe sous header/nav fixes */
+    .toc-mobile{
+      display:block;
+      position:sticky;
+      top: calc(var(--header-h) + var(--nav-h) + 8px); /* <- clé pour mobile avec header/nav fixes */
+      z-index: 9;
+      margin: 12px 12px 16px;
+    }
+    .toc-mobile details{
+      background:#fff;
+      border-radius:10px;
+      padding:.75rem 1rem;
+      box-shadow:0 1px 6px rgba(0,0,0,.08);
+    }
+
+    .toc-mobile details > ul{
+      max-height: 50vh;               /* ~ moitié d’écran */
+      overflow: auto;                  /* active le scroll interne */
+      -webkit-overflow-scrolling: touch; /* scroll fluide iOS */
+      padding-right: 4px;              /* petit espace côté scrollbar */
+    }
+
+    .toc-mobile details[open]{
+      max-height: calc(56px + 50vh);   /* hauteur du summary + liste */
+      overflow: hidden;
+    }
+
+    .toc-mobile summary{ cursor:pointer; font-weight:700; }
+    .toc-mobile ul{ list-style:none; padding-left:0; margin:.6rem 0 0 0; }
+    .toc-mobile li{ margin:.4rem 0; }
+    .toc-mobile li.section-title a{ font-weight:700; }
+
+    /* Cacher le sommaire mobile en desktop */
+    @media (min-width: 1024px){
+      .toc-mobile{ display:none; }
+    }
+
+    /* ===== Icône de contribution 📤 ===== */
+    .contrib-icon {
+      font-size: 1.1em;
+      margin-left: 6px;
+      cursor: pointer;
+      position: relative;
+      color: #235A8C;
+      transition: transform 0.2s ease;
+    }
+
+    .contrib-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* Infobulle au survol */
+    .contrib-icon::after {
+      content: "Contribute";
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #235A8C;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .contrib-icon:hover::after {
+      opacity: 1;
+    }
+
+    /* ===== Blocs & tables ===== */
+    .navcontainer{
+      width:min(100%, var(--container-w));
+      margin-inline:auto;
+      padding-inline: var(--space);
+    }
+
+    .container{
+      background:#fff; border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.06);
+      padding: 1.25rem 1.5rem; margin: 1rem 0;
+    }
+    table{ border-collapse: collapse; width:100%; }
+    th, td{ border:1px solid #ddd; padding:8px; }
+    th{ background:#f2f2f2; }
+    .detail{ text-indent:10px; }
+
+    /* ===== Ancrages (compensation header+nav fixes) ===== */
+    h2[id], h3[id]{ scroll-margin-top: var(--top-offset); }
+
+    /* ===== Footer ===== */
+    footer{ background:var(--brand-1); color:#fff; text-align:center; padding:14px 0; margin-top:auto; }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R168QL4ED7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-R168QL4ED7');
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="inner">
+      <h1 style="margin:0;font-size:clamp(1.25rem,1rem + 1vw,1.75rem);"><a href="../index.html">JalabonSamaritain</a></h1>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <div class="nav" role="navigation" aria-label="Navigation principale">
+    <div class="navcontainer inner">
+      <div id="nav-list">
+        <a href="../index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+
+        <!-- Sélecteur de langue -->
+        <div class="lang-switcher">
+          <button
+            id="lang-toggle"
+            class="lang-toggle"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Switch language"
+          >
+            <img
+              src="../../images/translation_logo.svg"
+              alt="Switch language"
+              class="lang-icon"
+            >
+          </button>
+
+          <div class="lang-menu" aria-label="Switch language">
+            <button type="button" data-lang="fr" data-href="../../html_files/EK.html">
+              <span class="flag">🇫🇷</span>
+              <span>Français</span>
+            </button>
+            <button type="button" data-lang="en" data-href="EK.html">
+              <span class="flag">🇬🇧</span>
+              <span>English</span>
+            </button>
+          </div>
+        </div>
+        <!-- Fin sélecteur de langue -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Sidebar (gauche fenêtre, n’apparaît que si assez de place) -->
+  <aside class="sidebar" aria-label="Sommaire EK (desktop)">
+    <ul>
+      <li class="indent_semestre bold"><a href="#livres_entretien">📘 Interview books</a></li>
+
+      <br>
+
+      <li class="indent_semestre bold"><a href="#bloc_probas">Probabilities blocks</a></li>
+      <li><a href="#proba_num">Numerical Probability</a></li>
+      <li><a href="#controle_sto">Stochastic control</a></li>
+      <li><a href="#processus_diffusion">Diffusion processes</a></li>
+      <li><a href="#machine_deep_learning">Machine & Deep Learning</a></li>
+
+      <br>
+
+      <li class="indent_semestre bold"><a href="#bloc_finance">Finance blocks</a></li>
+      <li><a href="#econometrie_HFT">Econometrics / HFT</a></li>
+      <li><a href="#modelisation_sto">Stochastic Modelling</a></li>
+      <li><a href="#modeles_taux">Interest rates models</a></li>
+      <li><a href="#marches_theorie_fin">Financial markets and financial theory</a></li>
+      <li><a href="#mesures_risque_valeurs_extremes">Risk measures and extreme values</a></li>
+      <li><a href="#modeles_sauts">Jump models</a></li>
+      <li><a href="#regulation">Regulation</a></li>
+    </ul>
+  </aside>
+
+  <!-- ===== CONTENT ===== -->
+<main class="container_global">
+
+  <nav class="toc-mobile" aria-label="EK table of contents (mobile)">
+    <details open>
+      <summary>📚 Contents — go to…</summary>
+      <ul>
+        <li class="section-title"><a href="#livres_entretien">📘 Interview books</a></li>
+
+        <li class="section-title"><a href="#bloc_probas">Probability block</a></li>
+        <li><a href="#proba_num">Numerical probability</a></li>
+        <li><a href="#controle_sto">Stochastic control</a></li>
+        <li><a href="#processus_diffusion">Diffusion processes</a></li>
+        <li><a href="#machine_deep_learning">Machine & Deep Learning</a></li>
+
+        <li class="section-title"><a href="#bloc_finance">Finance block</a></li>
+        <li><a href="#econometrie_HFT">Econometrics / HFT</a></li>
+        <li><a href="#modelisation_sto">Stochastic modelling</a></li>
+        <li><a href="#modeles_taux">Interest rate models</a></li>
+        <li><a href="#marches_theorie_fin">Financial markets and financial theory</a></li>
+        <li><a href="#mesures_risque_valeurs_extremes">Risk measures and extreme values</a></li>
+        <li><a href="#modeles_sauts">Jump models</a></li>
+        <li><a href="#regulation">Regulation</a></li>
+      </ul>
+    </details>
+  </nav>
+
+  <h1>El Karoui Master</h1>
+
+  <!-- Interview books -->
+  <ul><h3 id="livres_entretien" class="ancre-decalage">📘 Useful books for quantitative interviews<span class="contrib-icon btn-mail" data-matiere="Livres entretiens">📤</span></h3></ul>
+  <div class="container">
+    <p>Here is a selection of books that I found particularly useful to prepare for quantitative finance interviews. Feel free to go through several of them depending on your profile (maths, coding, brainteasers, etc.).</p>
+    <p>However, in my experience, it is especially important to master the first four books.</p>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/bouzoubaa.pdf" target="_blank" rel="noopener noreferrer" class="premium"><strong>Bouzoubaa</strong> – Exotic Options and Hybrids <em>A Guide to Structuring, Pricing and Trading.</em> </a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/redbook.pdf" target="_blank" rel="noopener noreferrer" class="premium"><strong>Red Book</strong> – Heard on The Street: <em>Quantitative Questions from Wall Street Job Interviews.</em></a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/green_book.pdf" target="_blank" rel="noopener noreferrer" class="premium"><strong>Green Book</strong> – <em>A Practical Guide to Quantitative Finance Interviews.</em></a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/50_challenges_proba.pdf" target="_blank" rel="noopener noreferrer" class="premium"><strong>Blue Book</strong> – <em>50 Challenging Problems in Probability</em></a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/cut_the_knot.pdf" target="_blank" rel="noopener noreferrer"><strong>Cut-the-Knot</strong> – <em>Probability Riddles</em></a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/FAQ_of_Quant_Finance.pdf" target="_blank" rel="noopener noreferrer"><strong>The Wilmott</strong> – <em>Frequently Asked Questions in Quantitative Finance.</em></a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/prepare_coding_interviews.pdf" target="_blank" rel="noopener noreferrer"><em>Cracking the Coding Interview</em></a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/quant_job_interview_QA.pdf" target="_blank" rel="noopener noreferrer"><em>Quant Job Interview – Questions and Answers</em></a></li>
+    </ul>
+  </div>
+
+  <!-- ===== Probability block ===== -->
+  <ul><h2 id="bloc_probas" class="ancre-decalage">Probability block</h2></ul>
+
+  <!-- Numerical probability -->
+  <ul><h3 id="proba_num" class="ancre-decalage">Numerical probability (Gilles Pagès x Vincent Lemaire)<span class="contrib-icon btn-mail" data-matiere="Probabilités numériques">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Course material:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/proba_num_cours.pdf" target="_blank" rel="noopener noreferrer">Main course notes</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/proba_num_poly.pdf" target="_blank" rel="noopener noreferrer">Course handout</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/proba_num_fiche_QMC.pdf" target="_blank" rel="noopener noreferrer">QMC summary sheet</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/proba_num_livre_pages.pdf" target="_blank" rel="noopener noreferrer">Gilles Pagès’ book (extracts)</a></li>
+    </ul>
+    <br>
+    <li><b>Tutorials / exercise sheets:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/proba_num_TD1_projets_exos.pdf" target="_blank" rel="noopener noreferrer">TD1 – Projects & exercises</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/proba_num_TD2.pdf" target="_blank" rel="noopener noreferrer">TD2</a></li>
+    </ul>
+    <br>
+    <li><b>Mini-projects and past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/Nano_Projet_1_Theo_JALABERT.html" target="_blank" rel="noopener noreferrer">Nano Project 1 (HTML)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/Nano_Projet_1_Theo_JALABERT.ipynb" download>Nano Project 1 (Notebook)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/Nano_Projet_3_Theo_JALABERT.html" target="_blank" rel="noopener noreferrer">Nano Project 3 (HTML)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/Nano_Projet_3_Theo_JALABERT.ipynb" download>Nano Project 3 (Notebook)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2008_rattrapages.pdf" target="_blank" rel="noopener noreferrer">2008 retake exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2008.pdf" target="_blank" rel="noopener noreferrer">2008 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2009_rattrapages.pdf" target="_blank" rel="noopener noreferrer">2009 retake exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2009.pdf" target="_blank" rel="noopener noreferrer">2009 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2010_rattrapages.pdf" target="_blank" rel="noopener noreferrer">2010 retake exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2010.pdf" target="_blank" rel="noopener noreferrer">2010 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2011.pdf" target="_blank" rel="noopener noreferrer">2011 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2012_rattrapages.pdf" target="_blank" rel="noopener noreferrer">2012 retake exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2013.pdf" target="_blank" rel="noopener noreferrer">2013 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2015.pdf" target="_blank" rel="noopener noreferrer">2015 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2022_rattrapages.pdf" target="_blank" rel="noopener noreferrer">2022 retake exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2022.pdf" target="_blank" rel="noopener noreferrer">2022 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2023.pdf" target="_blank" rel="noopener noreferrer">2023 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2024.pdf" target="_blank" rel="noopener noreferrer">2024 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/proba_num_annale_2025.pdf" target="_blank" rel="noopener noreferrer">2025 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/proba_num_annales.pdf" target="_blank" rel="noopener noreferrer">Collection of worked past exams</a></li>
+    </ul>
+  </div>
+
+  <!-- Stochastic control -->
+  <ul><h3 id="controle_sto" class="ancre-decalage">Convexity, optimisation and stochastic control (Idris Kharroubi)<span class="contrib-icon btn-mail" data-matiere="Contrôle stochastique">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Course material:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_cours.pdf" target="_blank" rel="noopener noreferrer">Main course notes</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly.pdf" target="_blank" rel="noopener noreferrer">Complete handout</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_touzi.pdf" target="_blank" rel="noopener noreferrer">Touzi handout</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_pham.pdf" target="_blank" rel="noopener noreferrer">Pham handout</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_chap1.pdf" target="_blank" rel="noopener noreferrer">Chapter 1</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_chap2.pdf" target="_blank" rel="noopener noreferrer">Chapter 2</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_chap3.pdf" target="_blank" rel="noopener noreferrer">Chapter 3</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_chap4.pdf" target="_blank" rel="noopener noreferrer">Chapter 4</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_chap5.pdf" target="_blank" rel="noopener noreferrer">Chapter 5</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_chap6.pdf" target="_blank" rel="noopener noreferrer">Chapter 6</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_chap7.pdf" target="_blank" rel="noopener noreferrer">Chapter 7</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_chap8.pdf" target="_blank" rel="noopener noreferrer">Chapter 8</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_poly_chap9.pdf" target="_blank" rel="noopener noreferrer">Chapter 9</a></li>
+    </ul>
+    <br>
+    <li><b>Summary sheets:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_fiche.pdf" target="_blank" rel="noopener noreferrer">Overview sheet</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_fiche_EDS_et_controle.pdf" target="_blank" rel="noopener noreferrer">SDE & control sheet</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_fiche_optimisation_sto.pdf" target="_blank" rel="noopener noreferrer">Stochastic optimisation sheet</a></li>
+    </ul>
+    <br>
+    <li><b>Tutorials / exercise sheets:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_TD1.pdf" target="_blank" rel="noopener noreferrer">TD1</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_TD1_2024.pdf" target="_blank" rel="noopener noreferrer">TD1 (2024 version)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_TD2.pdf" target="_blank" rel="noopener noreferrer">TD2</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_TD2_2024.pdf" target="_blank" rel="noopener noreferrer">TD2 (2024 version)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_TD3.pdf" target="_blank" rel="noopener noreferrer">TD3</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_TD4.pdf" target="_blank" rel="noopener noreferrer">TD4</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_TD5.pdf" target="_blank" rel="noopener noreferrer">TD5</a></li>
+    </ul>
+    <br>
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/controle_sto_annale_2024.pdf" target="_blank" rel="noopener noreferrer">2024 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/controle_sto_annale_2025.pdf" target="_blank" rel="noopener noreferrer">2025 exam</a></li>
+    </ul>
+  </div>
+
+  <!-- Diffusion processes -->
+  <ul><h3 id="processus_diffusion" class="ancre-decalage">Introduction to diffusion processes (Lorenzo Zambotti)<span class="contrib-icon btn-mail" data-matiere="Processus de diffusion">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Course material:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_cours.pdf" target="_blank" rel="noopener noreferrer">Main course notes</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_poly.pdf" target="_blank" rel="noopener noreferrer">Course handout</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_fiche.pdf" target="_blank" rel="noopener noreferrer">Summary sheet</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/proba_num_fiche_UI_Convergence_Martingales.pdf" target="_blank" rel="noopener noreferrer">UI & martingale convergence sheet</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/proba_num_fiche_sensibilites.pdf" target="_blank" rel="noopener noreferrer">Sensitivities sheet</a></li>
+    </ul>
+    <br>
+    <li><b>Tutorials / exercise sheets:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_TD0.pdf" target="_blank" rel="noopener noreferrer">TD0</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_TD1.pdf" target="_blank" rel="noopener noreferrer">TD1</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_TD2.pdf" target="_blank" rel="noopener noreferrer">TD2</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_TD3.pdf" target="_blank" rel="noopener noreferrer">TD3</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_TD4.pdf" target="_blank" rel="noopener noreferrer">TD4</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_TD5.pdf" target="_blank" rel="noopener noreferrer">TD5</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_TD6.pdf" target="_blank" rel="noopener noreferrer">TD6</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_TD7.pdf" target="_blank" rel="noopener noreferrer">TD7</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_solutions.pdf" target="_blank" rel="noopener noreferrer">Solutions</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_corrections.pdf" target="_blank" rel="noopener noreferrer">Worked solutions</a></li>
+    </ul>
+    <br>
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_annales.pdf" target="_blank" rel="noopener noreferrer">Miscellaneous past exams</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_annale_2023.pdf" target="_blank" rel="noopener noreferrer">2023 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_annale_2024.pdf" target="_blank" rel="noopener noreferrer">2024 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/processus_diffusion_annale_2025.pdf" target="_blank" rel="noopener noreferrer">2025 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/processus_diffusion_annales_elie.pdf" target="_blank" rel="noopener noreferrer">Past exams with solutions by Elie</a></li>
+    </ul>
+  </div>
+
+  <!-- Machine & Deep Learning -->
+  <ul><h3 id="machine_deep_learning" class="ancre-decalage">Machine Learning, neural networks and Deep Learning (Patrick Gallinari x Benedikt Wilbertz)<span class="contrib-icon btn-mail" data-matiere="Machine Learning & Deep Learning">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Course material:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/machine_learning_cours_week1.pdf" target="_blank" rel="noopener noreferrer">Machine Learning – Week 1</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/machine_learning_cours_week2.pdf" target="_blank" rel="noopener noreferrer">Machine Learning – Week 2</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/machine_learning_cours_week3.pdf" target="_blank" rel="noopener noreferrer">Machine Learning – Week 3</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/machine_learning_cours_week4.pdf" target="_blank" rel="noopener noreferrer">Machine Learning – Week 4</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/deep_learning_cours.pdf" target="_blank" rel="noopener noreferrer">Deep Learning – Course</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/machine_deep_learning_fiche_ML.pdf" target="_blank" rel="noopener noreferrer">ML summary sheet</a></li>
+    </ul>
+    <br>
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/machine_deep_learning_annales_ML.pdf" target="_blank" rel="noopener noreferrer">Machine Learning past exams</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/machine_deep_learning_annales_deep.pdf" target="_blank" rel="noopener noreferrer">Deep Learning past exams</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/machine_deep_learning_annale_deep_2022.pdf" target="_blank" rel="noopener noreferrer">Deep Learning exam 2022</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/machine_deep_learning_annale_deep_2023.pdf" target="_blank" rel="noopener noreferrer">Deep Learning exam 2023</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/machine_deep_learning_annale_ML_2023.pdf" target="_blank" rel="noopener noreferrer">Machine Learning exam 2023</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/machine_deep_learning_annale_2024.pdf" target="_blank" rel="noopener noreferrer">2024 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/machine_deep_learning_annale_questions_ML.docx" target="_blank" rel="noopener noreferrer">Sample exam questions (.docx)</a></li>
+    </ul>
+  </div>
+
+  <!-- ===== Finance block ===== -->
+  <ul><h2 id="bloc_finance" class="ancre-decalage">Finance block</h2></ul>
+
+  <!-- Econometrics / HFT -->
+  <ul><h3 id="econometrie_HFT" class="ancre-decalage">Econometrics and High-Frequency Trading (Mathieu Rosenbaum)<span class="contrib-icon btn-mail" data-matiere="Économétrie & HFT">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Course material:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/HFT_slides_seance1.pdf" target="_blank" rel="noopener noreferrer">Slides – Session 1</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/HFT_slides_seance1.2.pdf" target="_blank" rel="noopener noreferrer">Slides – Session 1.2</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/HFT_slides_seance2.pdf" target="_blank" rel="noopener noreferrer">Slides – Session 2</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/HFT_slides_seance3.pdf" target="_blank" rel="noopener noreferrer">Slides – Session 3</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/HFT_slides_seance4.pdf" target="_blank" rel="noopener noreferrer">Slides – Session 4</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/HFT_slides_seance5.pdf" target="_blank" rel="noopener noreferrer">Slides – Session 5</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/HFT_fiche.pdf" target="_blank" rel="noopener noreferrer">HFT summary sheet</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/econometrie_HFT_fiche.pdf" target="_blank" rel="noopener noreferrer">Econometrics sheet 1</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/econometrie_HFT_fiche2.pdf" target="_blank" rel="noopener noreferrer">Econometrics sheet 2</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/econometrie_fiche_microstructure.pdf" target="_blank" rel="noopener noreferrer">Market microstructure sheet</a></li>
+    </ul>
+    <br>
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/econometrie_HFT_annale_2021.pdf" target="_blank" rel="noopener noreferrer">2021 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/econometrie_HFT_2023.pdf" target="_blank" rel="noopener noreferrer">2023 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/econometrie_HFT_annale_2022_rattrapage.pdf" target="_blank" rel="noopener noreferrer">2022 retake exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/econometrie_HFT_annale_2024.pdf" target="_blank" rel="noopener noreferrer">2024 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/econometrie_HFT_annale_2025.pdf" target="_blank" rel="noopener noreferrer">2025 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/econometrie_annale_questions.pdf" target="_blank" rel="noopener noreferrer">Sample questions</a></li>
+    </ul>
+  </div>
+
+  <!-- Stochastic modelling -->
+  <ul><h3 id="modelisation_sto" class="ancre-decalage">Stochastic modelling of derivatives (Huyen Pham x Mathieu Garcin)<span class="contrib-icon btn-mail" data-matiere="Modélisation stochastique des produits dérivés">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Tutorials / TD:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modelisation_sto_TD1.pdf" target="_blank" rel="noopener noreferrer">TD1</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modelisation_sto_TD2.pdf" target="_blank" rel="noopener noreferrer">TD2</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modelisation_sto_TD3.pdf" target="_blank" rel="noopener noreferrer">TD3</a></li>
+    </ul>
+    <br>
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/modelisation_sto_annale_2025.pdf" target="_blank" rel="noopener noreferrer">2025 exam</a></li>
+    </ul>
+    <br>
+    <li><b>Course material (Gobet):</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W1-Slides-IntroCoursMaster2021-22.pdf" target="_blank" rel="noopener noreferrer">Slides – Intro to the Master course</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W1-Slides-ModelisationGBM-PortefeuilleAutofi-2021-22.pdf" target="_blank" rel="noopener noreferrer">Slides – GBM and self-financing portfolio</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W1-Notes-ModelisationGBM-PortefeuilleAutofi-2021-22.pdf" target="_blank" rel="noopener noreferrer">Notes – GBM and self-financing portfolio</a></li>
+
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W2_Slides_BlackScholes_2021-22.pdf" target="_blank" rel="noopener noreferrer">Slides – Black-Scholes</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W2_Notes_BlackScholes_2021-22.pdf" target="_blank" rel="noopener noreferrer">Notes – Black-Scholes</a></li>
+
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W3_Diapo_AlternativeModelling_2021-22.pdf" target="_blank" rel="noopener noreferrer">Slides – Alternative modelling</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W3_Notes_AlternativeModelling_2021-22.pdf" target="_blank" rel="noopener noreferrer">Notes – Alternative modelling</a></li>
+
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W4-Slides.pdf" target="_blank" rel="noopener noreferrer">Slides – Week 4</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W4-Notes.pdf" target="_blank" rel="noopener noreferrer">Notes – Week 4</a></li>
+
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W5_Slides_ModelisationPricingLineaireNonlineaire_2021-22.pdf" target="_blank" rel="noopener noreferrer">Slides – Linear / non-linear pricing</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W5_Notes_ModelisationPricingLineaireNonlineaire_2021-22.pdf" target="_blank" rel="noopener noreferrer">Notes – Linear / non-linear pricing</a></li>
+
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W6_Slides_ChgtNumeraire_2021-22-reduit.pdf" target="_blank" rel="noopener noreferrer">Slides – Change of numéraire</a></li>
+
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/W7_Slides_MarchesInternationaux_2021-22.pdf" target="_blank" rel="noopener noreferrer">Slides – International markets</a></li>
+    </ul>
+  </div>
+
+  <!-- Interest rate models -->
+  <ul><h3 id="modeles_taux" class="ancre-decalage">Interest rate models (Nicole El Karoui x Caroline Hillairet)<span class="contrib-icon btn-mail" data-matiere="Modèles de taux">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Tutorials / TD:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_TD_Nicole_El_Karoui.pdf" target="_blank" rel="noopener noreferrer">TD – Nicole El Karoui</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_TD_Zorana_Grbac.pdf" target="_blank" rel="noopener noreferrer">TD – Zorana Grbac</a></li>
+    </ul>
+    <br>
+    <li><b>Course material:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_Slides_options_LIBOR_Nicole_El_Karoui.pdf" target="_blank" rel="noopener noreferrer">Slides – LIBOR options (El Karoui)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_Slides_Swaption_Nicole_El_Karoui.pdf" target="_blank" rel="noopener noreferrer">Slides – Swaptions (El Karoui)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_Slides_Swaption_Exo_Nicole_El_Karoui.pdf" target="_blank" rel="noopener noreferrer">Slides – Swaption exercises (El Karoui)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_poly_Nicole_El_Karoui.pdf" target="_blank" rel="noopener noreferrer">Course notes (El Karoui)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_Slides_New_Taux_LIBOR_Nicole_El_Karoui.pdf" target="_blank" rel="noopener noreferrer">Slides – New LIBOR rates (El Karoui)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_Slides_Forward_Nicole_El_Karoui.pdf" target="_blank" rel="noopener noreferrer">Slides – Forwards (El Karoui)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_livre_Brigo_Mercurio.pdf" target="_blank" rel="noopener noreferrer">Brigo & Mercurio book</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_cours1_hillairet.pdf" target="_blank" rel="noopener noreferrer">Lecture 1 (Hillairet)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_cours2_hillairet.pdf" target="_blank" rel="noopener noreferrer">Lecture 2 (Hillairet)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_cours3_hillairet.pdf" target="_blank" rel="noopener noreferrer">Lecture 3 (Hillairet)</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_fiche.pdf" target="_blank" rel="noopener noreferrer">Summary sheet</a></li>
+    </ul>
+    <br>
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/modeles_taux_annale_2023.pdf" target="_blank" rel="noopener noreferrer">2023 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/modeles_taux_annale_2025.pdf" target="_blank" rel="noopener noreferrer">2025 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_annales.pdf" target="_blank" rel="noopener noreferrer">Collection of worked past exams</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_taux_exams_hillairet_ENSAE.pdf" target="_blank" rel="noopener noreferrer">Hillairet ENSAE exams</a></li>
+    </ul>
+  </div>
+
+  <!-- Financial markets and financial theory -->
+  <ul><h3 id="marches_theorie_fin" class="ancre-decalage">Financial markets and financial theory (Camille De Langhe x Vladimir Lozeve)<span class="contrib-icon btn-mail" data-matiere="Marchés financiers et Théorie financière">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Course material:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/theorie_fin_1_principle_of_macroeconomics.pdf" target="_blank" rel="noopener noreferrer">1. Principles of Macroeconomics</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/theorie_fin_2_Intoduction_to_Macro_Data.pdf" target="_blank" rel="noopener noreferrer">2. Introduction to Macro Data</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/theorie_fin_6_Money.pdf" target="_blank" rel="noopener noreferrer">6. Money</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/theorie_fin_7_IS-LM.pdf" target="_blank" rel="noopener noreferrer">7. IS-LM</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/theorie_fin_IS-LM_Modele-lineaire.pdf" target="_blank" rel="noopener noreferrer">IS-LM linear model</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/theorie_fin_Debt_Macro_Model.pdf" target="_blank" rel="noopener noreferrer">Debt Macro Model</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/theorie_fin_Growth_Rates.pdf" target="_blank" rel="noopener noreferrer">Growth Rates</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_fin_part1.pdf" target="_blank" rel="noopener noreferrer">Financial markets – Part 1</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_fin_part2.pdf" target="_blank" rel="noopener noreferrer">Financial markets – Part 2</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_fin_part3.pdf" target="_blank" rel="noopener noreferrer">Financial markets – Part 3</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_theorie_fin_fiche_macroeconomie.pdf" target="_blank" rel="noopener noreferrer">Macroeconomics summary sheet</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_theorie_fin_fiche_marche_de_taux.pdf" target="_blank" rel="noopener noreferrer">Interest rate market summary sheet</a></li>
+    </ul>
+    <br>
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_theorie_fin_annales.pdf" target="_blank" rel="noopener noreferrer">Collection of worked past exams</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_theorie_fin_annales_antoine.pdf" target="_blank" rel="noopener noreferrer">Antoine’s past exams</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_theorie_fin_annale_2022.pdf" target="_blank" rel="noopener noreferrer">2022 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_theorie_fin_annale_2023.pdf" target="_blank" rel="noopener noreferrer">2023 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/marches_theorie_fin_annale_2024.pdf" target="_blank" rel="noopener noreferrer">2024 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/marches_theorie_fin_annale_2025.pdf" target="_blank" rel="noopener noreferrer">2025 exam</a></li>
+    </ul>
+  </div>
+
+  <!-- Risk measures and extreme values -->
+  <ul><h3 id="mesures_risque_valeurs_extremes" class="ancre-decalage">Risk measures and extreme values (Aurélien Alfonsi x Lokman Abbas-Turki)<span class="contrib-icon btn-mail" data-matiere="Mesures de risques et valeurs extrêmes">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/mesures_risque_annales.pdf" target="_blank" rel="noopener noreferrer">Risk measures – Collection of past exams</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/valeurs_extremes_annales.pdf" target="_blank" rel="noopener noreferrer">Extreme values – Collection of past exams</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/mesures_risque_valeurs_extremes_annale_2024.pdf" target="_blank" rel="noopener noreferrer">2024 exam</a></li>
+    </ul>
+  </div>
+
+  <!-- Jump models -->
+  <ul><h3 id="modeles_sauts" class="ancre-decalage">Jump models (Thomas Duquesne)<span class="contrib-icon btn-mail" data-matiere="Modèles de sauts">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Course material:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_sauts_cours.pdf" target="_blank" rel="noopener noreferrer">Full course notes</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_sauts_poly.pdf" target="_blank" rel="noopener noreferrer">Handout</a></li>
+    </ul>
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/modeles_sauts_annale_2025.pdf" target="_blank" rel="noopener noreferrer">2025 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/modeles_sauts_annales.pdf" target="_blank" rel="noopener noreferrer">Collection of worked past exams</a></li>
+    </ul>
+  </div>
+
+  <!-- Regulation -->
+  <ul><h3 id="regulation" class="ancre-decalage">What financial crises teach us: evolution of practices and regulation (Nancy Yuk)<span class="contrib-icon btn-mail" data-matiere="Régulation">📤</span></h3></ul>
+  <div class="container">
+    <li><b>Course material:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/regulation_cours_slides.pdf" target="_blank" rel="noopener noreferrer">Course slides</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/regulation_cours_etude_cas.pdf" target="_blank" rel="noopener noreferrer">Case study</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/regulation_fiche.pdf" target="_blank" rel="noopener noreferrer">Summary sheet</a></li>
+    </ul>
+    <li><b>Past exams:</b></li>
+    <ul>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek/regulation_annale_2021.pdf" target="_blank" rel="noopener noreferrer">2021 exam</a></li>
+      <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_ek_fix/regulation_annale_2025.pdf" target="_blank" rel="noopener noreferrer">2025 exam</a></li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  Theo Jalabert | All rights reserved © 2025
+</footer>
+
+<script>
+  // Prevent automatic jump to an anchor on load
+  (function () {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (location.hash) {
+      history.replaceState(null, '', location.pathname + location.search);
+      window.scrollTo(0, 0);
+    }
+  })();
+
+  // Mobile table of contents: closed by default + auto-close + smooth scroll (without changing URL)
+  document.addEventListener('DOMContentLoaded', () => {
+    const details = document.querySelector('.toc-mobile details');
+    if (details) details.open = false;
+
+    document.querySelectorAll('.toc-mobile a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (!target) return;
+
+        if (details) details.open = false;
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Accessibility option: move focus to the target heading (if focusable)
+        if (typeof target.tabIndex === 'number') {
+          target.tabIndex = -1;
+          target.focus({ preventScroll: true });
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  document.querySelectorAll('.btn-mail').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const matiere = btn.dataset.matiere;
+      let sujet, corps;
+
+      if (matiere === "Livres entretiens") {
+        sujet = encodeURIComponent(`Contribution – El Karoui Master: ${matiere}`);
+        corps = encodeURIComponent(
+`Hi Théo,
+
+I would like to suggest an update regarding the interview books for the El Karoui Master.
+
+Here are the details:
+    - Type of content (new material, error correction, other):
+    - File name(s):
+    - Remarks or comments:`
+        );
+      } else {
+        sujet = encodeURIComponent(`Contribution – El Karoui Master: ${matiere}`);
+        corps = encodeURIComponent(
+`Hi Théo,
+
+I would like to suggest an update for the "${matiere}" section of the El Karoui Master.
+
+Here are the details:
+    - Type of content (new material, error correction, other):
+    - File name(s):
+    - Remarks or comments:`
+        );
+      }
+
+      window.location.href = `mailto:jalabert.theo@gmail.com?subject=${sujet}&body=${corps}`;
+    });
+  });
+</script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggle = document.getElementById('lang-toggle');
+      const menu = document.querySelector('.lang-menu');
+
+      if (!toggle || !menu) return;
+
+      // Ouvrir / fermer le menu au clic sur l'icône
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isOpen = menu.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      // Gestion du clic sur une langue
+      menu.addEventListener('click', function (e) {
+        const btn = e.target.closest('button[data-lang]');
+        if (!btn) return;
+        const lang = btn.dataset.lang;
+
+        console.log('Langue choisie :', lang);
+        // TODO : ici tu pourras brancher la vraie logique de traduction
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+
+      // Fermer le menu si on clique en dehors
+      document.addEventListener('click', function () {
+        if (menu.classList.contains('open')) {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const langButtons = document.querySelectorAll('.lang-menu button[data-href]');
+
+        langButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-href');
+            if (target) {
+              window.location.href = target;
+            }
+          });
+        });
+      });
+  </script>
+
+</body>
+</html>

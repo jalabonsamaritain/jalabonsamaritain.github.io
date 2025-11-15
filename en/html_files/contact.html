@@ -111,8 +111,9 @@
 
     /* Content */
     main.container_global{flex:1;width:min(100%,70rem);margin-inline:auto;padding:var(--space);margin-top:var(--space);}
-    .container_global p{font-size:clamp(1rem,.9rem+.4vw,1.125rem);margin:1em 0;}
-    h1{text-align:center;font-size:clamp(1.5rem,1rem+2vw,2.25rem);margin:.5em 0;}
+    .container_global h3{ text-align:center; margin:0 0 1rem; font-size:clamp(1.05rem,1rem + .6vw,1.25rem); }
+    .contact-list{ text-align:center; font-size:clamp(1rem,.9rem+.4vw,1.125rem); }
+    .contact-list p{ margin:.6rem 0; }
 
     /* Footer */
     footer{background:var(--brand-1);color:#fff;text-align:center;padding:14px 0;margin-top:auto;}
@@ -142,8 +143,8 @@
   <div class="nav" role="navigation" aria-label="Navigation principale">
     <div class="container inner">
       <div id="nav-list">
-        <a href="../index.html">Accueil</a>
-        <a href="about.html">À propos</a>
+        <a href="../index.html">Home</a>
+        <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
 
         <!-- Sélecteur de langue -->
@@ -154,21 +155,21 @@
             type="button"
             aria-haspopup="true"
             aria-expanded="false"
-            title="Changer de langue"
+            title="Switch language"
           >
             <img
-              src="../images/translation_logo.svg"
-              alt="Changer de langue"
+              src="../../images/translation_logo.svg"
+              alt="Switch language"
               class="lang-icon"
             >
           </button>
 
-          <div class="lang-menu" aria-label="Choisir la langue">
-            <button type="button" data-lang="fr" data-href="about.html">
+          <div class="lang-menu" aria-label="Switch language">
+            <button type="button" data-lang="fr" data-href="../../html_files/contact.html">
               <span class="flag">🇫🇷</span>
               <span>Français</span>
             </button>
-            <button type="button" data-lang="en" data-href="../en/html_files/about.html">
+            <button type="button" data-lang="en" data-href="contact.html">
               <span class="flag">🇬🇧</span>
               <span>English</span>
             </button>
@@ -181,66 +182,67 @@
 
   <!-- Main content -->
   <main class="container_global">
-    <p>Salut ! Je m'appelle <strong>Théo Jalabert</strong>.</p>
-
-    <p>Je suis Quant Analyst chez NatWest Markets, au sein de l’équipe Structured Rates à Londres. Mon travail consiste à modéliser la valorisation et le risque de produits dérivés de taux et d’inflation complexes, tout en fournissant des outils sur mesure aux desks de trading (EUR/GBP options, inflation, investor products).</p>
-
-    <p>Diplômé de l’ISFA (major de promotion pendant les 3 années de formation), j’ai poursuivi ma spécialisation en finance quantitative à l’<a href="https://www.polytechnique.edu/" target="_blank" rel="noopener noreferrer">École Polytechnique</a> et à <a href="https://www.sorbonne-universite.fr/" target="_blank" rel="noopener noreferrer">Sorbonne Université</a>, dans le cadre du <a href="https://finance.math.upmc.fr/#" target="_blank" rel="noopener noreferrer">Master Probabilités et Finance (ex-DEA El Karoui)</a>.</p>
+    <h3>If you wish to contact me, you can do so via:</h3>
+    <div class="contact-list">
+      <p>Email : <a href="mailto:jalabert.theo@gmail.com">jalabert.theo@gmail.com</a></p>
+      <p>LinkedIn : <a href="https://www.linkedin.com/in/theojalabert/" target="_blank" rel="noopener noreferrer">Théo Jalabert | LinkedIn Profile</a></p>
+    </div>
   </main>
 
   <!-- Footer -->
   <footer>
-    Théo Jalabert | Tous droits réservés © 2025
+    Theo Jalabert | All rights reserved © 2025
   </footer>
 
   <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const toggle = document.getElementById('lang-toggle');
-        const menu = document.querySelector('.lang-menu');
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggle = document.getElementById('lang-toggle');
+      const menu = document.querySelector('.lang-menu');
 
-        if (!toggle || !menu) return;
+      if (!toggle || !menu) return;
 
-        // Ouvrir / fermer le menu au clic sur l'icône
-        toggle.addEventListener('click', function (e) {
-          e.stopPropagation();
-          const isOpen = menu.classList.toggle('open');
-          toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        });
-
-        // Gestion du clic sur une langue
-        menu.addEventListener('click', function (e) {
-          const btn = e.target.closest('button[data-lang]');
-          if (!btn) return;
-          const lang = btn.dataset.lang;
-
-          console.log('Langue choisie :', lang);
-          // TODO : ici tu pourras brancher la vraie logique de traduction
-          menu.classList.remove('open');
-          toggle.setAttribute('aria-expanded', 'false');
-        });
-
-        // Fermer le menu si on clique en dehors
-        document.addEventListener('click', function () {
-          if (menu.classList.contains('open')) {
-            menu.classList.remove('open');
-            toggle.setAttribute('aria-expanded', 'false');
-          }
-        });
+      // Ouvrir / fermer le menu au clic sur l'icône
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isOpen = menu.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       });
 
-          document.addEventListener('DOMContentLoaded', () => {
-          const langButtons = document.querySelectorAll('.lang-menu button[data-href]');
+      // Gestion du clic sur une langue
+      menu.addEventListener('click', function (e) {
+        const btn = e.target.closest('button[data-lang]');
+        if (!btn) return;
+        const lang = btn.dataset.lang;
 
-          langButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-              const target = btn.getAttribute('data-href');
-              if (target) {
-                window.location.href = target;
-              }
-            });
+        console.log('Langue choisie :', lang);
+        // TODO : ici tu pourras brancher la vraie logique de traduction
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+
+      // Fermer le menu si on clique en dehors
+      document.addEventListener('click', function () {
+        if (menu.classList.contains('open')) {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const langButtons = document.querySelectorAll('.lang-menu button[data-href]');
+
+        langButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-href');
+            if (target) {
+              window.location.href = target;
+            }
           });
         });
-    </script>
+      });
+  </script>
+
 
 </body>
 </html>

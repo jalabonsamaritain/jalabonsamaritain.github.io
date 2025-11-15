@@ -56,10 +56,76 @@
       display:flex; align-items:center; justify-content:center; min-height:var(--nav-h);
     }
     #nav-list{
-      display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; width:100%;
+      display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; margin:0 auto;
     }
     #nav-list a{ color:#fff; padding:10px 12px; border-radius:6px; font-size:clamp(.95rem,.9rem + .2vw,1rem); }
     #nav-list a:hover{ background:rgba(255,255,255,.15); }
+
+    /* ===== Sélecteur de langue ===== */
+    .lang-switcher {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle {
+      background: transparent;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle:hover {
+      background: rgb(255 255 255 / .12);
+    }
+
+    .lang-icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .lang-menu {
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: #fff;
+      color: #222;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      padding: 6px 0;
+      min-width: 150px;
+      display: none;
+      z-index: 30;
+    }
+
+    .lang-menu.open {
+      display: block;
+    }
+
+    .lang-menu button {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .lang-menu button:hover {
+      background: #eef2ff;
+    }
+
+    .lang-menu .flag {
+      font-size: 1.1rem;
+    }
 
     /* ===== Colonne principale (décalée à droite de la sidebar) ===== */
     main.container_global{
@@ -181,6 +247,12 @@
       background:#fff; border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.06);
       padding: 1.25rem 1.5rem; margin: 1rem 0;
     }
+    /* Conteneur de largeur générique */
+    .navcontainer{
+      width:min(100%, var(--container-w));
+      margin-inline:auto;
+      padding-inline: var(--space);
+    }
     table{ border-collapse: collapse; width:100%; }
     th, td{ border:1px solid #ddd; padding:8px; }
     th{ background:#f2f2f2; }
@@ -213,11 +285,41 @@
 
   <!-- Navigation -->
   <div class="nav" role="navigation" aria-label="Navigation principale">
-    <div class="inner">
+    <div class="navcontainer inner">
       <div id="nav-list">
         <a href="../index.html">Accueil</a>
         <a href="about.html">À propos</a>
         <a href="contact.html">Contact</a>
+
+        <!-- Sélecteur de langue -->
+        <div class="lang-switcher">
+          <button
+            id="lang-toggle"
+            class="lang-toggle"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Changer de langue"
+          >
+            <img
+              src="../images/translation_logo.svg"
+              alt="Changer de langue"
+              class="lang-icon"
+            >
+          </button>
+
+          <div class="lang-menu" aria-label="Choisir la langue">
+            <button type="button" data-lang="fr" data-href="l3_actuariat.html">
+              <span class="flag">🇫🇷</span>
+              <span>Français</span>
+            </button>
+            <button type="button" data-lang="en" data-href="../en/html_files/l3_actuariat.html">
+              <span class="flag">🇬🇧</span>
+              <span>English</span>
+            </button>
+          </div>
+        </div>
+        <!-- Fin sélecteur de langue -->
       </div>
     </div>
   </div>
@@ -599,5 +701,55 @@ Voici les informations :
     });
   });
   </script>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('lang-toggle');
+        const menu = document.querySelector('.lang-menu');
+
+        if (!toggle || !menu) return;
+
+        // Ouvrir / fermer le menu au clic sur l'icône
+        toggle.addEventListener('click', function (e) {
+          e.stopPropagation();
+          const isOpen = menu.classList.toggle('open');
+          toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        // Gestion du clic sur une langue
+        menu.addEventListener('click', function (e) {
+          const btn = e.target.closest('button[data-lang]');
+          if (!btn) return;
+          const lang = btn.dataset.lang;
+
+          console.log('Langue choisie :', lang);
+          // TODO : ici tu pourras brancher la vraie logique de traduction
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        });
+
+        // Fermer le menu si on clique en dehors
+        document.addEventListener('click', function () {
+          if (menu.classList.contains('open')) {
+            menu.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
+
+          document.addEventListener('DOMContentLoaded', () => {
+          const langButtons = document.querySelectorAll('.lang-menu button[data-href]');
+
+          langButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+              const target = btn.getAttribute('data-href');
+              if (target) {
+                window.location.href = target;
+              }
+            });
+          });
+        });
+    </script>
+
 </body>
 </html>

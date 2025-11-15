@@ -1,0 +1,894 @@
+<!-- L3 Actuariat -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/images/logo_isfa.png" type="image/png">
+  <title>JalabonSamaritain — L3 Actuariat</title>
+
+  <style>
+    /* ===== Reset & variables ===== */
+    *,*::before,*::after{ box-sizing:border-box; }
+    :root{
+      --brand-1:#235A8C;
+      --brand-2:#0E76A8;
+      --bg:#f4f4f4;
+      --space:clamp(12px,2vw,20px);
+      --header-h:64px;
+      --nav-h:48px;
+      --top-offset: calc(var(--header-h) + var(--nav-h) + 12px); /* pour ancres */
+      --container-w:70rem;
+      --sidebar-w:240px;
+    }
+
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0; min-height:100svh; display:flex; flex-direction:column;
+      font-family:ui-sans-serif,system-ui,Segoe UI,Calibri,Roboto,Arial;
+      line-height:1.5; background:var(--bg); color:#222;
+      /* PAS de padding-top: on a choisi header/nav toujours fixes */
+    }
+    a{ color:#0645AD; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .premium {
+        color: #DAA520; /* Doré intense */
+        font-size: 1.05em;
+        transition: color 0.3s ease;
+    }
+
+    .premium:hover {
+        color: #b8860b; /* Doré foncé au survol */
+        text-decoration: underline;
+    }
+
+    /* ===== Header & Nav (toujours fixes) ===== */
+    header{ background:var(--brand-1); color:#fff; position:fixed; top:0; left:0; right:0; z-index:20; }
+    header .inner{
+      display:flex; align-items:center; justify-content:center;
+      min-height:var(--header-h); padding-block:8px;
+    }
+    header a{ color:#fff; }
+
+    .nav{ background:var(--brand-2); color:#fff; position:fixed; top:var(--header-h); left:0; right:0; z-index:19; }
+    .nav .inner{
+      display:flex; align-items:center; justify-content:center; min-height:var(--nav-h);
+    }
+    #nav-list{
+      display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; margin:0 auto;
+    }
+    #nav-list a{ color:#fff; padding:10px 12px; border-radius:6px; font-size:clamp(.95rem,.9rem + .2vw,1rem); }
+    #nav-list a:hover{ background:rgba(255,255,255,.15); }
+
+    /* ===== Sélecteur de langue ===== */
+    .lang-switcher {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle {
+      background: transparent;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle:hover {
+      background: rgb(255 255 255 / .12);
+    }
+
+    .lang-icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .lang-menu {
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: #fff;
+      color: #222;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      padding: 6px 0;
+      min-width: 150px;
+      display: none;
+      z-index: 30;
+    }
+
+    .lang-menu.open {
+      display: block;
+    }
+
+    .lang-menu button {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .lang-menu button:hover {
+      background: #eef2ff;
+    }
+
+    .lang-menu .flag {
+      font-size: 1.1rem;
+    }
+
+    /* ===== Colonne principale (décalée à droite de la sidebar) ===== */
+    main.container_global{
+      width:min(100%, var(--container-w));
+      margin-inline:auto;
+      margin-top: calc(var(--header-h) + var(--nav-h) + 20px);
+      padding:var(--space);
+      flex:1;
+      /* Décalage pour laisser la sidebar fixe à gauche */
+      margin-left: calc(var(--sidebar-w) + 30px);
+    }
+
+    h1{ text-align:center; font-size:clamp(1.5rem,1rem+2vw,2.25rem); margin:.5em 0; }
+
+    /* ===== Sidebar (fixe par défaut ; cachée <1024px) ===== */
+    .sidebar{
+      position:fixed;
+      top: calc(var(--header-h) + var(--nav-h) + 8px);
+      bottom: 16px;
+      left: 16px;
+      width: var(--sidebar-w);
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      padding:12px;
+      overflow:auto;
+      z-index:10;
+    }
+    .sidebar ul{ list-style:none; margin:0; padding:0; }
+    .sidebar li{ margin:8px 0; }
+    .sidebar a{ color:#333; display:block; padding:6px 10px; border-radius:6px; }
+    .sidebar a:hover{ background:#f2f2f2; text-decoration:none; }
+    .indent_semestre{ font-weight:700; margin-top:6px; }
+
+    @media (max-width: 1023px){
+      .sidebar{ display:none; }
+      main.container_global{
+        width:94%;
+        margin-left:auto; margin-right:auto; /* on recentre quand la sidebar disparaît */
+      }
+    }
+
+    /* Sommaire mobile : suit le scroll ET passe sous header/nav fixes */
+    .toc-mobile{
+      display:block;
+      position:sticky;
+      top: calc(var(--header-h) + var(--nav-h) + 8px); /* <- clé pour mobile avec header/nav fixes */
+      z-index: 9;
+      margin: 12px 12px 16px;
+    }
+    .toc-mobile details{
+      background:#fff;
+      border-radius:10px;
+      padding:.75rem 1rem;
+      box-shadow:0 1px 6px rgba(0,0,0,.08);
+    }
+
+    .toc-mobile details > ul{
+      max-height: 50vh;               /* ~ moitié d’écran */
+      overflow: auto;                  /* active le scroll interne */
+      -webkit-overflow-scrolling: touch; /* scroll fluide iOS */
+      padding-right: 4px;              /* petit espace côté scrollbar */
+    }
+
+    .toc-mobile details[open]{
+      max-height: calc(56px + 50vh);   /* hauteur du summary + liste */
+      overflow: hidden;
+    }
+
+    .toc-mobile summary{ cursor:pointer; font-weight:700; }
+    .toc-mobile ul{ list-style:none; padding-left:0; margin:.6rem 0 0 0; }
+    .toc-mobile li{ margin:.4rem 0; }
+    .toc-mobile li.section-title a{ font-weight:700; }
+
+    /* Cacher le sommaire mobile en desktop */
+    @media (min-width: 1024px){
+      .toc-mobile{ display:none; }
+    }
+
+    /* ===== Icône de contribution 📤 ===== */
+    .contrib-icon {
+      font-size: 1.1em;
+      margin-left: 6px;
+      cursor: pointer;
+      position: relative;
+      color: #235A8C;
+      transition: transform 0.2s ease;
+    }
+
+    .contrib-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* Infobulle au survol */
+    .contrib-icon::after {
+      content: "Contribute";
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #235A8C;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .contrib-icon:hover::after {
+      opacity: 1;
+    }
+
+    /* ===== Blocs & tables ===== */
+    .container{
+      background:#fff; border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.06);
+      padding: 1.25rem 1.5rem; margin: 1rem 0;
+    }
+    /* Conteneur de largeur générique */
+    .navcontainer{
+      width:min(100%, var(--container-w));
+      margin-inline:auto;
+      padding-inline: var(--space);
+    }
+    table{ border-collapse: collapse; width:100%; }
+    th, td{ border:1px solid #ddd; padding:8px; }
+    th{ background:#f2f2f2; }
+    .detail{ text-indent:10px; }
+
+    /* ===== Ancrages (compensation header+nav fixes) ===== */
+    h2[id], h3[id]{ scroll-margin-top: var(--top-offset); }
+
+    /* ===== Footer ===== */
+    footer{ background:var(--brand-1); color:#fff; text-align:center; padding:14px 0; margin-top:auto; }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R168QL4ED7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-R168QL4ED7');
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="inner">
+      <h1 style="margin:0;font-size:clamp(1.25rem,1rem + 1vw,1.75rem);"><a href="../index.html">JalabonSamaritain</a></h1>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <div class="nav" role="navigation" aria-label="Navigation principale">
+    <div class="navcontainer inner">
+      <div id="nav-list">
+        <a href="../index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+
+        <!-- Sélecteur de langue -->
+        <div class="lang-switcher">
+          <button
+            id="lang-toggle"
+            class="lang-toggle"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Switch language"
+          >
+            <img
+              src="../../images/translation_logo.svg"
+              alt="Switch language"
+              class="lang-icon"
+            >
+          </button>
+
+          <div class="lang-menu" aria-label="Switch language">
+            <button type="button" data-lang="fr" data-href="../../html_files/l3_actuariat.html">
+              <span class="flag">🇫🇷</span>
+              <span>Français</span>
+            </button>
+            <button type="button" data-lang="en" data-href="l3_actuariat.html">
+              <span class="flag">🇬🇧</span>
+              <span>English</span>
+            </button>
+          </div>
+        </div>
+        <!-- Fin sélecteur de langue -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar (left side of the window, only appears if there is enough space) -->
+<aside class="sidebar" aria-label="L3 Summary (desktop)">
+  <ul>
+    <li class="indent_semestre"><a href="#semestre_1">Semester 1</a></li>
+    <li><a href="#droit_civil">Civil Law</a></li>
+    <li><a href="#droit_constit">Constitutional Law</a></li>
+    <li><a href="#integration">Integration</a></li>
+    <br>
+    <li class="indent_semestre"><a href="#semestre_2">Semester 2</a></li>
+    <li><a href="#droit_des_affaires">Business Law</a></li>
+    <li><a href="#fiscalite">Taxation</a></li>
+    <li><a href="#init_droit_assurance">Introduction to Insurance Law</a></li>
+    <li><a href="#init_operations_assurance">Introduction to Insurance Operations</a></li>
+    <li><a href="#maths_fi2">Financial Mathematics 2</a></li>
+    <li><a href="#micro_eco_2">Microeconomics 2</a></li>
+    <li><a href="#operations_banque">Banking Operations</a></li>
+    <li><a href="#probas2">Probability 2</a></li>
+  </ul>
+</aside>
+
+<!-- Main content -->
+<main class="container_global">
+  <!-- Mobile Table of Contents -->
+  <nav class="toc-mobile" aria-label="L3 Summary (mobile)">
+    <details>
+      <summary>📚 Summary – go to…</summary>
+      <ul>
+        <li class="section-title"><a href="#semestre_1">Semester 1</a></li>
+        <li><a href="#droit_civil">Civil Law</a></li>
+        <li><a href="#droit_constit">Constitutional Law</a></li>
+        <li><a href="#integration">Integration</a></li>
+        <li class="section-title"><a href="#semestre_2">Semester 2</a></li>
+        <li><a href="#droit_des_affaires">Business Law</a></li>
+        <li><a href="#fiscalite">Taxation</a></li>
+        <li><a href="#init_droit_assurance">Insurance Law</a></li>
+        <li><a href="#init_operations_assurance">Insurance Operations</a></li>
+        <li><a href="#maths_fi2">Financial Mathematics 2</a></li>
+        <li><a href="#micro_eco_2">Microeconomics 2</a></li>
+        <li><a href="#operations_banque">Banking Operations</a></li>
+        <li><a href="#probas2">Probability 2</a></li>
+      </ul>
+    </details>
+  </nav>
+
+  <h1>L3 Actuarial Science</h1>
+
+  <ul>
+    <!-- SEMESTER 1 -->
+    <h2 id="semestre_1">Semester 1</h2>
+
+    <!-- Civil Law -->
+    <ul><h3 id="droit_civil">Civil Law<span class="contrib-icon btn-mail" data-matiere="Civil Law">📤</span></h3></ul>
+    <div class="container">
+      <li><b> Full course: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_civil_cours.pdf" target="_blank" rel="noopener noreferrer">droit_civil_cours.pdf</a>
+      </li>
+      <br>
+      <li><b> General basics: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_civil_bases.pdf" target="_blank" rel="noopener noreferrer">droit_civil_bases.pdf</a>
+      </li>
+      <br>
+      <li><b> Summary sheet: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_civil_fiche.pdf" target="_blank" rel="noopener noreferrer">droit_civil_fiche.pdf</a>
+      </li>
+      <br>
+      <li><b> Covered topics: </b></li>
+      <p class="detail"><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_civil_theme2.pdf" target="_blank" rel="noopener noreferrer">Topic 2</a> – Sources of Civil Law</p>
+      <p class="detail"><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_civil_theme3.pdf" target="_blank" rel="noopener noreferrer">Topic 3</a> – Natural and Legal Persons</p>
+      <p class="detail"><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_civil_theme4.pdf" target="_blank" rel="noopener noreferrer">Topic 4</a> – Assets and Property Rights</p>
+    </div>
+
+    <!-- Constitutional Law -->
+    <ul><h3 id="droit_constit">Constitutional Law<span class="contrib-icon btn-mail" data-matiere="Constitutional Law">📤</span></h3></ul>
+    <div class="container">
+      <li><b> General introduction: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_constitutionnel_intro.pdf" target="_blank" rel="noopener noreferrer">droit_constitutionnel_intro.pdf</a>
+      </li>
+      <br>
+      <li><b> Chapters: </b></li>
+      <p class="detail"><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_constitutionnel_chap1.pdf" target="_blank" rel="noopener noreferrer">Chapter 1</a></p>
+      <p class="detail"><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_constitutionnel_chap2.pdf" target="_blank" rel="noopener noreferrer">Chapter 2</a></p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_constitutionnel_chap3.pdf" target="_blank" rel="noopener noreferrer">Chapter 3 – Part 1</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_constitutionnel_chap3_part2.pdf" target="_blank" rel="noopener noreferrer">Part 2</a>
+      </p>
+      <br>
+      <li><b> Revision sheets: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_constitutionnel_fiche_chap0_et_1.pdf" target="_blank" rel="noopener noreferrer">
+          Chapters 0 & 1
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_constitutionnel_fiche_chap2.pdf" target="_blank" rel="noopener noreferrer">
+          Chapter 2
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_constitutionnel_fiche_chap3.pdf" target="_blank" rel="noopener noreferrer">
+          Chapter 3
+        </a>
+      </p>
+    </div>
+
+    <!-- Integration -->
+    <ul><h3 id="integration">Integration<span class="contrib-icon btn-mail" data-matiere="Integration">📤</span></h3></ul>
+    <div class="container">
+      <li><b> Chapters: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_chap0.pdf" target="_blank" rel="noopener noreferrer">Chapter 0</a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_chap1.pdf" target="_blank" rel="noopener noreferrer">Chapter 1</a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_chap2.pdf" target="_blank" rel="noopener noreferrer">Chapter 2</a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_chap3.pdf" target="_blank" rel="noopener noreferrer">Chapter 3</a>
+      </p>
+      <br>
+      <li><b> Tutorials: </b></li>
+      <p class="detail">
+        Tutorial 1:
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_TD1.pdf" target="_blank" rel="noopener noreferrer">Exercises</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_TD1_correction.pdf" target="_blank" rel="noopener noreferrer">Solutions</a>
+      </p>
+      <p class="detail">
+        Tutorial 2:
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_TD2.pdf" target="_blank" rel="noopener noreferrer">Exercises</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_TD2_correction.pdf" target="_blank" rel="noopener noreferrer">Solutions</a>
+      </p>
+      <p class="detail">
+        Tutorial 3:
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_TD3.pdf" target="_blank" rel="noopener noreferrer">Exercises</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_TD3_correction.pdf" target="_blank" rel="noopener noreferrer">Solutions</a>
+      </p>
+      <p class="detail">
+        Tutorial 4:
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_TD4.pdf" target="_blank" rel="noopener noreferrer">Exercises</a>
+      </p>
+      <br>
+      <li><b> Revision sheet: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/integration_fiche_revision.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+      </li>
+    </div>
+
+    <!-- SEMESTER 2 -->
+    <h2 id="semestre_2">Semester 2</h2>
+
+    <!-- Business Law -->
+    <ul>
+      <h3 id="droit_des_affaires" class="ancre-decalage">Business Law<span class="contrib-icon btn-mail" data-matiere="Business Law">📤</span></h3>
+    </ul>
+
+    <div class="container">
+      <li><b> Part 1: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_des_affaires_partie_1.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+      </li>
+
+      <br>
+
+      <li><b> Part 2: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/droit_des_affaires_partie_2.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+      </li>
+    </div>
+
+    <!-- Taxation -->
+    <ul>
+      <h3 id="fiscalite" class="ancre-decalage">Taxation<span class="contrib-icon btn-mail" data-matiere="Taxation">📤</span></h3>
+    </ul>
+
+    <div class="container">
+      <li><b> Full course: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/fiscalite_cours.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+      </li>
+
+      <br>
+
+      <li><b> Presentation slides: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/fiscalite_slides.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+      </li>
+    </div>
+
+    <!-- Introduction to Insurance Law -->
+    <ul>
+      <h3 id="init_droit_assurance" class="ancre-decalage">Introduction to Insurance Law<span class="contrib-icon btn-mail" data-matiere="Introduction to Insurance Law">📤</span></h3>
+    </ul>
+
+    <div class="container">
+      <li><b> Course: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/initiation_droit_assurance_cours_droit_des_assurances.pdf" target="_blank" rel="noopener noreferrer">Insurance Law</a>
+      </li>
+
+      <br>
+
+      <li><b> Case study: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/initiation_droit_assurance_etude_de_cas.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+      </li>
+    </div>
+
+    <!-- Introduction to Insurance Operations -->
+    <ul>
+      <h3 id="init_operations_assurance" class="ancre-decalage">Introduction to Insurance Operations<span class="contrib-icon btn-mail" data-matiere="Introduction to Insurance Operations">📤</span></h3>
+    </ul>
+
+    <div class="container">
+      <li><b> Sheets: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/initiation_operations_assurance_fiches_questions.pdf" target="_blank" rel="noopener noreferrer">Questions & Sheets</a>
+      </li>
+
+      <br>
+
+      <li><b> Past exams: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/initiation_operations_assurance_annales.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+      </li>
+    </div>
+
+    <!-- Financial Mathematics 2 -->
+    <ul>
+      <h3 id="maths_fi2" class="ancre-decalage">Financial Mathematics 2<span class="contrib-icon btn-mail" data-matiere="Financial Mathematics 2">📤</span></h3>
+    </ul>
+
+    <div class="container">
+      <li><b> Course: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/maths_fin_2_cours.pdf" target="_blank" rel="noopener noreferrer">Main PDF</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/maths_fin_2_cours_adri.pdf" target="_blank" rel="noopener noreferrer">Adri’s Version</a>
+      </li>
+
+      <br>
+
+      <li><b> Sheets and notes: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/maths_fin_2_note_28042022.pdf" target="_blank" rel="noopener noreferrer">Note 28/04/2022</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/maths_fin_2_fiche_revision.pdf" target="_blank" rel="noopener noreferrer">Revision sheet</a>
+      </li>
+
+      <br>
+
+      <li><b> Questions: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/maths_fin_2_questions_partiel.pdf" target="_blank" rel="noopener noreferrer">Midterm questions</a>
+      </li>
+
+      <br>
+
+      <li><b> Tutorials: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/maths_fin_2_TD6_exercices_calcul_obligataire.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 6 – Bond pricing
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/maths_fin_2_TD7_duration_et_immunisation.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 7 – Duration & Immunisation
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/maths_fin_2_TD8_elements_sur_la_STTI.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 8 – Elements on STTI
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/maths_fin_2_TD10_les_swaps.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 10 – Swaps
+        </a>
+      </p>
+    </div>
+
+    <!-- Microeconomics 2 -->
+    <ul>
+      <h3 id="micro_eco_2" class="ancre-decalage">Microeconomics 2<span class="contrib-icon btn-mail" data-matiere="Microeconomics 2">📤</span></h3>
+    </ul>
+
+    <div class="container">
+      <li><b> Notes and additional material: </b>
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/micro_economie_2_note_10052022.pdf" target="_blank" rel="noopener noreferrer">Note 10/05/2022</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/micro_economie_2_exercices_supplementaires_le_producteur.pdf" target="_blank" rel="noopener noreferrer">
+          Additional exercises – Producer theory
+        </a>
+      </li>
+
+      <br>
+
+      <li><b> Tutorials: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/micro_economie_2_TD1.pdf" target="_blank" rel="noopener noreferrer">Tutorial 1</a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/micro_economie_2_TD_S2.pdf" target="_blank" rel="noopener noreferrer">
+          Semester 2 tutorials
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/micro_economie_2_correction_TD2.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 2 – Solutions
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/micro_economie_2_correction_fin_TD_theorie_des_jeux.pdf" target="_blank" rel="noopener noreferrer">
+          Final solutions – Game theory
+        </a>
+      </p>
+    </div>
+
+    <!-- Banking Operations -->
+    <ul>
+      <h3 id="operations_banque" class="ancre-decalage">Banking Operations<span class="contrib-icon btn-mail" data-matiere="Banking Operations">📤</span></h3>
+    </ul>
+
+    <div class="container">
+      <li><b> Lecture notes: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/operation_de_banque_note_02052022.pdf" target="_blank" rel="noopener noreferrer">
+          Note 02/05/2022
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/operation_de_banque_note_07052022.pdf" target="_blank" rel="noopener noreferrer">
+          Note 07/05/2022
+        </a>
+      </p>
+
+      <br>
+
+      <li><b> Q&A: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/operation_de_banque_questions_reponses.pdf" target="_blank" rel="noopener noreferrer">
+          FAQ
+        </a>
+      </p>
+    </div>
+
+    <!-- Probability 2 -->
+    <ul>
+      <h3 id="probas2" class="ancre-decalage">Probability 2<span class="contrib-icon btn-mail" data-matiere="Probability 2">📤</span></h3>
+    </ul>
+
+    <div class="container">
+      <li><b> Course and summaries: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_cours.pdf" target="_blank" rel="noopener noreferrer">
+          Course notes
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_resume.pdf" target="_blank" rel="noopener noreferrer">
+          Summary
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_fiche_de_revisions.pdf" target="_blank" rel="noopener noreferrer">
+          Revision sheet
+        </a>
+      </p>
+
+      <br>
+
+      <li><b> Lecture notes: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_note_25042022.pdf" target="_blank" rel="noopener noreferrer">
+          Note 25/04/2022
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_note_26042022.pdf" target="_blank" rel="noopener noreferrer">
+          Note 26/04/2022
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_note_random.pdf" target="_blank" rel="noopener noreferrer">
+          Random note
+        </a>
+      </p>
+
+      <br>
+
+      <li><b> Tutorials: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_TD1.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 1
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_TD2.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 2
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_TD3.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 3
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_TD4.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 4
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_TD5_LGN.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 5 – Law of Large Numbers
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_TD6.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 6
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_TD7.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 7
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_TD8.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 8
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_TD9.pdf" target="_blank" rel="noopener noreferrer">
+          Tutorial 9
+        </a>
+      </p>
+
+      <br>
+
+      <li><b> Additional exercises: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_exercices_en_vrac.pdf" target="_blank" rel="noopener noreferrer">
+          Miscellaneous exercises
+        </a>
+      </p>
+
+      <br>
+
+      <li><b> Assignments: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_DM.pdf" target="_blank" rel="noopener noreferrer">
+          Corrected assignment
+        </a>
+      </p>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_dm_sujet.pdf" target="_blank" rel="noopener noreferrer">
+          Assignment subject
+        </a>
+      </p>
+
+      <br>
+
+      <li><b> Continuous assessment: </b></li>
+      <p class="detail">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/probas_2_cc_mars_2015.pdf" target="_blank" rel="noopener noreferrer">
+          Midterm – March 2015
+        </a>
+      </p>
+    </div>
+
+  </ul>
+</main>
+
+<footer>
+  Theo Jalabert | All rights reserved © 2025
+</footer>
+
+<script>
+  // Prevent automatic jumping to an anchor on load
+  (function () {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (location.hash) {
+      history.replaceState(null, '', location.pathname + location.search);
+      window.scrollTo(0, 0);
+    }
+  })();
+
+  // Mobile table of contents: closed by default + auto close + smooth scroll (without modifying the URL)
+  document.addEventListener('DOMContentLoaded', () => {
+    const details = document.querySelector('.toc-mobile details');
+    if (details) details.open = false;
+
+    document.querySelectorAll('.toc-mobile a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (!target) return;
+
+        if (details) details.open = false;
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Accessibility option: move focus to the targeted heading (if focusable)
+        if (typeof target.tabIndex === 'number') {
+          target.tabIndex = -1; // ensure it is focusable
+          target.focus({ preventScroll: true });
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  document.querySelectorAll('.btn-mail').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const matiere = btn.dataset.matiere;
+      const sujet = encodeURIComponent(`Contribution - L3 Actuarial Science: ${matiere}`);
+      const corps = encodeURIComponent(
+`Hi Théo,
+
+I would like to suggest an update for the subject ${matiere} in the L3 Actuarial Science year.
+
+Here is the information:
+    - Type of content (new course, error correction, other):
+    - File name(s):
+    - Comments or notes:`
+      );
+      window.location.href = `mailto:jalabert.theo@gmail.com?subject=${sujet}&body=${corps}`;
+    });
+  });
+</script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggle = document.getElementById('lang-toggle');
+      const menu = document.querySelector('.lang-menu');
+
+      if (!toggle || !menu) return;
+
+      // Ouvrir / fermer le menu au clic sur l'icône
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isOpen = menu.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      // Gestion du clic sur une langue
+      menu.addEventListener('click', function (e) {
+        const btn = e.target.closest('button[data-lang]');
+        if (!btn) return;
+        const lang = btn.dataset.lang;
+
+        console.log('Langue choisie :', lang);
+        // TODO : ici tu pourras brancher la vraie logique de traduction
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+
+      // Fermer le menu si on clique en dehors
+      document.addEventListener('click', function () {
+        if (menu.classList.contains('open')) {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const langButtons = document.querySelectorAll('.lang-menu button[data-href]');
+
+        langButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-href');
+            if (target) {
+              window.location.href = target;
+            }
+          });
+        });
+      });
+  </script>
+
+</body>
+</html>

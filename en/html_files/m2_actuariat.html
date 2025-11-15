@@ -1,0 +1,2433 @@
+<!-- M2 Actuariat (version avec Sommaire mobile fixe comme L3) -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/images/logo_isfa.png" type="image/png">
+  <title>JalabonSamaritain — M2 Actuariat</title>
+
+  <style>
+    /* ===== Reset & variables ===== */
+    *,*::before,*::after{ box-sizing:border-box; }
+    :root{
+      --brand-1:#235A8C;
+      --brand-2:#0E76A8;
+      --bg:#f4f4f4;
+      --space:clamp(12px,2vw,20px);
+      --header-h:64px;
+      --nav-h:48px;
+      --top-offset: calc(var(--header-h) + var(--nav-h) + 12px); /* pour ancres */
+      --container-w:70rem;
+      --sidebar-w:240px;
+    }
+
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0; min-height:100svh; display:flex; flex-direction:column;
+      font-family:ui-sans-serif,system-ui,Segoe UI,Calibri,Roboto,Arial;
+      line-height:1.5; background:var(--bg); color:#222;
+      /* PAS de padding-top: on a choisi header/nav toujours fixes */
+    }
+    a{ color:#0645AD; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .premium {
+        color: #DAA520; /* Doré intense */
+        font-size: 1.05em;
+        transition: color 0.3s ease;
+    }
+
+    .premium:hover {
+        color: #b8860b; /* Doré foncé au survol */
+        text-decoration: underline;
+    }
+
+    /* ===== Header & Nav (toujours fixes) ===== */
+    header{ background:var(--brand-1); color:#fff; position:fixed; top:0; left:0; right:0; z-index:20; }
+    header .inner{
+      display:flex; align-items:center; justify-content:center;
+      min-height:var(--header-h); padding-block:8px;
+    }
+    header a{ color:#fff; }
+
+    .nav{ background:var(--brand-2); color:#fff; position:fixed; top:var(--header-h); left:0; right:0; z-index:19; }
+    .nav .inner{
+      display:flex; align-items:center; justify-content:center; min-height:var(--nav-h);
+    }
+    #nav-list{
+      display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; margin:0 auto;
+    }
+    #nav-list a{ color:#fff; padding:10px 12px; border-radius:6px; font-size:clamp(.95rem,.9rem + .2vw,1rem); }
+    #nav-list a:hover{ background:rgba(255,255,255,.15); }
+
+    /* ===== Sélecteur de langue ===== */
+    .lang-switcher {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle {
+      background: transparent;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle:hover {
+      background: rgb(255 255 255 / .12);
+    }
+
+    .lang-icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .lang-menu {
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: #fff;
+      color: #222;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      padding: 6px 0;
+      min-width: 150px;
+      display: none;
+      z-index: 30;
+    }
+
+    .lang-menu.open {
+      display: block;
+    }
+
+    .lang-menu button {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .lang-menu button:hover {
+      background: #eef2ff;
+    }
+
+    .lang-menu .flag {
+      font-size: 1.1rem;
+    }
+
+    /* ===== Colonne principale (décalée à droite de la sidebar) ===== */
+    main.container_global{
+      width:min(100%, var(--container-w));
+      margin-inline:auto;
+      margin-top: calc(var(--header-h) + var(--nav-h) + 20px);
+      padding:var(--space);
+      flex:1;
+      /* Décalage pour laisser la sidebar fixe à gauche */
+      margin-left: calc(var(--sidebar-w) + 30px);
+    }
+
+    h1{ text-align:center; font-size:clamp(1.5rem,1rem+2vw,2.25rem); margin:.5em 0; }
+
+    /* ===== Sidebar (fixe par défaut ; cachée <1024px) ===== */
+    .sidebar{
+      position:fixed;
+      top: calc(var(--header-h) + var(--nav-h) + 8px);
+      bottom: 16px;
+      left: 16px;
+      width: var(--sidebar-w);
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      padding:12px;
+      overflow:auto;
+      z-index:10;
+    }
+    .sidebar ul{ list-style:none; margin:0; padding:0; }
+    .sidebar li{ margin:8px 0; }
+    .sidebar a{ color:#333; display:block; padding:6px 10px; border-radius:6px; }
+    .sidebar a:hover{ background:#f2f2f2; text-decoration:none; }
+    .indent_semestre{ font-weight:700; margin-top:6px; }
+
+    @media (max-width: 1023px){
+      .sidebar{ display:none; }
+      main.container_global{
+        width:94%;
+        margin-left:auto; margin-right:auto; /* on recentre quand la sidebar disparaît */
+      }
+    }
+
+    /* Sommaire mobile : suit le scroll ET passe sous header/nav fixes */
+    .toc-mobile{
+      display:block;
+      position:sticky;
+      top: calc(var(--header-h) + var(--nav-h) + 8px); /* <- clé pour mobile avec header/nav fixes */
+      z-index: 9;
+      margin: 12px 12px 16px;
+    }
+    .toc-mobile details{
+      background:#fff;
+      border-radius:10px;
+      padding:.75rem 1rem;
+      box-shadow:0 1px 6px rgba(0,0,0,.08);
+    }
+
+    .toc-mobile details > ul{
+      max-height: 50vh;               /* ~ moitié d’écran */
+      overflow: auto;                  /* active le scroll interne */
+      -webkit-overflow-scrolling: touch; /* scroll fluide iOS */
+      padding-right: 4px;              /* petit espace côté scrollbar */
+    }
+
+    .toc-mobile details[open]{
+      max-height: calc(56px + 50vh);   /* hauteur du summary + liste */
+      overflow: hidden;
+    }
+
+    .toc-mobile summary{ cursor:pointer; font-weight:700; }
+    .toc-mobile ul{ list-style:none; padding-left:0; margin:.6rem 0 0 0; }
+    .toc-mobile li{ margin:.4rem 0; }
+    .toc-mobile li.section-title a{ font-weight:700; }
+
+    /* Cacher le sommaire mobile en desktop */
+    @media (min-width: 1024px){
+      .toc-mobile{ display:none; }
+    }
+
+    /* ===== Icône de contribution 📤 ===== */
+    .contrib-icon {
+      font-size: 1.1em;
+      margin-left: 6px;
+      cursor: pointer;
+      position: relative;
+      color: #235A8C;
+      transition: transform 0.2s ease;
+    }
+
+    .contrib-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* Infobulle au survol */
+    .contrib-icon::after {
+      content: "Contribute";
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #235A8C;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .contrib-icon:hover::after {
+      opacity: 1;
+    }
+
+    /* ===== Blocs & tables ===== */
+    .container{
+      background:#fff; border-radius:6px; box-shadow:0 1px 6px rgba(0,0,0,.06);
+      padding: 1.25rem 1.5rem; margin: 1rem 0;
+    }
+    /* Conteneur de largeur générique */
+    .navcontainer{
+      width:min(100%, var(--container-w));
+      margin-inline:auto;
+      padding-inline: var(--space);
+    }
+    table{ border-collapse: collapse; width:100%; }
+    th, td{ border:1px solid #ddd; padding:8px; }
+    th{ background:#f2f2f2; }
+    .detail{ text-indent:10px; }
+
+    /* ===== Ancrages (compensation header+nav fixes) ===== */
+    h2[id], h3[id]{ scroll-margin-top: var(--top-offset); }
+
+    /* ===== Footer ===== */
+    footer{ background:var(--brand-1); color:#fff; text-align:center; padding:14px 0; margin-top:auto; }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R168QL4ED7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-R168QL4ED7');
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="inner">
+      <h1 style="margin:0;font-size:clamp(1.25rem,1rem + 1vw,1.75rem);"><a href="../index.html">JalabonSamaritain</a></h1>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <div class="nav" role="navigation" aria-label="Navigation principale">
+    <div class="navcontainer inner">
+      <div id="nav-list">
+        <a href="../index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+
+        <!-- Sélecteur de langue -->
+        <div class="lang-switcher">
+          <button
+            id="lang-toggle"
+            class="lang-toggle"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Switch language"
+          >
+            <img
+              src="../../images/translation_logo.svg"
+              alt="Switch language"
+              class="lang-icon"
+            >
+          </button>
+
+          <div class="lang-menu" aria-label="Switch language">
+            <button type="button" data-lang="fr" data-href="../../html_files/m2_actuariat.html">
+              <span class="flag">🇫🇷</span>
+              <span>Français</span>
+            </button>
+            <button type="button" data-lang="en" data-href="m2_actuariat.html">
+              <span class="flag">🇬🇧</span>
+              <span>English</span>
+            </button>
+          </div>
+        </div>
+        <!-- Fin sélecteur de langue -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar (left side of the window, only appears if there is enough space) -->
+<aside class="sidebar" aria-label="L3 Table of contents (desktop)">
+  <ul>
+    <li class="indent_semestre bold"><a href="#semestre_1">Semester 1</a></li>
+    <li><a href="#erm">ERM</a></li>
+    <li><a href="#modeles_de_duree">Duration Models</a></li>
+    <li><a href="#finance_mathematique">Mathematical Finance</a></li>
+    <li><a href="#actifs_hybrides">Hybrid Assets</a></li>
+    <li><a href="#series_temporelles">Time Series</a></li>
+    <li><a href="#charges_sinitres">Charges - Claims</a></li>
+    <li><a href="#theorie_credibilite">Credibility Theory</a></li>
+    <li><a href="#techniques_numeriques">Numerical Methods</a></li>
+    <li><a href="#data_science">Data Science</a></li>
+    <li><a href="#retraite">Pensions</a></li>
+    <li><a href="#reassurance">Reinsurance</a></li>
+
+    <br>
+
+    <li class="indent_semestre bold"><a href="#semestre_2">Semester 2</a></li>
+    <li><a href="#mfa">MFA</a></li>
+    <li><a href="#risque_credit">Credit Risk</a></li>
+    <li><a href="#valeurs_extremes">Extreme Values</a></li>
+    <li><a href="#theorie_ruine">Ruin Theory</a></li>
+    <li><a href="#ifrs_solvabilite2">IFRS Solvency 2</a></li>
+    <li><a href="#reglementation_bancaire">Banking Regulation</a></li>
+    <li><a href="#alm">Asset-Liability Management</a></li>
+    <li><a href="#retraite2">Pensions 2</a></li>
+    <li><a href="#protection_sociale">Social Protection</a></li>
+    <li><a href="#business_case_reass">Reinsurance Business Case</a></li>
+    <li><a href="#estimation_copules">Copula Estimation</a></li>
+    <li><a href="#strategie2">Strategy 2</a></li>
+    <li><a href="#assurance_sante">Health Insurance</a></li>
+    <li><a href="#memoire">Actuarial Thesis</a></li>
+  </ul>
+</aside>
+
+<main class="container_global">
+
+  <!-- ===== Sticky mobile table of contents (visible only on mobile) ===== -->
+
+  <nav class="toc-mobile" aria-label="M1 Table of contents (mobile)">
+    <details open>
+      <summary>📚 Contents — go to…</summary>
+      <ul>
+        <li class="section-title"><a href="#semestre_1">Semester 1</a></li>
+        <li><a href="#erm">ERM</a></li>
+        <li><a href="#modeles_de_duree">Duration Models</a></li>
+        <li><a href="#finance_mathematique">Mathematical Finance</a></li>
+        <li><a href="#actifs_hybrides">Hybrid Assets</a></li>
+        <li><a href="#series_temporelles">Time Series</a></li>
+        <li><a href="#charges_sinitres">Charges - Claims</a></li>
+        <li><a href="#theorie_credibilite">Credibility Theory</a></li>
+        <li><a href="#techniques_numeriques">Numerical Methods</a></li>
+        <li><a href="#data_science">Data Science</a></li>
+        <li><a href="#retraite">Pensions</a></li>
+        <li><a href="#reassurance">Reinsurance</a></li>
+
+        <li class="section-title"><a href="#semestre_2">Semester 2</a></li>
+        <li><a href="#mfa">MFA</a></li>
+        <li><a href="#risque_credit">Credit Risk</a></li>
+        <li><a href="#valeurs_extremes">Extreme Values</a></li>
+        <li><a href="#theorie_ruine">Ruin Theory</a></li>
+        <li><a href="#ifrs_solvabilite2">IFRS Solvency 2</a></li>
+        <li><a href="#reglementation_bancaire">Banking Regulation</a></li>
+        <li><a href="#alm">Asset-Liability Management</a></li>
+        <li><a href="#retraite2">Pensions 2</a></li>
+        <li><a href="#protection_sociale">Social Protection</a></li>
+        <li><a href="#business_case_reass">Reinsurance Business Case</a></li>
+        <li><a href="#estimation_copules">Copula Estimation</a></li>
+        <li><a href="#strategie2">Strategy 2</a></li>
+        <li><a href="#assurance_sante">Health Insurance</a></li>
+        <li><a href="#memoire">Actuarial Thesis</a></li>
+      </ul>
+    </details>
+  </nav>
+
+
+  <h1>M2 Actuarial Science</h1>
+
+  <!-- SEMESTER 1 -->
+  <h2 id="semestre_1" class="ancre-decalage">Semester 1</h2>
+
+  <!-- ERM -->
+  <ul>
+    <h3 id="erm" class="ancre-decalage">
+      ERM (Stéphane Loisel)
+      <span class="contrib-icon btn-mail" data-matiere="ERM">📤</span>
+    </h3>
+  </ul>
+
+  <div class="container">
+    <li><b>Chapter 0:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_chap0.pdf" target="_blank" rel="noopener noreferrer">ERM framework, concept and process</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_chap0_slides.pdf" target="_blank" rel="noopener noreferrer">Slides</a>
+    </li>
+
+    <br>
+
+    <li><b>Chapter 1:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_chap1.pdf" target="_blank" rel="noopener noreferrer">Risk correlation</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_chap1_slides.pdf" target="_blank" rel="noopener noreferrer">Slides</a>
+      <p class="detail">Definition of copulas, SKLAR’s theorem</p>
+    </li>
+
+    <li><b>Chapter 2:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_chap2.pdf" target="_blank" rel="noopener noreferrer">Risk measure(s)</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_chap2_slides.pdf" target="_blank" rel="noopener noreferrer">Slides</a>
+      <p class="detail">Risk measures, distortion measures</p>
+      <p class="detail">VaR, TVaR...</p>
+    </li>
+
+    <li><b>Chapter 3:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_chap3_slides1.pdf" target="_blank" rel="noopener noreferrer">Securitization 1</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_chap3_slides2.pdf" target="_blank" rel="noopener noreferrer">Securitization 2</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_chap3.pdf" target="_blank" rel="noopener noreferrer">Handwritten notes</a>
+      <p class="detail">Mechanisms, reinsurance vs securitization</p>
+      <p class="detail">Financial and actuarial valuation</p>
+    </li>
+
+    <br>
+
+    <table>
+      <tr>
+        <th class="col1">Topic</th>
+        <th class="col2">Exercise sheet</th>
+        <th class="col3">Solution</th>
+      </tr>
+      <tr>
+        <td class="col1">Risk measure</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_td1_sujet.pdf" target="_blank" rel="noopener noreferrer">TD1</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_td1_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="col1">Copulas</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_td2_sujet.pdf" target="_blank" rel="noopener noreferrer">TD2</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_td2_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="col1">Archimedean copulas</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_td3_sujet.pdf" target="_blank" rel="noopener noreferrer">TD3</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_td3_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="col1">Copulas</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_td4_sujet.pdf" target="_blank" rel="noopener noreferrer">TD4</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_td4_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+
+    <li><b>Presentations:</b>
+      <a href="exposes_erm.html" target="_blank" rel="noopener noreferrer">List of 24 presentations</a>
+    </li>
+
+    <br>
+
+    <li><b>Past exams:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_annale_2023.pdf" target="_blank" rel="noopener noreferrer">2023</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_copules.pdf" target="_blank" rel="noopener noreferrer">Copulas</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/erm_annales.pdf" target="_blank" rel="noopener noreferrer">Combined PDF</a>
+    </li>
+  </div>
+
+  <!-- Duration Models -->
+  <ul>
+    <h3 id="modeles_de_duree" class="ancre-decalage">
+      Duration Models (Frédéric Planchet)
+      <span class="contrib-icon btn-mail" data-matiere="Duration Models">📤</span>
+    </h3>
+  </ul>
+
+  <div class="container">
+    <li><b>Course page: </b>
+      <a href="http://www.ressources-actuarielles.net/__c1256f13006585b2.nsf/0/e81688bb41c86fb7c12584fb00292528?OpenDocument&TableRow=3.0#3.">here</a>
+    </li>
+
+    <br>
+
+    <li><b>Lecture notes: </b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_notes.pdf" target="_blank" rel="noopener noreferrer">here</a>
+    </li>
+    <br>
+
+    <li><b>Chapter 1:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_chap1.pdf" target="_blank" rel="noopener noreferrer">Introduction</a>
+    </li>
+    <p class="detail">Representation of a survival distribution</p>
+    <p class="detail">Standard parametric distributions</p>
+    <p class="detail">Composite models</p>
+    <p class="detail">References</p>
+
+    <li><b>Chapter 2:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_chap2.pdf" target="_blank" rel="noopener noreferrer">Statistics of parametric and semi-parametric models</a>
+    </li>
+    <p class="detail">Taking censoring into account in duration models</p>
+    <p class="detail">Latent and observable likelihoods in the presence of censoring</p>
+
+    <li><b>Chapter 3:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_chap3.pdf" target="_blank" rel="noopener noreferrer">Mortality tables</a>
+    </li>
+    <p class="detail">Mortality analysis</p>
+    <p class="detail">Construction, validation criteria</p>
+
+    <li><b>Chapter 4:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_chap4.pdf" target="_blank" rel="noopener noreferrer">Statistics of non-parametric models</a>
+    </li>
+    <p class="detail">Duration models and point processes</p>
+    <p class="detail">Non-parametric estimators</p>
+
+    <li><b>Chapter 5:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_chap5.pdf" target="_blank" rel="noopener noreferrer">Smoothing and fitting methods</a>
+    </li>
+    <p class="detail">Parametric fitting methods</p>
+    <p class="detail">Non-parametric smoothing methods</p>
+
+    <br>
+
+    <table>
+      <tr>
+        <th class="col1">Topic</th>
+        <th class="col2">Exercise sheet</th>
+        <th class="col3">Solution</th>
+      </tr>
+      <tr>
+        <td class="col1">TD1</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_TD1.pdf" target="_blank" rel="noopener noreferrer">TD1</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_TD1_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="col1">TD2</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_TD2.pdf" target="_blank" rel="noopener noreferrer">TD2</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_TD2_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="col1">TD3</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_TD3.pdf" target="_blank" rel="noopener noreferrer">TD3</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_TD3_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="col1">TD4</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_TD4.pdf" target="_blank" rel="noopener noreferrer">TD4</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_TD4_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+
+    <li><b>Past exams:</b>
+      <ul>
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2005.pdf" target="_blank" rel="noopener noreferrer">2005</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2005_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2005_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2005 (2nd session)</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2005_deuxieme_session_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2006.pdf" target="_blank" rel="noopener noreferrer">2006</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2006_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2006_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2006 (2nd session)</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2006_deuxieme_session_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2007_correction.pdf" target="_blank" rel="noopener noreferrer">2007 Solution</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2007_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2007 (2nd session)</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2008.pdf" target="_blank" rel="noopener noreferrer">2008</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2008_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2008_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2008 (2nd session)</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2009.pdf" target="_blank" rel="noopener noreferrer">2009</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2009_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2010.pdf" target="_blank" rel="noopener noreferrer">2010</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2010_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2011.pdf" target="_blank" rel="noopener noreferrer">2011</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2011_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2012.pdf" target="_blank" rel="noopener noreferrer">2012</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2012_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2012_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2012 (2nd session)</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2012_deuxieme_session_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2013.pdf" target="_blank" rel="noopener noreferrer">2013</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2013_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2014.pdf" target="_blank" rel="noopener noreferrer">2014</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2014_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2015.pdf" target="_blank" rel="noopener noreferrer">2015</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2015_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2016.pdf" target="_blank" rel="noopener noreferrer">2016</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2016_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2017.pdf" target="_blank" rel="noopener noreferrer">2017</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2017_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2018.pdf" target="_blank" rel="noopener noreferrer">2018</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2018_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2019.pdf" target="_blank" rel="noopener noreferrer">2019</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2019_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2020.pdf" target="_blank" rel="noopener noreferrer">2020</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2020_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2022.pdf" target="_blank" rel="noopener noreferrer">2022</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2022_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2023.pdf" target="_blank" rel="noopener noreferrer">2023</a> -
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_2023_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+        </li>
+
+        <li>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_de_duree_annale_probable_2024.pdf" target="_blank" rel="noopener noreferrer">Likely 2024 exam</a>
+        </li>
+      </ul>
+    </li>
+  </div>
+
+  <!-- Mathematical Finance -->
+  <ul>
+    <h3 id="finance_mathematique" class="ancre-decalage">
+      Mathematical Finance (Ying Jiao)
+      <span class="contrib-icon btn-mail" data-matiere="Mathematical Finance">📤</span>
+    </h3>
+  </ul>
+
+  <div class="container">
+    <li><b>Full course (2024):</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_cours_2024.pdf">PDF</a>
+    </li>
+
+    <li><b>Miscellaneous notes:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_notes_random.pdf">Random notes</a>
+    </li>
+
+    <br>
+
+    <li><b>Historical chapters (old version):</b></li>
+    <p class="detail">
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_chap1_old.pdf">Chapter 1</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_chap2_old.pdf">Chapter 2</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_chap3_old.pdf">Chapter 3</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_chap4_old.pdf">Chapter 4</a>
+    </p>
+
+    <<br>
+
+    <table>
+      <tr>
+        <th class="col1">Topic</th>
+        <th class="col2">Exercise sheet</th>
+        <th class="col3">Solution</th>
+      </tr>
+      <tr>
+        <td class="col1">FRA, Swap, Swaption</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_TD1.pdf">TD1</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_td1_correction_old.pdf">Solution</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="col1">Vasicek model</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_TD2.pdf">TD2</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_td2_correction_old.pdf">Solution</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="col1">Change of measure</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_TD3.pdf">TD3</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_td3_correction_old.pdf">Solution</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="col1">Past exam exercise</td>
+        <td class="col2">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_annale_2020.pdf">January 2020</a>
+        </td>
+        <td class="col3">
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_annale_2020_correction.pdf">Solution</a>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+
+    <li><b>Past exams:</b><br>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_annale_2015.pdf">2015</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_annale_2015_correction.pdf">Solution</a>,<br>
+
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_annale_2016.pdf">2016</a>,<br>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/finance_mathematique_annale_2017.pdf">2017</a>
+    </li>
+
+    <br>
+
+    <li><b>Talk:</b>
+      <a href="https://www.youtube.com/watch?v=jmwu2yq8lq4" target="_blank" rel="noopener noreferrer">GSE by Martin Jimenez</a>
+    </li>
+  </div>
+
+    <!-- Hybrid Assets -->
+<ul>
+  <h3 id="actifs_hybrides" class="ancre-decalage">Hybrid Assets (Nicolas Leboisne)
+    <span class="contrib-icon btn-mail" data-matiere="Hybrid Assets">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Chapter 1: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_cours_chap1.pdf" target="_blank" rel="noopener noreferrer">Equity Warrants</a>
+  </li>
+
+  <li><b> Chapter 2: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_cours_chap2.pdf" target="_blank" rel="noopener noreferrer">Convertible Bonds</a>
+  </li>
+
+  <br>
+
+  <table>
+    <tr>
+      <th class="col1">Topic</th>
+      <th class="col2">Subject</th>
+      <th class="col3">Solution</th>
+    </tr>
+    <tr>
+      <td class="col1">Warrants</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD1.pdf" target="_blank" rel="noopener noreferrer">Subject</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD1_article.pdf" target="_blank" rel="noopener noreferrer">Article</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD1_correction1.pdf" target="_blank" rel="noopener noreferrer">Sol1</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD1_correction2.pdf" target="_blank" rel="noopener noreferrer">Sol2</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">Convertible Bonds</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD2.pdf" target="_blank" rel="noopener noreferrer">Subject</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD2_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">Indexed Convertible Bonds</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD3.pdf" target="_blank" rel="noopener noreferrer">Subject</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD3_correction1.pdf" target="_blank" rel="noopener noreferrer">Sol1</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD3_correction2.pdf" target="_blank" rel="noopener noreferrer">Sol2</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">BSOC</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD4_sujet.pdf" target="_blank" rel="noopener noreferrer">Subject</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD4_correction1.pdf" target="_blank" rel="noopener noreferrer">Sol1</a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD4_correction2.pdf" target="_blank" rel="noopener noreferrer">Sol2</a>
+      </td>
+    </tr>
+  </table>
+
+  <br>
+
+  <li><b> Additional exercises: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD.pdf" target="_blank" rel="noopener noreferrer">TD Summary</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_TD_entrainement.pdf" target="_blank" rel="noopener noreferrer">Training</a>
+  </li>
+
+  <br>
+
+  <li><b> Past exams: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_annale_2016.pdf" target="_blank" rel="noopener noreferrer">2016</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_annale_blanc.pdf" target="_blank" rel="noopener noreferrer">Mock Exam</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/actifs_hybrides_annale_blanc_correction.pdf" target="_blank" rel="noopener noreferrer">(solution)</a>
+  </li>
+</div>
+
+
+<!-- Time Series -->
+<ul>
+  <h3 id="series_temporelles" class="ancre-decalage">Time Series (Christian Robert)
+    <span class="contrib-icon btn-mail" data-matiere="Time Series">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b>Full course:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_cours.pdf" target="_blank" rel="noopener noreferrer">PDF</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_cours_manuscrit.pdf" target="_blank" rel="noopener noreferrer">Manuscripts</a>
+  </li>
+
+  <li><b>Course questions:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_questions_de_cours.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+  </li>
+
+  <br>
+
+  <li><b>Chapters:</b></li>
+  <p class="detail">No separate chapters available, see the full course above.</p>
+
+  <br>
+
+  <table>
+    <tr>
+      <th class="col1">Topic</th>
+      <th class="col2">Subject</th>
+      <th class="col3">Solution</th>
+    </tr>
+    <tr>
+      <td class="col1">Time series decomposition</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_TD.pdf" target="_blank" rel="noopener noreferrer">Subject</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_TD.pdf" target="_blank" rel="noopener noreferrer">R Script</a>
+      </td>
+    </tr>
+  </table>
+
+  <br>
+
+  <li><b>Past exams:</b></li>
+  <ul>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2008.pdf" target="_blank" rel="noopener noreferrer">2008</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2008_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2010.pdf" target="_blank" rel="noopener noreferrer">2010</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_CC_2010.pdf" target="_blank" rel="noopener noreferrer">CC</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2011.pdf" target="_blank" rel="noopener noreferrer">2011</a></li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2012.pdf" target="_blank" rel="noopener noreferrer">2012</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2012_rattrapage.pdf" target="_blank" rel="noopener noreferrer">Resit</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2013.pdf" target="_blank" rel="noopener noreferrer">2013</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2013_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2013_rattrapage.pdf" target="_blank" rel="noopener noreferrer">Resit</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2014.pdf" target="_blank" rel="noopener noreferrer">2014</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2014_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2016.pdf" target="_blank" rel="noopener noreferrer">2016</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2016_entrainement.pdf" target="_blank" rel="noopener noreferrer">Training</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2017.pdf" target="_blank" rel="noopener noreferrer">2017</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2017_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2019.pdf" target="_blank" rel="noopener noreferrer">2019</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2019_entrainement.pdf" target="_blank" rel="noopener noreferrer">Training</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2020.pdf" target="_blank" rel="noopener noreferrer">2020</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2020_rattrapage.pdf" target="_blank" rel="noopener noreferrer">Resit</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2021.pdf" target="_blank" rel="noopener noreferrer">2021</a> -
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2021_rattrapage.pdf" target="_blank" rel="noopener noreferrer">Resit</a>
+    </li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2022.pdf" target="_blank" rel="noopener noreferrer">2022</a></li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/series_temporelles_annale_2023.pdf" target="_blank" rel="noopener noreferrer">2023</a></li>
+  </ul>
+</div>
+
+
+<!-- Charges-Claims Modeling -->
+<ul>
+  <h3 id="charges_sinitres" class="ancre-decalage">Charges-Claims Modeling (Jean Brunet)
+    <span class="contrib-icon btn-mail" data-matiere="Charges-Claims Modeling">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b>Old course (S. Loisel): </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/charges_sinistres_poly_loisel.pdf" target="_blank" rel="noopener noreferrer"> Here</a>
+  </li>
+
+  <br>
+
+  <li><b> Chapter 1: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/charges_sinistres_chap1.pdf" target="_blank" rel="noopener noreferrer"> Introduction</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/charges_sinistres_chap1_manuscrit.pdf" target="_blank" rel="noopener noreferrer"> Manuscript</a>
+  </li>
+
+  <br>
+
+  <li><b> Chapter 2: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/charges_sinistres_chap2.pdf" target="_blank" rel="noopener noreferrer"> Individual Model</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/charges_sinistres_chap2_manuscrit.pdf" target="_blank" rel="noopener noreferrer"> Manuscript</a>
+  </li>
+  <p class="detail">Definition of X_ind, moments, distribution</p>
+
+  <li><b> Chapter 3: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/charges_sinistres_chap3.pdf" target="_blank" rel="noopener noreferrer"> Collective Model</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/charges_sinistres_chap3_manuscrit.pdf" target="_blank" rel="noopener noreferrer"> Manuscript</a>
+  </li>
+  <p class="detail">Models for claim frequency</p>
+  <p class="detail">Zero-inflated distribution, mixed Poisson</p>
+  <p class="detail">Models for claim amounts</p>
+
+  <li><b> Chapter 4: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/charges_sinistres_chap4.pdf" target="_blank" rel="noopener noreferrer"> Perspective</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/charges_sinistres_chap4_manuscrit.pdf" target="_blank" rel="noopener noreferrer"> Manuscript</a>
+  </li>
+  <p class="detail">Frequentist approach</p>
+  <p class="detail">Bayesian approach</p>
+
+  <br>
+
+  <table>
+    <tr>
+      <th class="col1">Topic</th>
+      <th class="col2">Subject</th>
+      <th class="col3">Solution</th>
+    </tr>
+    <tr>
+      <td class="col1">Basics and reminders</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistres_TD1.pdf" target="_blank" rel="noopener noreferrer">TD1</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistres_TD1_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">Panjer Algorithm</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistres_TD2.pdf" target="_blank" rel="noopener noreferrer">TD2</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistres_TD2_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">De Pril Algorithm</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistres_TD3.pdf" target="_blank" rel="noopener noreferrer">TD3</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistres_TD3_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>
+      </td>
+    </tr>
+  </table>
+
+  <br>
+
+  <li><b> Additional material: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistes_QCM_revision.pdf" target="_blank" rel="noopener noreferrer">Revision MCQs</a>
+  </li>
+
+  <br>
+
+  <li><b> Past exams: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistres_annale_2020.pdf" target="_blank" rel="noopener noreferrer">January 2020</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistres_annale_2020_rattrapage.pdf" target="_blank" rel="noopener noreferrer">Resit 2020</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/charges_sinistres_annale_2021.pdf" target="_blank" rel="noopener noreferrer">January 2021</a>
+  </li>
+</div>
+
+
+<!-- Credibility Theory -->
+<ul>
+  <h3 id="theorie_credibilite" class="ancre-decalage">Credibility Theory (Pierre Thérond)
+    <span class="contrib-icon btn-mail" data-matiere="Credibility Theory">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b>Course (slides): </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_de_la_credibilite_cours.pdf" target="_blank" rel="noopener noreferrer">here</a>
+  </li>
+
+  <br>
+
+  <li><b>Handwritten course: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_de_la_credibilite_cours_manuscrit.pdf" target="_blank" rel="noopener noreferrer">here</a>
+  </li>
+
+  <br>
+
+  <li><b> Chapter 5: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_de_la_credibilite_cours_chapitre5.pdf" target="_blank" rel="noopener noreferrer">here</a>
+  </li>
+
+  <br>
+
+  <li><b> Chapter 1: </b> 
+    Introduction</li>
+  <p class="detail">Introductory illustrations</p>
+  <p class="detail">Limited fluctuation credibility</p>
+  <p class="detail">Mathematical formulation of the pricing problem</p>
+
+  <li><b> Chapter 2: </b>
+    Bayesian premium</li>
+  <p class="detail">Bayesian framework</p>
+  <p class="detail">Best experience rating premium</p>
+  <p class="detail">Bonus-malus scale construction</p>
+  <p class="detail">Classes of conjugate priors</p>
+
+  <li><b> Chapter 3: </b>
+    Credibility estimator</li>
+  <p class="detail">Credibility premium</p>
+  <p class="detail">Bühlmann model</p>
+
+  <li><b> Chapter 4: </b>
+    Bühlmann-Straub model</li>
+  <p class="detail">Model assumptions</p>
+  <p class="detail">Credibility estimators</p>
+  <p class="detail">Process summary</p>
+
+  <li><b> Chapter 5: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_de_la_credibilite_cours_chapitre5.pdf" target="_blank" rel="noopener noreferrer">Bonus-malus systems</a>
+  </li>
+  <p class="detail">Introduction</p>
+  <p class="detail">Modelling the path of an insured</p>
+  <p class="detail">With and without premium personalization</p>
+
+  <br><br>
+
+  <li><b> Past exams: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_de_la_credibilite_annales_all.pdf" target="_blank" rel="noopener noreferrer">All exams since 2006 (full PDF)</a>
+  </li>
+  <p class="detail"><a href="annales_theorie_credibilite.html" target="_blank" rel="noopener noreferrer">Access by year</a></p>
+
+</div>
+
+
+<!-- Numerical Methods -->
+<ul>
+  <h3 id="techniques_numeriques" class="ancre-decalage">Numerical Methods (Armand Bernou)
+    <span class="contrib-icon btn-mail" data-matiere="Numerical Methods">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b>Full course: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/techniques_numeriques_chap_1_et_2.pdf" target="_blank" rel="noopener noreferrer">Chapters 1 & 2</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/techniques_numeriques_chap3.pdf" target="_blank" rel="noopener noreferrer">Chapter 3</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/techniques_numeriques_chap4.pdf" target="_blank" rel="noopener noreferrer">Chapter 4</a>
+  </li>
+
+  <br>
+
+  <li><b> Notes: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/techniques_numeriques_notes_de_cours.pdf" target="_blank" rel="noopener noreferrer">Here</a>
+  </li>
+
+  <br>
+
+  <li><b> Introduction </b></li>
+
+  <br>
+
+  <li><b> PDE Approximation</b></li>
+  <p class="detail">Feynman-Kac: link between SDEs and PDEs</p>
+  <p class="detail">Numerical schemes</p>
+
+  <br>
+
+  <table>
+    <tr>
+      <th class="col1">Topic</th>
+      <th class="col2">Subject</th>
+      <th class="col3">Solution</th>
+    </tr>
+
+    <tr>
+      <td class="col1">TD1</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/techniques_numeriques_TD1.pdf" target="_blank" rel="noopener noreferrer">Subject</a>
+      </td>
+      <td class="col3">-</td>
+    </tr>
+
+    <tr>
+      <td class="col1">TD2</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/techniques_numeriques_TD2.pdf" target="_blank" rel="noopener noreferrer">Subject</a>
+      </td>
+      <td class="col3">-</td>
+    </tr>
+  </table>
+
+  <br>
+
+  <li><b> Projects: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/techniques_numeriques_projets.pdf" target="_blank" rel="noopener noreferrer">Summary</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/techniques_numeriques_Projet1_ALLERS_JALABERT_SIMONEAU-FRIGGI.pdf" target="_blank" rel="noopener noreferrer">Project 1</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/techniques_numeriques_Projet2_ALLERS_JALABERT_SIMONEAU-FRIGGI.pdf" target="_blank" rel="noopener noreferrer">Project 2</a>
+  </li>
+</div>
+
+
+<!-- Data Science -->
+<ul>
+  <h3 id="data_science" class="ancre-decalage">Data Science (Pierrick Piette)
+    <span class="contrib-icon btn-mail" data-matiere="Data Science">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b>Course page: </b> 
+    <a href="https://sites.google.com/view/pierrick-piette/teaching" target="_blank" rel="noopener noreferrer"> here </a>
+  </li>
+
+  <br>
+
+  <li><b>Chapter 0: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap0_intro.pdf" target="_blank" rel="noopener noreferrer"> Introduction</a>
+  </li>
+  <p class="detail">History of statistics</p>
+  <p class="detail">General concepts, Correlation / Causality</p>
+
+  <li><b> Chapter 1: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap1_actuariat.pdf" target="_blank" rel="noopener noreferrer"> Actuarial motivations</a>
+  </li>
+  <p class="detail">Data and actuarial science, big data, regulation</p>
+
+  <li><b> Chapter 2: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap2_model_lineair.pdf" target="_blank" rel="noopener noreferrer"> Linear models</a>
+  </li>
+  <p class="detail">Simple linear regression, OLS estimation</p>
+  <p class="detail">Model selection</p>
+  <p class="detail">Penalized regression</p>
+  <p class="detail">Penalized GLMs</p>
+
+  <li><b> Chapter 3: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap3_theorie.pdf" target="_blank" rel="noopener noreferrer"> Statistical learning theory</a>
+  </li>
+  <p class="detail">General principles</p>
+  <p class="detail">Vapnik theory</p>
+
+  <li><b> Chapter 4: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap4_cart.pdf" target="_blank" rel="noopener noreferrer"> Decision trees</a>
+  </li>
+  <p class="detail">Introduction, notations</p>
+  <p class="detail">CART, overfitting management</p>
+  <p class="detail">Classification trees, performance measures</p>
+
+  <li><b> Chapter 5: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap5_bagging.pdf" target="_blank" rel="noopener noreferrer"> Bagging and Random Forest</a>
+  </li>
+  <p class="detail">Principles and pruning strategy</p>
+
+  <li><b> Chapter 6: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap6_boosting.pdf" target="_blank" rel="noopener noreferrer"> Boosting</a>
+  </li>
+  <p class="detail">Adaboost</p>
+  <p class="detail">Gradient boosting</p>
+  <p class="detail">XGBoost</p>
+
+  <li><b> Chapter 7: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap7_interpretabilite.pdf" target="_blank" rel="noopener noreferrer"> Interpretability</a>
+  </li>
+  <p class="detail">Model-agnostic methods</p>
+  <p class="detail">SHAP values</p>
+
+  <li><b> Chapter 8: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap8_nn.pdf" target="_blank" rel="noopener noreferrer"> Neural networks</a>
+  </li>
+  <p class="detail">Perceptron, multilayer perceptron</p>
+  <p class="detail">Backpropagation</p>
+  <p class="detail">CNN</p>
+  <p class="detail">GAN</p>
+
+  <li><b> Chapter 9: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap9_svm.pdf" target="_blank" rel="noopener noreferrer"> SVM</a>
+  </li>
+  <p class="detail">Kernels, linear SVM, kernel SVM</p>
+
+  <li><b> Chapter 10: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_cours_chap10_fft.pdf" target="_blank" rel="noopener noreferrer"> Food for Thought</a>
+  </li>
+  <p class="detail">Unbalanced data</p>
+  <p class="detail">Stacking</p>
+
+  <br>
+
+  <table>
+    <tr>
+      <th class="col1">Topic</th>
+      <th class="col2">Subject</th>
+    </tr>
+    <tr>
+      <td class="col1">Penalized regressions</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_TD1_penalisation.pdf" target="_blank" rel="noopener noreferrer">TD1</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">CART</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_TD2_cart.pdf" target="_blank" rel="noopener noreferrer">TD2</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">Random forest</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_TD3_rf.pdf" target="_blank" rel="noopener noreferrer">TD3</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">Gradient boosting</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_TD4_boosting.pdf" target="_blank" rel="noopener noreferrer">TD4</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">XGBoost</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_TD5_xgboost_shape_value.pdf" target="_blank" rel="noopener noreferrer">TD5</a>
+      </td>
+    </tr>
+  </table>
+
+  <li><b> Projects: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/data_science_sujet_projet_2023.pdf" target="_blank" rel="noopener noreferrer">2023 project topics</a>
+  </li>
+
+</div>
+
+    <!-- Retirement -->
+<ul>
+  <h3 id="retraite" class="anchor-offset">Retirement (Brigitte Ecary & Pierre Montesinos)
+    <span class="contrib-icon btn-mail" data-subject="Retirement">📤</span></h3>
+</ul>
+
+<div class="container">
+  <li><b> Chapter 1: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_1_cours1.pdf" target="_blank" rel="noopener noreferrer">
+      Overview of Retirement in France
+    </a>
+  </li>
+  <p class="detail"> Key definitions </p>
+  <p class="detail"> History of retirement in France </p>
+  <p class="detail"> A system structured around 3 official pillars </p>
+  <p class="detail"> Overview of mandatory retirement </p>
+  <p class="detail"> Focus on employees’ pension schemes </p>
+  <p class="detail"> Monitoring a pay-as-you-go pension scheme </p>
+
+  <li><b> Chapter 2: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_1_cours2.pdf" target="_blank" rel="noopener noreferrer">
+      Issues and Evolutions of Mandatory Retirement Systems
+    </a>
+  </li>
+  <p class="detail"> Fillon Law of 21 August 2003 </p>
+  <p class="detail"> Woerth Law of 9 November 2010 </p>
+  <p class="detail"> Intermediate measures & Hollande reforms </p>
+  <p class="detail"> "Old age" branch in Social Security Financing Acts </p>
+  <p class="detail"> ARRCO–AGIRC agreements </p>
+  <p class="detail"> Current developments and reflections </p>
+
+  <li><b> Chapter 3: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_1_cours3.pdf" target="_blank" rel="noopener noreferrer">
+      Collective Retirement, Individual Retirement & Pension Savings
+    </a>
+  </li>
+  <p class="detail"> Environment of supplementary retirement </p>
+  <p class="detail"> Defined contribution / defined benefit schemes </p>
+  <p class="detail"> PACTE Law & Ordinance n°2019-766 (24 July 2019) </p>
+  <p class="detail"> Tax and social rules of pension savings </p>
+  <p class="detail"> Pension savings in companies </p>
+  <p class="detail"> Individual retirement </p>
+  <p class="detail"> GDPR </p>
+
+  <li><b> Revisions / MCQs: </b></li>
+  <ul>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_1_qcm.pdf" target="_blank" rel="noopener noreferrer">General MCQ</a></li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_1_qcm_leo.pdf" target="_blank" rel="noopener noreferrer">Léo MCQ</a></li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_1_qcm_2012.pdf" target="_blank" rel="noopener noreferrer">2012 MCQ</a></li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_1_qcm_2014_correction.pdf" target="_blank" rel="noopener noreferrer">2014 MCQ – Correction</a></li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_1_qcm_2018_sujet.pdf" target="_blank" rel="noopener noreferrer">2018 MCQ – Subject</a></li>
+    <li><a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_1_qcm_2018_final.pdf" target="_blank" rel="noopener noreferrer">2018 MCQ – Final</a></li>
+  </ul>
+</div>
+
+<!-- Reinsurance -->
+<ul>
+  <h3 id="reassurance" class="anchor-offset">Reinsurance (Alexandre Delacroix)
+    <span class="contrib-icon btn-mail" data-subject="Reinsurance">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b>Chapter: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/reassurance_cours_reassurance_non_vie.pdf" target="_blank" rel="noopener noreferrer">
+      Non-life Reinsurance
+    </a>
+  </li>
+  <p class="detail"> General principles </p>
+  <p class="detail"> Different forms of reinsurance </p>
+  <p class="detail"> XS per-risk pricing </p>
+  <p class="detail"> Conclusion </p>
+
+  <li><b> Handwritten notes: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/reassurance_cours_notes_random.pdf" target="_blank" rel="noopener noreferrer">
+      Notes
+    </a>
+  </li>
+  <p class="detail"> SPV mechanism </p>
+  <p class="detail"> Reinsurance result calculation </p>
+  <p class="detail"> XS per-risk pricing </p>
+
+  <li><b> Additional material: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/reassurance_cours.pdf" target="_blank" rel="noopener noreferrer">
+      Full course
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Past papers: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/reassurance_annale_2017.pdf" target="_blank" rel="noopener noreferrer">2017</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/reassurance_annale_2021.pdf" target="_blank" rel="noopener noreferrer">2021</a>
+  </li>
+</div>
+
+<!-- Semester 2 -->
+<h2 id="semestre_2" class="anchor-offset">Semester 2</h2>
+
+<!-- Financial Models in Insurance -->
+<ul>
+  <h3 id="mfa" class="anchor-offset">Financial Models in Insurance (Frédéric Planchet)
+    <span class="contrib-icon btn-mail" data-subject="Financial Models in Insurance">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b>Course page:</b>
+    <a href="http://www.ressources-actuarielles.net/C1256F13006585B2/0/826D0D13E38C0614C1256F130067C177"
+      target="_blank" rel="noopener noreferrer">here</a>
+  </li>
+
+  <li><b>Lecture notes:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_note_21052024.pdf"
+      target="_blank" rel="noopener noreferrer">PDF</a>
+  </li>
+
+  <li><b>Summary:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_synthese.pdf"
+      target="_blank" rel="noopener noreferrer">Main concepts to know</a>
+  </li>
+
+  <br>
+
+  <!-- Chapters -->
+  <li><b>Chapter 1:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_chap1.pdf"
+      target="_blank" rel="noopener noreferrer">Introduction</a> —
+    AOA:
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_chap1.1.pdf"
+      target="_blank" rel="noopener noreferrer">presentation</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_chap1.2.pdf"
+      target="_blank" rel="noopener noreferrer">course</a>
+  </li>
+
+  <li><b>Chapter 2:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_chap2.pdf"
+      target="_blank" rel="noopener noreferrer">Floor guarantees on unit-linked contracts</a>
+  </li>
+
+  <li><b>Chapter 3:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_chap3.1.pdf"
+      target="_blank" rel="noopener noreferrer">Bond modelling</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_chap3.2.pdf"
+      target="_blank" rel="noopener noreferrer">GSE</a>
+  </li>
+
+  <li><b>Chapter 4:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_chap4.pdf"
+      target="_blank" rel="noopener noreferrer">Quantitative models for ORSA</a>
+  </li>
+
+  <br>
+
+  <!-- Conferences -->
+  <li><b>Conferences:</b></li>
+  <p class="detail">
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_conf_assurance_vie_PB.pdf"
+      target="_blank" rel="noopener noreferrer">Life insurance & PB</a> |
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_conf_deflateur.pdf"
+      target="_blank" rel="noopener noreferrer">Deflator</a> |
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_conf_risque_marche.pdf"
+      target="_blank" rel="noopener noreferrer">Market risk</a> |
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_conf_simbel.pdf"
+      target="_blank" rel="noopener noreferrer">SimBel package</a>
+  </p>
+
+  <br>
+
+  <!-- Past papers -->
+  <li><b>Past papers:</b></li>
+  <ul>
+    <li>2015: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2015.pdf" target="_blank" rel="noopener noreferrer">Exam</a>, 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2015_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>
+    </li>
+    <li>2016: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2016.pdf" target="_blank" rel="noopener noreferrer">Exam</a>, 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2016_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>
+    </li>
+    <li>2017: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2017.pdf" target="_blank" rel="noopener noreferrer">Exam</a>, 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2017_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>
+    </li>
+    <li>2018: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2018.pdf" target="_blank" rel="noopener noreferrer">Exam</a>, 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2018_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>
+    </li>
+    <li>2019: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2019.pdf" target="_blank" rel="noopener noreferrer">Exam</a>, 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2019_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>
+    </li>
+    <li>2021: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2021.pdf" target="_blank" rel="noopener noreferrer">Exam</a>, 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2021_correction.pdf" target="_blank" rel="noopener noreferrer">Correction 1</a>, 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2021_correction_bis.pdf" target="_blank" rel="noopener noreferrer">Correction 2</a>, 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2021_correction_manuscrit.pdf" target="_blank" rel="noopener noreferrer">Handwritten correction</a>
+    </li>
+    <li>2023: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_annale_2023.pdf" target="_blank" rel="noopener noreferrer">Exam</a>
+    </li>
+    <li><b>Revision file:</b> 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/modeles_financiers_en_assurance_revisions_2024.pdf" target="_blank" rel="noopener noreferrer">2024 Revisions</a>
+    </li>
+  </ul>
+</div>
+
+<!-- Credit Risk -->
+<ul>
+  <h3 id="risque_credit" class="anchor-offset">Credit Risk (Ying Jiao)
+    <span class="contrib-icon btn-mail" data-subject="Credit Risk">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b>Course materials:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_cours_poly.pdf" target="_blank" rel="noopener noreferrer">Lecture notes</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_cours.pdf" target="_blank" rel="noopener noreferrer">Slides PDF</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_cours_manuscrit.pdf" target="_blank" rel="noopener noreferrer">Handwritten notes</a>
+  </li>
+
+  <br>
+
+  <li><b>Project (2024):</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_Projet_ALLERS_JALABERT_SIMONEAU-FRIGGI.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+  </li>
+
+  <br>
+
+  <table>
+    <tr>
+      <th class="col1">Topic</th>
+      <th class="col2">Subject</th>
+      <th class="col3">Correction</th>
+    </tr>
+    <tr>
+      <td class="col1">Basics, Merton</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_TD1.pdf" target="_blank" rel="noopener noreferrer">TD 1</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_TD1_correction_old.pdf" target="_blank" rel="noopener noreferrer">Correction</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">Cox / Jump-to-default models</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_TD2_old.pdf" target="_blank" rel="noopener noreferrer">TD 2</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_TD2_correction_old.pdf" target="_blank" rel="noopener noreferrer">Correction</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">Intensity processes</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_TD3_old.pdf" target="_blank" rel="noopener noreferrer">TD 3</a>
+      </td>
+      <td class="col3">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/risque_de_credit_TD3_correction_old.pdf" target="_blank" rel="noopener noreferrer">Correction</a>
+      </td>
+    </tr>
+  </table>
+
+  <br>
+
+  <li><b>Past papers:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/risque_de_credit_annale_2021.pdf" target="_blank" rel="noopener noreferrer">
+      2021 Exam
+    </a>
+  </li>
+</div>
+
+<!-- Extreme Value Theory -->
+<ul>
+  <h3 id="valeurs_extremes" class="anchor-offset">Extreme Value Theory (Christian Robert)
+    <span class="contrib-icon btn-mail" data-subject="Extreme Value Theory">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b>Full course:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_valeurs_extremes_cours.pdf" target="_blank" rel="noopener noreferrer">PDF</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_valeurs_extremes_cours_planchet.pdf" target="_blank" rel="noopener noreferrer">Planchet Slides</a>
+  </li>
+
+  <li><b>Other resources:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_valeurs_extremes_cours_introduction.pdf" target="_blank" rel="noopener noreferrer">Introduction</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_valeurs_extremes_cours_fiche.pdf" target="_blank" rel="noopener noreferrer">Summary sheet</a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_valeurs_extremes_questions_cours.pdf" target="_blank" rel="noopener noreferrer">Course questions</a>
+  </li>
+
+  <br>
+
+  <li><b>Chapter 1:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_valeurs_extremes_cours_chap1.pdf" target="_blank" rel="noopener noreferrer">Static univariate extremes</a>
+  </li>
+
+  <li><b>Chapter 2:</b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_cours_chap2.pdf" target="_blank" rel="noopener noreferrer">Dynamic and multivariate extremes</a>
+  </li>
+
+  <br>
+
+  <table>
+    <tr>
+      <th class="col1">Topic</th>
+      <th class="col2">Subject</th>
+      <th class="col3">Correction / Data</th>
+    </tr>
+    <tr>
+      <td class="col1">TD 1 full</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_TD1_complet.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+      </td>
+      <td class="col3">—</td>
+    </tr>
+    <tr>
+      <td class="col1">TD 2</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_TD2.pdf" target="_blank" rel="noopener noreferrer">Subject</a>
+      </td>
+      <td class="col3">—</td>
+    </tr>
+    <tr>
+      <td class="col1">Practice</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_TD_entrainement.pdf" target="_blank" rel="noopener noreferrer">File</a>
+      </td>
+      <td class="col3">—</td>
+    </tr>
+  </table>
+
+  <br>
+
+  <li><b>Past papers:</b></li>
+  <ul>
+    <li>2010: <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2010.pdf" target="_blank" rel="noopener noreferrer">Exam</a></li>
+    <li>2011: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2011.pdf" target="_blank" rel="noopener noreferrer">Exam</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2011_perso.pdf" target="_blank" rel="noopener noreferrer">Personal version</a>
+    </li>
+    <li>2012: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2012_rattrapage.pdf" target="_blank" rel="noopener noreferrer">Resit</a>
+    </li>
+    <li>2013: 
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2013.pdf" target="_blank" rel="noopener noreferrer">Exam</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2013_rattrapage.pdf" target="_blank" rel="noopener noreferrer">Resit</a>
+    </li>
+    <li>2014:
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2014.pdf" target="_blank" rel="noopener noreferrer">Exam</a>
+    </li>
+    <li>2015:
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2015.pdf" target="_blank" rel="noopener noreferrer">Exam</a>
+    </li>
+    <li>2016:
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2016.pdf" target="_blank" rel="noopener noreferrer">Exam</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2016_ENSAE.pdf" target="_blank" rel="noopener noreferrer">ENSAE</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2016_ENSAE_correction.pdf" target="_blank" rel="noopener noreferrer">ENSAE correction</a>
+    </li>
+    <li>2017:
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2017.pdf" target="_blank" rel="noopener noreferrer">Exam</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2017_ENSAE.pdf" target="_blank" rel="noopener noreferrer">ENSAE</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2017_pros.pdf" target="_blank" rel="noopener noreferrer">Pros</a>
+    </li>
+    <li>2018:
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2018_ENSAE.pdf" target="_blank" rel="noopener noreferrer">ENSAE</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2018_UIR.pdf" target="_blank" rel="noopener noreferrer">UIR</a>
+    </li>
+    <li>2019:
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2019.pdf" target="_blank" rel="noopener noreferrer">Exam</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2019_perso.pdf" target="_blank" rel="noopener noreferrer">Personal version</a>
+    </li>
+    <li>2021:
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2011_bis.pdf" target="_blank" rel="noopener noreferrer">Corrected course questions</a>
+    </li>
+    <li>2023:
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2023.pdf" target="_blank" rel="noopener noreferrer">Exam</a>,
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annale_2023_correction.pdf" target="_blank" rel="noopener noreferrer">Correction</a>
+    </li>
+    <li><b>General compilation:</b>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases.download/data_isfa/theorie_valeurs_extremes_annales.pdf" target="_blank" rel="noopener noreferrer">Complete PDF</a>
+    </li>
+  </ul>
+</div>
+
+
+    <!-- Ruin Theory -->
+<ul>
+  <h3 id="theorie_ruine" class="ancre-decalage">
+    Ruin Theory (Stéphane Loisel)
+    <span class="contrib-icon btn-mail" data-matiere="Ruin Theory">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Complete course material: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_poly.pdf" target="_blank" rel="noopener noreferrer">
+      Risk management course
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Lecture notes: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_notes.pdf" target="_blank" rel="noopener noreferrer">
+      here
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Chapter 1: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_chap1.pdf" target="_blank" rel="noopener noreferrer">
+      Poisson process
+    </a>
+  </li>
+  <p class="detail">Superposition, thinning</p>
+
+  <li><b> Chapter 2: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_chap2.pdf" target="_blank" rel="noopener noreferrer">
+      Ruin theory
+    </a>
+  </li>
+  <p class="detail">Integro-differential equation, integral equation</p>
+  <p class="detail">Martingale method</p>
+
+  <li><b> Chapter 3: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_chap3.pdf" target="_blank" rel="noopener noreferrer">
+      Penalty functions in risk theory
+    </a>
+  </li>
+  <p class="detail">Introduction</p>
+  <p class="detail">Risk measures, profits, dividends</p>
+  <p class="detail">Penalty functions</p>
+  <p class="detail">Differentiation theorem</p>
+  <p class="detail">Optimal reserve allocation strategy</p>
+
+  <li><b> Chapter 4: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_chap4.pdf" target="_blank" rel="noopener noreferrer">
+      Article
+    </a>
+  </li>
+  <p class="detail">Also relevant for the midterm exam</p>
+
+  <br>
+
+  <li><b> Slides: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_slides.pdf" target="_blank" rel="noopener noreferrer">
+      here
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Other: </b></li>
+  <p class="detail">
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_conf_climat.pdf" target="_blank" rel="noopener noreferrer">
+      Conference on climate risks
+    </a>
+  </p>
+  <p class="detail">
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_simulation.R">
+      R simulations
+    </a>
+  </p>
+
+  <br>
+
+  <li><b> Tutorials: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_TD.pdf" target="_blank" rel="noopener noreferrer">
+      Main tutorial
+    </a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_TD_other.pdf" target="_blank" rel="noopener noreferrer">
+      Other topic
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Revision: </b></li>
+  <p class="detail">
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_annale_2023.pdf" target="_blank" rel="noopener noreferrer">
+      Exam 2023
+    </a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_annale_2023_bis.pdf" target="_blank" rel="noopener noreferrer">
+      Exam 2023 bis
+    </a>
+  </p>
+  <p class="detail">
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_resume.pdf" target="_blank" rel="noopener noreferrer">
+      Summary
+    </a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_ruine_fiche.pdf" target="_blank" rel="noopener noreferrer">
+      Cheat sheet
+    </a>
+  </p>
+</div>
+
+<!-- IFRS Solvency II -->
+<ul>
+  <h3 id="ifrs_solvabilite2" class="ancre-decalage">
+    IFRS Solvency II (Pierre Thérond)
+    <span class="contrib-icon btn-mail" data-matiere="IFRS Solvency II">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Course page: </b>
+    <a href="http://www.therond.fr/enseignement/isfa-3-ifrs-solvabilite-2/" target="_blank" rel="noopener noreferrer">
+      here
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> General notes: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/ifrs_solva_2_cours.pdf" target="_blank" rel="noopener noreferrer">
+      here
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Reference documents: </b></li>
+  <p class="detail">
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/s2_dir2009.pdf" target="_blank" rel="noopener noreferrer">
+      Directive 2009
+    </a>
+  </p>
+  <p class="detail">
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/reg_deleg_2014.pdf" target="_blank" rel="noopener noreferrer">
+      Delegated Regulation 2014
+    </a>
+  </p>
+  <p class="detail">
+    <a href="https://www.ifrs.org" target="_blank" rel="noopener noreferrer">IFRS</a>
+  </p>
+  <p class="detail">
+    <a href="https://www.efrag.org/?AspxAutoDetectCookieSupport=1" target="_blank" rel="noopener noreferrer">EFRAG</a>
+  </p>
+  <p class="detail">
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/s2_analyse_synthese.pdf" target="_blank" rel="noopener noreferrer">
+      S2 – Analysis and summary
+    </a>
+  </p>
+</div>
+
+<!-- Banking Prudential Regulation -->
+<ul>
+  <h3 id="reglementation_bancaire" class="ancre-decalage">
+    Banking Prudential Regulation (P. Perret)
+    <span class="contrib-icon btn-mail" data-matiere="Banking Prudential Regulation">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Course: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/reglementation_prudentielle_bancaire_cours.pdf" target="_blank" rel="noopener noreferrer">
+      here
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Project: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/reglementation_prudentielle_bancaire_Projet_ALLERS_JALABERT_SIMONEAU-FRIGGI.pdf" target="_blank" rel="noopener noreferrer">
+      ALLERS JALABERT SIMONEAU-FRIGGI
+    </a>
+  </li>
+</div>
+
+<!-- Asset-Liability Management -->
+<ul>
+  <h3 id="alm" class="ancre-decalage">
+    Asset-Liability Management (S. Collier)
+    <span class="contrib-icon btn-mail" data-matiere="Asset-Liability Management">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Lecture notes: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/gestion_actif_passif_cours.pdf" target="_blank" rel="noopener noreferrer">
+      PDF
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Chapter 1: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/gestion_actif_passif_slide1.pdf" target="_blank" rel="noopener noreferrer">
+      Introduction to Asset-Liability Management
+    </a>
+  </li>
+  <p class="detail">
+    Fundamentals – A/L management for insurers – A/L gaps – economic view – financial options
+  </p>
+
+  <li><b> Chapter 2: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/gestion_actif_passif_slide2.pdf" target="_blank" rel="noopener noreferrer">
+      Stochastic ALM
+    </a>
+  </li>
+  <p class="detail">
+    Financial options – valuation framework
+  </p>
+
+  <li><b> Chapter 3: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/gestion_actif_passif_slide3.pdf" target="_blank" rel="noopener noreferrer">
+      ALM modelling
+    </a>
+  </li>
+  <p class="detail">
+    Writing indicators – convergence
+  </p>
+
+  <br>
+
+  <table>
+    <tr>
+      <th class="col1">Topic</th>
+      <th class="col2">File</th>
+    </tr>
+    <tr>
+      <td class="col1">TP 1 – ALM (PDF)</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/TP1_ALM_Theo.pdf" target="_blank" rel="noopener noreferrer">
+          PDF
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td class="col1">TP 1 – ALM (Excel)</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/TP1_ALM_JALABERT.xlsx" target="_blank" rel="noopener noreferrer">
+          XLSX
+        </a>
+      </td>
+    </tr>
+  </table>
+
+  <br>
+
+  <li><b> Past exams: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/gestion_actif_passif_annale_2017.pdf" target="_blank" rel="noopener noreferrer">
+      2017
+    </a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/gestion_actif_passif_annale_2018.pdf" target="_blank" rel="noopener noreferrer">
+      2018
+    </a>
+  </li>
+</div>
+
+<!-- Pensions 2 -->
+<ul>
+  <h3 id="retraite2" class="ancre-decalage">
+    Pensions 2 (J. Jacquemin)
+    <span class="contrib-icon btn-mail" data-matiere="Pensions 2">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Session 1: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_2_cours_seance1.pdf" target="_blank" rel="noopener noreferrer">
+      Valuation and accounting of employee benefits obligations
+    </a>
+  </li>
+  <p class="detail">General principles</p>
+  <p class="detail">Valuation process</p>
+  <p class="detail">Special events</p>
+  <p class="detail">Accounting principles</p>
+
+  <li><b> Session 2: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_2_cours_seance2.pdf" target="_blank" rel="noopener noreferrer">
+      The new pension landscape in France
+    </a>
+  </li>
+  <p class="detail">Overview of pensions in France</p>
+  <p class="detail">The temptation of a universal pension system</p>
+  <p class="detail">Pacte Law</p>
+  <p class="detail">The revival of defined benefit schemes</p>
+
+  <li><b> Session 3: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_2_cours_seance3.pdf" target="_blank" rel="noopener noreferrer">
+      Social and tax compliance of schemes
+    </a>
+  </li>
+  <p class="detail">Rules for social contributions on benefits</p>
+  <p class="detail">Social and tax allowances – supplementary pensions</p>
+  <p class="detail">Taxation of defined contribution schemes</p>
+  <p class="detail">Taxation of defined benefit schemes</p>
+
+  <table>
+    <tr>
+      <th class="col1">Topic</th>
+      <th class="col2">File</th>
+    </tr>
+    <tr>
+      <td class="col1">Tutorial 1</td>
+      <td class="col2">
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/r2_td1.xlsx">
+          xlsx
+        </a>,
+        <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/retraite_2_td1.pdf" target="_blank" rel="noopener noreferrer">
+          Formulas
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- Social Protection -->
+<ul>
+  <h3 id="protection_sociale" class="ancre-decalage">
+    Social Protection (M. Favre-Beguet)
+    <span class="contrib-icon btn-mail" data-matiere="Social Protection">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Part 1: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/protection_sociale_chap1.pdf" target="_blank" rel="noopener noreferrer">
+      Key principles of health insurance
+    </a>
+  </li>
+  <p class="detail">Analysing the statutory scheme</p>
+  <p class="detail">Overview of complementary coverage offerings</p>
+
+  <li><b> Part 2: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/protection_sociale_chap2.pdf" target="_blank" rel="noopener noreferrer">
+      Technical comments on the founding texts
+    </a>
+  </li>
+  <p class="detail">Employer obligations towards employees and former employees</p>
+  <p class="detail">Tax and social treatment of contributions</p>
+  <p class="detail">Other key texts</p>
+
+  <li><b> Part 3: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/protection_sociale_chap3.pdf" target="_blank" rel="noopener noreferrer">
+      Group pricing
+    </a>
+  </li>
+  <p class="detail">Health pricing methods</p>
+  <p class="detail">Disability and death pricing methods</p>
+
+  <li><b> Income statements: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/protection_sociale_chap4.pdf" target="_blank" rel="noopener noreferrer">
+      Income statement
+    </a>
+  </li>
+  <p class="detail">Legal obligations</p>
+  <p class="detail">Provisions</p>
+  <p class="detail">Structure of accounts</p>
+  <p class="detail">Analysis tools</p>
+  <p class="detail">Profit sharing</p>
+
+  <br>
+
+  <li><b> Past exams: </b></li>
+  <ul>
+    <li>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/protection_sociale_annale_2019.pdf" target="_blank" rel="noopener noreferrer">
+        Exam 2019
+      </a>
+    </li>
+    <li>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/protection_sociale_annale_2022.pdf" target="_blank" rel="noopener noreferrer">
+        Exam 2022
+      </a>
+    </li>
+    <li>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/protection_sociale_questions_et_reponses.pdf" target="_blank" rel="noopener noreferrer">
+        Questions / Answers
+      </a>
+    </li>
+    <li>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/protection_sociale_fiche.pdf" target="_blank" rel="noopener noreferrer">
+        Cheat sheet
+      </a>
+    </li>
+  </ul>
+</div>
+
+<!-- Business Case in Reinsurance -->
+<ul>
+  <h3 id="business_case_reass" class="ancre-decalage">
+    Business Case in Reinsurance (L. Loljeeh, A. Pellerin)
+    <span class="contrib-icon btn-mail" data-matiere="Business Case in Reinsurance">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Chapter 1: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_chap1.pdf" target="_blank" rel="noopener noreferrer">
+      Introduction
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Chapter 2: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_chap2.pdf" target="_blank" rel="noopener noreferrer">
+      Reinsurance
+    </a>
+  </li>
+  <p class="detail">Impacts of reinsurance</p>
+  <p class="detail">Basics of reinsurance</p>
+
+  <li><b> Chapter 3: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_chap3.pdf" target="_blank" rel="noopener noreferrer">
+      Pricing
+    </a>
+  </li>
+  <p class="detail">Standard methods (burning cost, collective risk model, exposure rating)</p>
+  <p class="detail">Alternative methods (Monte Carlo simulations)</p>
+
+  <li><b> Chapter 4: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_chap4.pdf" target="_blank" rel="noopener noreferrer">
+      CAT Risk
+    </a>
+  </li>
+  <p class="detail">Definition, modelling, pricing</p>
+
+  <li><b> Chapter 5: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_chap5.pdf" target="_blank" rel="noopener noreferrer">
+      QS & SL
+    </a>
+  </li>
+  <p class="detail">Definition, modelling, pricing</p>
+
+  <li><b> Chapter 6: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_chap6.pdf" target="_blank" rel="noopener noreferrer">
+      Data analysis
+    </a>
+  </li>
+  <p class="detail">Data composition</p>
+  <p class="detail">Statistical revaluation</p>
+  <p class="detail">Premium indexation</p>
+
+  <li><b> Chapter 7: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_chap7.pdf" target="_blank" rel="noopener noreferrer">
+      Specific features
+    </a>
+  </li>
+  <p class="detail">Capital allocation</p>
+  <p class="detail">Optimal reinsurance</p>
+
+  <li><b> Chapter 8: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_chap8.pdf" target="_blank" rel="noopener noreferrer">
+      Results
+    </a>
+  </li>
+  <p class="detail">Pricing steps</p>
+  <p class="detail">Reinstatement</p>
+
+  <br>
+
+  <li><b> Project: </b></li>
+  <ul>
+    <li>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_groupe_16_rapport.pdf" target="_blank" rel="noopener noreferrer">
+        Group report PDF
+      </a>
+    </li>
+    <li>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_report_group_16.xlsx">
+        Excel – Results
+      </a>
+    </li>
+    <li>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/business_case_en_reassurance_groupe_16.xlsb">
+        Dashboard
+      </a>
+    </li>
+  </ul>
+</div>
+
+<!-- Copula Estimation -->
+<ul>
+  <h3 id="estimation_copules" class="ancre-decalage">
+    Copula Estimation (Esterina Masiello)
+    <span class="contrib-icon btn-mail" data-matiere="Copula Estimation">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Projects: </b></li>
+  <ul>
+    <li>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/Projet_1_ALLERS_JALABERT_SIMONEAU_FRIGGI.pdf" target="_blank" rel="noopener noreferrer">
+        Project 1 – Study of the dependence structure between CAC 40 and FTSE 100
+      </a>
+    </li>
+    <li>
+      <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/Projet_2_ALLERS_JALABERT_SIMONEAU_FRIGGI.pdf" target="_blank" rel="noopener noreferrer">
+        Project 2 – Study of dependence structure, Spotify data
+      </a>
+    </li>
+  </ul>
+</div>
+
+<!-- Strategy 2 -->
+<ul>
+  <h3 id="strategie2" class="ancre-decalage">
+    Strategy 2 (Melchior Salgado)
+    <span class="contrib-icon btn-mail" data-matiere="Strategy 2">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Final project: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/strategie_2_projet.pdf" target="_blank" rel="noopener noreferrer">
+      Case study – Project
+    </a>
+  </li>
+</div>
+
+<!-- Health Insurance -->
+<ul>
+  <h3 id="assurance_sante" class="ancre-decalage">
+    Health Insurance (Anne Marion)
+    <span class="contrib-icon btn-mail" data-matiere="Health Insurance">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> Course: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/assurance_sante_et_datavisualisation_cours.pdf" target="_blank" rel="noopener noreferrer">
+      here
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Notes: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/assurance_sante_et_datavisualisation_notes1.pdf" target="_blank" rel="noopener noreferrer">
+      Session 1
+    </a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/assurance_sante_et_datavisualisation_notes2.pdf" target="_blank" rel="noopener noreferrer">
+      Session 2
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Other references: </b></li>
+  <p class="detail">
+    <a href="https://fr.wikipedia.org/wiki/Transition_démographique" target="_blank" rel="noopener noreferrer">
+      Demographic transition
+    </a>
+  </p>
+</div>
+
+<!-- Actuarial Thesis -->
+<ul>
+  <h3 id="memoire" class="ancre-decalage">
+    Actuarial Thesis (Anne Eyraud)
+    <span class="contrib-icon btn-mail" data-matiere="Actuarial Thesis">📤</span>
+  </h3>
+</ul>
+
+<div class="container">
+  <li><b> IA recommendations: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/ia_recommandations_2010.pdf" target="_blank" rel="noopener noreferrer">
+      2010
+    </a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/ia_recommandations_2018.pdf" target="_blank" rel="noopener noreferrer">
+      2018
+    </a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/ia_recommandations_2020.pdf" target="_blank" rel="noopener noreferrer">
+      2020
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Presentations: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/memoire_presentation2017.pdf" target="_blank" rel="noopener noreferrer">
+      2017
+    </a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/memoire_presentation2022.pdf" target="_blank" rel="noopener noreferrer">
+      2022
+    </a>
+  </li>
+
+  <br>
+
+  <li><b> Cover page template: </b>
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/page_de_garde_memoire_word.docx">
+      Word
+    </a>,
+    <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/page_de_garde_memoire_LaTeX.zip">
+      LaTeX
+    </a>
+  </li>
+</div>
+
+</main>
+
+<footer>
+  Theo Jalabert | All rights reserved © 2025
+</footer>
+
+<script>
+  // Prevent automatic jump to an anchor on page load
+  (function () {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (location.hash) {
+      history.replaceState(null, '', location.pathname + location.search);
+      window.scrollTo(0, 0);
+    }
+  })();
+
+  // Mobile table of contents: closed by default + auto-close + smooth scrolling (without changing the URL)
+  document.addEventListener('DOMContentLoaded', () => {
+    const details = document.querySelector('.toc-mobile details');
+    if (details) details.open = false;
+
+    document.querySelectorAll('.toc-mobile a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (!target) return;
+
+        if (details) details.open = false;
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Accessibility option: move focus to the targeted heading (if focusable)
+        if (typeof target.tabIndex === 'number') {
+          target.tabIndex = -1; // make sure it's focusable
+          target.focus({ preventScroll: true });
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  document.querySelectorAll('.btn-mail').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const matiere = btn.dataset.matiere;
+      const sujet = encodeURIComponent(`Contribution - M2 Actuarial Science: ${matiere}`);
+      const corps = encodeURIComponent(
+`Hello Théo,
+
+I would like to suggest an update for the subject ${matiere} for the M2 Actuarial year.
+
+Here is the information:
+    - Type of content (new course material, error fix, other):
+    - Name of the file(s):
+    - Remarks or comments:`
+      );
+      window.location.href = `mailto:jalabert.theo@gmail.com?subject=${sujet}&body=${corps}`;
+    });
+  });
+</script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggle = document.getElementById('lang-toggle');
+      const menu = document.querySelector('.lang-menu');
+
+      if (!toggle || !menu) return;
+
+      // Ouvrir / fermer le menu au clic sur l'icône
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isOpen = menu.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      // Gestion du clic sur une langue
+      menu.addEventListener('click', function (e) {
+        const btn = e.target.closest('button[data-lang]');
+        if (!btn) return;
+        const lang = btn.dataset.lang;
+
+        console.log('Langue choisie :', lang);
+        // TODO : ici tu pourras brancher la vraie logique de traduction
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+
+      // Fermer le menu si on clique en dehors
+      document.addEventListener('click', function () {
+        if (menu.classList.contains('open')) {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const langButtons = document.querySelectorAll('.lang-menu button[data-href]');
+
+        langButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-href');
+            if (target) {
+              window.location.href = target;
+            }
+          });
+        });
+      });
+  </script>
+
+</body>
+</html>

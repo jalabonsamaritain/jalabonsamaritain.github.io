@@ -159,7 +159,6 @@
       padding: 1.25rem 1.5rem;
       margin-top: 12px;
     }
-
     ul.list{ list-style:none; padding:0; margin:0; }
     ul.list > li{
       padding:8px 0; border-bottom:1px solid #eee;
@@ -209,8 +208,8 @@
         });
         if (count) {
           count.textContent = visible === items.length
-            ? `${visible} exposés`
-            : `${visible} résultat${visible>1?'s':''}`;
+            ? `${visible} presentations`
+            : `${visible} result${visible>1?'s':''}`;
         }
       }
 
@@ -233,8 +232,8 @@
   <div class="nav" role="navigation" aria-label="Navigation principale">
     <div class="container inner">
       <div id="nav-list">
-        <a href="../index.html">Accueil</a>
-        <a href="about.html">À propos</a>
+        <a href="../index.html">Home</a>
+        <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
 
         <!-- Sélecteur de langue -->
@@ -245,21 +244,21 @@
             type="button"
             aria-haspopup="true"
             aria-expanded="false"
-            title="Changer de langue"
+            title="Switch language"
           >
             <img
-              src="../images/translation_logo.svg"
-              alt="Changer de langue"
+              src="../../images/translation_logo.svg"
+              alt="Switch language"
               class="lang-icon"
             >
           </button>
 
-          <div class="lang-menu" aria-label="Choisir la langue">
-            <button type="button" data-lang="fr" data-href="exposes_erm.html">
+          <div class="lang-menu" aria-label="Switch language">
+            <button type="button" data-lang="fr" data-href="../../html_files/exposes_erm.html">
               <span class="flag">🇫🇷</span>
               <span>Français</span>
             </button>
-            <button type="button" data-lang="en" data-href="../en/html_files/exposes_erm.html">
+            <button type="button" data-lang="en" data-href="exposes_erm.html">
               <span class="flag">🇬🇧</span>
               <span>English</span>
             </button>
@@ -271,95 +270,95 @@
   </div>
 
   <!-- Outils -->
-  <div class="tools" aria-label="Recherche des exposés d’ERM">
-    <label for="q">Rechercher</label>
-    <input id="q" type="search" placeholder="Filtrer (ex : copule, climatiques, ORSA, .xlsx…)" aria-label="Rechercher dans les exposés">
+  <div class="tools" aria-label="Search ERM presentations">
+    <label for="q">Search</label>
+    <input id="q" type="search" placeholder="Filter (e.g., copula, climate, ORSA, .xlsx…)" aria-label="Search within the presentations">
     <span class="count" aria-live="polite"></span>
   </div>
 
   <main class="container_global">
-    <h1>Exposés d’ERM</h1>
+    <h1>ERM presentations</h1>
 
     <div class="annales-box">
       <ul class="list" id="groups">
-        <li id="g1"><span class="title">Groupe 1 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/01-copule_gaussienne.pdf" target="_blank" rel="noopener noreferrer">Copules Gaussiennes</a>
+        <li id="g1"><span class="title">Group 1:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/01-copule_gaussienne.pdf" target="_blank" rel="noopener noreferrer">Gaussian Copulas</a>
         </li>
-        <li id="g2"><span class="title">Groupe 2 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/02-copule_de_Student.pdf" target="_blank" rel="noopener noreferrer">Copule de Student</a>
+        <li id="g2"><span class="title">Group 2:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/02-copule_de_Student.pdf" target="_blank" rel="noopener noreferrer">Student Copula</a>
         </li>
-        <li id="g3"><span class="title">Groupe 3 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/03-copules_archimediennes.pptx" target="_blank" rel="noopener noreferrer">Copules Archimédiennes</a>
+        <li id="g3"><span class="title">Group 3:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/03-copules_archimediennes.pptx" target="_blank" rel="noopener noreferrer">Archimedean Copulas</a>
         </li>
-        <li id="g4"><span class="title">Groupe 4 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/04-Copule_de_Clayton.pdf" target="_blank" rel="noopener noreferrer">Copule de Clayton</a>
+        <li id="g4"><span class="title">Group 4:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/04-Copule_de_Clayton.pdf" target="_blank" rel="noopener noreferrer">Clayton Copula</a>
         </li>
-        <li id="g5"><span class="title">Groupe 5 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/05-copule_de_Gumbel.pdf" target="_blank" rel="noopener noreferrer">Copules de Gumbel</a>,
+        <li id="g5"><span class="title">Group 5:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/05-copule_de_Gumbel.pdf" target="_blank" rel="noopener noreferrer">Gumbel Copulas</a>,
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/05-copule_de_Gumbel.r">Code (.R)</a>
         </li>
-        <li id="g6"><span class="title">Groupe 6 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/06-copules_archimediennes_hierarchiques.pdf" target="_blank" rel="noopener noreferrer">Copules Archimédiennes Hiérarchiques</a>
+        <li id="g6"><span class="title">Group 6:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/06-copules_archimediennes_hierarchiques.pdf" target="_blank" rel="noopener noreferrer">Hierarchical Archimedean Copulas</a>
         </li>
-        <li id="g7"><span class="title">Groupe 7 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/07-VaR_TVaR_et_expectiles.pptx" target="_blank" rel="noopener noreferrer">VaR, TVaR et expectiles</a>,
+        <li id="g7"><span class="title">Group 7:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/07-VaR_TVaR_et_expectiles.pptx" target="_blank" rel="noopener noreferrer">VaR, TVaR and expectiles</a>,
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/07-VaR_TVaR_et_expectiles_application.xlsx">Application (.xlsx)</a>
         </li>
-        <li id="g8"><span class="title">Groupe 8 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.pptx" target="_blank" rel="noopener noreferrer">Agrégation des risques avec VaR et TVaR en pratique</a>,
+        <li id="g8"><span class="title">Group 8:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.pptx" target="_blank" rel="noopener noreferrer">Risk aggregation with VaR and TVaR in practice</a>,
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.txt">(.txt)</a>,
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/08-Agregation_des_risques_avec_VaR_et_TVaR_en_pratique.xlsx">(.xlsx)</a>
         </li>
-        <li id="g9"><span class="title">Groupe 9 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/09-proprietes_des_methodes_d_allocation_du_capital_economique.pdf" target="_blank" rel="noopener noreferrer">Propriétés des méthodes d’allocation du capital économique</a>
+        <li id="g9"><span class="title">Group 9:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/09-proprietes_des_methodes_d_allocation_du_capital_economique.pdf" target="_blank" rel="noopener noreferrer">Properties of economic capital allocation methods</a>
         </li>
-        <li id="g10"><span class="title">Groupe 10 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/10-Methodes_allocation_d_actifs.pptx" target="_blank" rel="noopener noreferrer">Méthodes proportionnelles et méthodes d’impact marginal</a>
+        <li id="g10"><span class="title">Group 10:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/10-Methodes_allocation_d_actifs.pptx" target="_blank" rel="noopener noreferrer">Proportional methods and marginal impact methods</a>
         </li>
-        <li id="g11"><span class="title">Groupe 11 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/11-Methode_d_Euler.pptx" target="_blank" rel="noopener noreferrer">Méthode d'Euler</a>,
+        <li id="g11"><span class="title">Group 11:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/11-Methode_d_Euler.pptx" target="_blank" rel="noopener noreferrer">Euler Method</a>,
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/11-Methode_d_Euler_application.xlsx">(.xlsx)</a>
         </li>
-        <li id="g12"><span class="title">Groupe 12 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/12-CAT_BONDS_mono_peril.pptx" target="_blank" rel="noopener noreferrer">CAT BOND mono-péril</a>
+        <li id="g12"><span class="title">Group 12:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/12-CAT_BONDS_mono_peril.pptx" target="_blank" rel="noopener noreferrer">Single-peril CAT bond</a>
         </li>
-        <li id="g13"><span class="title">Groupe 13 :</span>
+        <li id="g13"><span class="title">Group 13:</span>
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/13-mortality_bonds.pptx" target="_blank" rel="noopener noreferrer">Mortality Bonds</a>
         </li>
-        <li id="g14"><span class="title">Groupe 14 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/14-titrisation_des_risques_automobiles.pptx" target="_blank" rel="noopener noreferrer">Titrisation des risques automobiles</a>
+        <li id="g14"><span class="title">Group 14:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/14-titrisation_des_risques_automobiles.pptx" target="_blank" rel="noopener noreferrer">Securitisation of motor risks</a>
         </li>
-        <li id="g15"><span class="title">Groupe 15 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/15-titrisation_multirisques_et_risques_speciaux.pdf" target="_blank" rel="noopener noreferrer">Titrisation multi-risques et risques spéciaux</a>
+        <li id="g15"><span class="title">Group 15:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/15-titrisation_multirisques_et_risques_speciaux.pdf" target="_blank" rel="noopener noreferrer">Multi-risk and specialty-risk securitisation</a>
         </li>
-        <li id="g16"><span class="title">Groupe 16 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/16-ORSA_et_rapport_ORSA.pdf" target="_blank" rel="noopener noreferrer">ORSA et rapport ORSA</a>,
+        <li id="g16"><span class="title">Group 16:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/16-ORSA_et_rapport_ORSA.pdf" target="_blank" rel="noopener noreferrer">ORSA and ORSA report</a>,
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/16-ORSA_et_rapport_ORSA.xlsx">(.xlsx)</a>
         </li>
-        <li id="g17"><span class="title">Groupe 17 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/17-politiques_ecrites_S2.pdf" target="_blank" rel="noopener noreferrer">Politiques écrites</a>
+        <li id="g17"><span class="title">Group 17:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/17-politiques_ecrites_S2.pdf" target="_blank" rel="noopener noreferrer">Written policies</a>
         </li>
-        <li id="g18"><span class="title">Groupe 18 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/18-risques_cyber.pdf" target="_blank" rel="noopener noreferrer">Risque Cyber</a>
+        <li id="g18"><span class="title">Group 18:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/18-risques_cyber.pdf" target="_blank" rel="noopener noreferrer">Cyber Risk</a>
         </li>
-        <li id="g19"><span class="title">Groupe 19 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/19-Impact_changement_climatique_risques_biometriques.pdf" target="_blank" rel="noopener noreferrer">Impact du changement climatique sur les risques biométriques</a>
+        <li id="g19"><span class="title">Group 19:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/19-Impact_changement_climatique_risques_biometriques.pdf" target="_blank" rel="noopener noreferrer">Impact of climate change on biometric risks</a>
         </li>
-        <li id="g20"><span class="title">Groupe 20 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/20-impact_du_changement_climatique_sur_les_risques_P&C_des_assureurs.pptx" target="_blank" rel="noopener noreferrer">Impact du changement climatique sur les risques P&C des assureurs</a>
+        <li id="g20"><span class="title">Group 20:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/20-impact_du_changement_climatique_sur_les_risques_P&C_des_assureurs.pptx" target="_blank" rel="noopener noreferrer">Impact of climate change on insurers' P&C risks</a>
         </li>
-        <li id="g21"><span class="title">Groupe 21 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/21-Impact_du_changement_climatique_sur_l_actifs_des_assureurs.pdf" target="_blank" rel="noopener noreferrer">Impact du changement climatique sur les actifs d'assurance</a>,
+        <li id="g21"><span class="title">Group 21:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/21-Impact_du_changement_climatique_sur_l_actifs_des_assureurs.pdf" target="_blank" rel="noopener noreferrer">Impact of climate change on insurers' assets</a>,
           <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/21-Impact_du_changement_climatique_sur_l_actifs_des_assureurs.R" target="_blank" rel="noopener noreferrer">Code (.R)</a>
         </li>
-        <li id="g22"><span class="title">Groupe 22 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/22_Risque_De_Durabilite.pptx" target="_blank" rel="noopener noreferrer">Risque de durabilité</a>
+        <li id="g22"><span class="title">Group 22:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/22_Risque_De_Durabilite.pptx" target="_blank" rel="noopener noreferrer">Sustainability risk</a>
         </li>
-        <li id="g23"><span class="title">Groupe 23 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/23-assurabilite_et_inassurabilite_de_certains_risques.pdf" target="_blank" rel="noopener noreferrer">Assurabilité et Inassurabilité de certains risques</a>
+        <li id="g23"><span class="title">Group 23:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/23-assurabilite_et_inassurabilite_de_certains_risques.pdf" target="_blank" rel="noopener noreferrer">Insurability and non-insurability of certain risks</a>
         </li>
-        <li id="g24"><span class="title">Groupe 24 :</span>
-          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/24_cartographie_des_risques.pdf" target="_blank" rel="noopener noreferrer">Cartographie des risques</a>
+        <li id="g24"><span class="title">Group 24:</span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/24_cartographie_des_risques.pdf" target="_blank" rel="noopener noreferrer">Risk mapping</a>
         </li>
       </ul>
     </div>
@@ -392,54 +391,54 @@
 </script>
 
 <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const toggle = document.getElementById('lang-toggle');
-        const menu = document.querySelector('.lang-menu');
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggle = document.getElementById('lang-toggle');
+      const menu = document.querySelector('.lang-menu');
 
-        if (!toggle || !menu) return;
+      if (!toggle || !menu) return;
 
-        // Ouvrir / fermer le menu au clic sur l'icône
-        toggle.addEventListener('click', function (e) {
-          e.stopPropagation();
-          const isOpen = menu.classList.toggle('open');
-          toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        });
-
-        // Gestion du clic sur une langue
-        menu.addEventListener('click', function (e) {
-          const btn = e.target.closest('button[data-lang]');
-          if (!btn) return;
-          const lang = btn.dataset.lang;
-
-          console.log('Langue choisie :', lang);
-          // TODO : ici tu pourras brancher la vraie logique de traduction
-          menu.classList.remove('open');
-          toggle.setAttribute('aria-expanded', 'false');
-        });
-
-        // Fermer le menu si on clique en dehors
-        document.addEventListener('click', function () {
-          if (menu.classList.contains('open')) {
-            menu.classList.remove('open');
-            toggle.setAttribute('aria-expanded', 'false');
-          }
-        });
+      // Ouvrir / fermer le menu au clic sur l'icône
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isOpen = menu.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       });
 
-          document.addEventListener('DOMContentLoaded', () => {
-          const langButtons = document.querySelectorAll('.lang-menu button[data-href]');
+      // Gestion du clic sur une langue
+      menu.addEventListener('click', function (e) {
+        const btn = e.target.closest('button[data-lang]');
+        if (!btn) return;
+        const lang = btn.dataset.lang;
 
-          langButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-              const target = btn.getAttribute('data-href');
-              if (target) {
-                window.location.href = target;
-              }
-            });
+        console.log('Langue choisie :', lang);
+        // TODO : ici tu pourras brancher la vraie logique de traduction
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+
+      // Fermer le menu si on clique en dehors
+      document.addEventListener('click', function () {
+        if (menu.classList.contains('open')) {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const langButtons = document.querySelectorAll('.lang-menu button[data-href]');
+
+        langButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-href');
+            if (target) {
+              window.location.href = target;
+            }
           });
         });
-    </script>
+      });
+  </script>
 
-  <footer>Théo Jalabert | Tous droits réservés © 2025</footer>
+  <footer>Theo Jalabert | All rights reserved © 2025</footer>
 </body>
 </html>

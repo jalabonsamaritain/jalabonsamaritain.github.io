@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" href="/images/logo_isfa.png" type="image/png">
+  <title>JalabonSamaritain — Annales Théorie Crédibilité</title>
+
+  <style>
+    /* ===== Reset & variables (cohérents avec EK/L3/M1/M2) ===== */
+    *,*::before,*::after{ box-sizing:border-box; }
+    :root{
+      --brand-1:#235A8C;
+      --brand-2:#0E76A8;
+      --bg:#f4f4f4;
+      --space:clamp(12px,2vw,20px);
+      --header-h:64px;
+      --nav-h:48px;
+      --top-offset: calc(var(--header-h) + var(--nav-h) + 12px);
+      --container-w:70rem;
+      --card-bg:#fff;
+    }
+
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0; min-height:100svh; display:flex; flex-direction:column;
+      font-family:ui-sans-serif,system-ui,Segoe UI,Calibri,Roboto,Arial;
+      line-height:1.5; background:var(--bg); color:#222;
+    }
+    a{ color:#0645AD; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    /* ===== Header & Nav (fixes) ===== */
+    header{ background:var(--brand-1); color:#fff; position:fixed; top:0; left:0; right:0; z-index:20; }
+    header .inner{ display:flex; align-items:center; justify-content:center; min-height:var(--header-h); padding-block:8px; }
+    header a{ color:#fff; }
+
+    .nav{ background:var(--brand-2); color:#fff; position:fixed; top:var(--header-h); left:0; right:0; z-index:19; }
+    .nav .inner{ display:flex; align-items:center; justify-content:center; min-height:var(--nav-h); }
+    #nav-list{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; margin:0 auto; }
+    #nav-list a{ color:#fff; padding:10px 12px; border-radius:6px; font-size:clamp(.95rem,.9rem + .2vw,1rem); }
+    #nav-list a:hover{ background:rgba(255,255,255,.15); }
+
+    /* ===== Sélecteur de langue ===== */
+    .lang-switcher {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle {
+      background: transparent;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .lang-toggle:hover {
+      background: rgb(255 255 255 / .12);
+    }
+
+    .lang-icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .lang-menu {
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: #fff;
+      color: #222;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      padding: 6px 0;
+      min-width: 150px;
+      display: none;
+      z-index: 30;
+    }
+
+    .lang-menu.open {
+      display: block;
+    }
+
+    .lang-menu button {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .lang-menu button:hover {
+      background: #eef2ff;
+    }
+
+    .lang-menu .flag {
+      font-size: 1.1rem;
+    }
+
+    /* ===== Sommaire mobile (menu déroulant) ===== */
+    .toc-mobile{
+      display:block;
+      position:sticky;
+      top: calc(var(--header-h) + var(--nav-h) + 8px);
+      z-index: 9;
+      margin: 12px 12px 0;
+    }
+    .toc-mobile details{
+      background:#fff;
+      border-radius:10px;
+      padding:.75rem 1rem;
+      box-shadow:0 1px 6px rgba(0,0,0,.08);
+    }
+    .toc-mobile summary{ cursor:pointer; font-weight:700; }
+    .toc-mobile details > ul{
+      list-style:none; padding-left:0; margin:.6rem 0 0 0;
+      max-height: 50vh; overflow:auto; -webkit-overflow-scrolling:touch; padding-right:4px;
+    }
+    .toc-mobile li{ margin:.4rem 0; }
+    .toc-mobile a{ color:#333; }
+    .toc-mobile a:hover{ text-decoration:underline; }
+
+    /* Cacher le sommaire mobile en desktop */
+    @media (min-width: 1024px){
+      .toc-mobile{ display:none; }
+    }
+
+    /* ===== Contenu ===== */
+    main.container_global{
+      width:min(100%, var(--container-w));
+      margin-inline:auto;
+      margin-top: calc(var(--header-h) + var(--nav-h) + 20px);
+      padding: var(--space);
+      flex:1;
+    }
+    h1{ text-align:center; font-size:clamp(1.5rem,1rem+2vw,2.25rem); margin:.5em 0 0.75em; }
+
+    /* Conteneur de largeur générique */
+    .container{
+      width:min(100%, var(--container-w));
+      margin-inline:auto;
+      padding-inline: var(--space);
+    }
+
+    /* Carte blanche pour la liste d'annales */
+    .annales-box{
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 1px 6px rgba(0,0,0,.06);
+      padding: 1.25rem 1.5rem;
+      margin-top: 12px;
+    }
+
+    ul.years{ list-style:none; padding:0; margin:0; }
+    ul.years > li{
+      padding:8px 0; border-bottom:1px solid #eee;
+      scroll-margin-top: var(--top-offset);
+    }
+    ul.years > li:last-child{ border-bottom:none; }
+    .year-title{ font-weight:700; }
+
+    /* ===== Footer ===== */
+    footer{ background:var(--brand-1); color:#fff; text-align:center; padding:14px 0; margin-top:auto; }
+  </style>
+
+  <!-- Empêche la restauration auto et le saut direct sur hash -->
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (location.hash) {
+      history.replaceState(null, '', location.pathname + location.search);
+      window.scrollTo(0, 0);
+    }
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R168QL4ED7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-R168QL4ED7');
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="inner">
+      <h1 style="margin:0; font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);">
+        <a href="../index.html">JalabonSamaritain</a>
+      </h1>
+    </div>
+  </header>
+
+  <!-- Nav -->
+  <div class="nav" role="navigation" aria-label="Navigation principale">
+    <div class="container inner">
+      <div id="nav-list">
+        <a href="../index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+
+        <!-- Sélecteur de langue -->
+        <div class="lang-switcher">
+          <button
+            id="lang-toggle"
+            class="lang-toggle"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Switch language"
+          >
+            <img
+              src="../../images/translation_logo.svg"
+              alt="Switch language"
+              class="lang-icon"
+            >
+          </button>
+
+          <div class="lang-menu" aria-label="Switch language">
+            <button type="button" data-lang="fr" data-href="../../html_files/annales_theorie_credibilite.html">
+              <span class="flag">🇫🇷</span>
+              <span>Français</span>
+            </button>
+            <button type="button" data-lang="en" data-href="annales_theorie_credibilite.html">
+              <span class="flag">🇬🇧</span>
+              <span>English</span>
+            </button>
+          </div>
+        </div>
+        <!-- Fin sélecteur de langue -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Sommaire mobile (menu déroulant) -->
+  <nav class="toc-mobile" aria-label="Sommaire Annales (mobile)">
+    <details open>
+      <summary>📚 Summary — go to a year…</summary>
+      <ul>
+        <li><a href="#y2023">2023</a></li>
+        <li><a href="#y2020">2020</a></li>
+        <li><a href="#y2019">2019</a></li>
+        <li><a href="#y2018">2018</a></li>
+        <li><a href="#y2017">2017</a></li>
+        <li><a href="#y2016">2016</a></li>
+        <li><a href="#y2015">2015</a></li>
+        <li><a href="#y2014">2014</a></li>
+        <li><a href="#y2013">2013</a></li>
+        <li><a href="#y2012">2012</a></li>
+        <li><a href="#y2011">2011</a></li>
+        <li><a href="#y2010">2010</a></li>
+        <li><a href="#y2009">2009</a></li>
+        <li><a href="#y2008">2008</a></li>
+        <li><a href="#y2007">2007</a></li>
+        <li><a href="#y2006">2006</a></li>
+      </ul>
+    </details>
+  </nav>
+
+  <!-- Contenu -->
+  <main class="container_global">
+    <h1>Past Exams — Credibility theory & bonus–malus systems.</h1>
+
+    <div class="annales-box">
+      <ul class="years" id="years">
+        <li id="y2006">
+          <span class="year-title">Exam 2006: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2006.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2006_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2006_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2007">
+          <span class="year-title">Exam 2007: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2007.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2007_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2008">
+          <span class="year-title">Exam 2008: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2008.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2008_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2009">
+          <span class="year-title">Exam 2009: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2009.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2009_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2010">
+          <span class="year-title">Exam 2010: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2010.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2010_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2011">
+          <span class="year-title">Exam 2011: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2011.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2011_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2012">
+          <span class="year-title">Exam 2012: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2012.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2012_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2013">
+          <span class="year-title">Exam 2013: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2013.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2013_correction.pdf" target="_blank" rel="noopener noreferrer">Solution</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2013_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2014">
+          <span class="year-title">Exam 2014: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2014.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2014_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2015">
+          <span class="year-title">Exam 2015: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2015.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2015_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2016">
+          <span class="year-title">Exam 2016: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2016.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2016_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2017">
+          <span class="year-title">Exam 2017: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2017.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2017_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2018">
+          <span class="year-title">Exam 2018: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2018.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2018_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2019">
+          <span class="year-title">Exam 2019: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2019.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>,
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2019_deuxieme_session.pdf" target="_blank" rel="noopener noreferrer">2nd session</a>
+        </li>
+
+        <li id="y2020">
+          <span class="year-title">Exam 2020: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2020.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>
+        </li>
+
+        <li id="y2023">
+          <span class="year-title">Exam 2023: </span>
+          <a href="https://site.jalabert-theo.workers.dev/?url=https://github.com/theojalabert/jalabonsamaritain-data/releases/download/data_isfa/theorie_de_la_credibilite_annale_2023.pdf" target="_blank" rel="noopener noreferrer">1st session exam</a>
+        </li>
+      </ul>
+    </div>
+  </main>
+
+  <footer>Theo Jalabert | All rights reserved © 2025</footer>
+
+  <!-- Script : menu déroulant mobile (fermé par défaut, scroll doux, sans changer l’URL) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const details = document.querySelector('.toc-mobile details');
+      if (details) details.open = false;
+
+      document.querySelectorAll('.toc-mobile a[href^="#"]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = a.getAttribute('href').slice(1);
+          const target = document.getElementById(id);
+          if (!target) return;
+
+          if (details) details.open = false;
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+          // accessibilité : focus sur la cible si possible
+          target.tabIndex = -1;
+          target.focus({ preventScroll: true });
+        });
+      });
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggle = document.getElementById('lang-toggle');
+      const menu = document.querySelector('.lang-menu');
+
+      if (!toggle || !menu) return;
+
+      // Ouvrir / fermer le menu au clic sur l'icône
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isOpen = menu.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      // Gestion du clic sur une langue
+      menu.addEventListener('click', function (e) {
+        const btn = e.target.closest('button[data-lang]');
+        if (!btn) return;
+        const lang = btn.dataset.lang;
+
+        console.log('Langue choisie :', lang);
+        // TODO : ici tu pourras brancher la vraie logique de traduction
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+
+      // Fermer le menu si on clique en dehors
+      document.addEventListener('click', function () {
+        if (menu.classList.contains('open')) {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const langButtons = document.querySelectorAll('.lang-menu button[data-href]');
+
+        langButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-href');
+            if (target) {
+              window.location.href = target;
+            }
+          });
+        });
+      });
+  </script>
+
+</body>
+</html>
